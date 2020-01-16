@@ -88,6 +88,7 @@ public final class GoogleCloudStorageBucketAccessControlAPI: BucketAccessControl
             queryParams = queryParameters.queryParameters
         }
         
+        
         return request.send(method: .DELETE, path: "\(endpoint)/\(bucket)/acl/\(entity)", query: queryParams)
     }
     

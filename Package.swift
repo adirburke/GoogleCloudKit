@@ -18,6 +18,18 @@ let package = Package(
             name: "GoogleCloudKit",
             targets: ["Core", "Storage"]
         ),
+        .library(
+            name: "DiscoveryCodeGen",
+            targets: ["CodeGen"]
+        ),
+        .executable(
+            name: "codegen-cli",
+            targets: ["CLI"]
+            ),
+        .executable(
+        name: "testingModules",
+        targets: ["testingModules"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.0.0"),
@@ -25,6 +37,22 @@ let package = Package(
         .package(url: "https://github.com/vapor/jwt-kit.git", from: "4.0.0-beta")
     ],
     targets: [
+        .target(
+            name: "testingModules",
+            dependencies: ["AsyncHTTPClient", "JWTKit", "NIOFoundationCompat"],
+            path: "testingModules/"
+        ),
+        .target(
+            name: "CodeGen",
+            dependencies: [],
+            path: "CodeGen/"
+        ),
+        .target(
+            name: "codegen-cli",
+            dependencies: [],
+            path: "codegen-cli/"
+        ),
+        
         .target(
             name: "Core",
             dependencies: ["AsyncHTTPClient", "JWTKit", "NIOFoundationCompat"],
