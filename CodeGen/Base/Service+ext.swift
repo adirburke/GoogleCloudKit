@@ -28,16 +28,13 @@ extension DiscoveryService {
     
     fileprivate func cleanUpScopeName(_ scope: String) -> String {
         let something = scope.range(of: "/", options: .backwards)?.upperBound
-        //        var substring = substring
         var substring = String(scope[something!...])
-        //            print(scope, substring)
         var s = ""
         if substring.count > 4 {
             s = String(substring.dropLast(substring.count - 4))
         } else {
             s = substring
         }
-//        print(s, substring, scope)
         if s == "com/" || s == "" { substring = "fullAccess" }
         
         substring = substring.replacingOccurrences(of: ".", with: "_")
@@ -189,14 +186,20 @@ extension DiscoveryService {
     }
     
     
-    fileprivate func getMethodParams(_ m: (key: String, value: GoogleCloudDiscoveryMethods)) -> String {
+    fileprivate func getMethodParams(_ m: (key: String, value: GoogleCloudDiscoveryMethods)) -> (String, String, String) {
         var funcParm = ""
+        var commentSection = ""
+        var repeatedParms = ""
         for order in m.value.parameterOrder ?? [] {
             if let parm = m.value.parameters?[order] {
+                var d = parm.description ?? ""
+                d = d.replacingOccurrences(of: "\n", with: " ")
+                commentSection.addLine("/// - Parameter \(order.makeSwiftSafe()): \(d)")
                 funcParm += "\(order.makeSwiftSafe()) : \(parm.type!.toSwiftParameterName()), "
+                repeatedParms += "\(order.makeSwiftSafe()): \(order.makeSwiftSafe()),"
             }
         }
-        return funcParm
+        return (funcParm, commentSection, repeatedParms)
     }
     
     func insertQueryBlock(baseIndent: Int) -> String {
@@ -230,12 +233,17 @@ extension DiscoveryService {
         
         var gc = ""
         var later = ""
+//        var protocolLines = [String]()
+//        var laterlater = ""
         for r in s.resources?.sorted(by: { $0.key < $1.key}) ?? [] {
-            
+            var protocolLines = [String]()
+            var extensionLines = [String]()
             var apiName = r.key
             apiName = apiName.capitalized().makeSwiftSafe()
-            gc.addLine("public protocol \(apiName)APIProtocol  {} ")
+            let laterlater = "public protocol \(apiName)APIProtocol  {"
+            let extensionStart = "extension \(apiName)APIProtocol  {"
             apiList?.append("\(apiName)APIProtocol")
+            
             gc.addLine("public final class GoogleCloud\(capName)\(apiName)API : \(apiName)APIProtocol {")
             gc.addLine("let endpoint = \"\(endPoint)\"", with: 1)
             gc.addLine("let request : GoogleCloud\(capName)Request", with: 1)
@@ -249,40 +257,61 @@ extension DiscoveryService {
             for m in r.value.methods?.sorted(by: { $0.key < $1.key }) ?? [] {
                 
                 let methodName = m.key.makeSwiftSafe()
-                let funcParm = getMethodParams(m)
+                let commentSection = "/// \(m.value.description ?? "")".replacingOccurrences(of: "\n", with: " ")
+                let (funcParm, comment, repeatedParm) = getMethodParams(m)
+                
                 var responseValue = m.value.response?.reference.makeSwiftSafe() ?? "EmptyResponse"
                 responseValue = "GoogleCloud\(capName)\(responseValue.makeSwiftSafe())"
                 var requestValue = ""
                 var requestRequired = false
+                var repeatedRequest = ""
                 if let request = m.value.request?.reference.makeSwiftSafe() {
                     requestRequired = true
                     requestValue = "body : GoogleCloud\(capName)\(request.makeSwiftSafe()),"
+                    repeatedRequest = "body: body,"
                 }
                 
+                protocolLines.append(commentSection)
+                let protocolLine = "func \(methodName)(\(funcParm)\(requestValue) queryParameters: [String: String]?) -> EventLoopFuture<\(responseValue)>"
+                protocolLines.append(protocolLine)
+                
+                var extensionLine = ""
+                extensionLine.addLine("public func \(methodName)(\(funcParm)\(requestValue) queryParameters: [String: String]? = nil) -> EventLoopFuture<\(responseValue)> {", with: 1)
+                extensionLine.addLine("\(methodName)(\(repeatedParm) \(repeatedRequest) queryParameters: queryParameters)", with: 2)
+                extensionLine.addLine("}", with: 1)
+                extensionLines.append(extensionLine)
+                
+                gc.addLine(commentSection, with: 1)
+                gc.addLine(comment,with: 1)
                 gc.addLine("public func \(methodName)(\(funcParm)\(requestValue) queryParameters: [String: String]?) -> EventLoopFuture<\(responseValue)> {", with: 1)
                 gc += insertQueryBlock(baseIndent: 2)
-                //                gc.addLine("do {", with: 2)
-                var path = createPathAndSwiftSafe(m)
-                //                b/\(bucket)/o/{object}
+                let path = createPathAndSwiftSafe(m)
                 if requestRequired {
                     gc.addLine("do {", with: 2)
                     gc.addLine("let data = try JSONEncoder().encode(body)", with: 3)
-                    gc.addLine("return request.send(method: .\(m.value.httpMethod ?? ""), path: \"\\(endpoint)/\(path)\", query: queryParams, body: .data(data))", with: 3)
+                    gc.addLine("return request.send(method: .\(m.value.httpMethod ?? ""), path: \"\\(endpoint)\(path)\", query: queryParams, body: .data(data))", with: 3)
                     gc.addLine("} catch {", with: 2)
                     gc.addLine("return request.httpClient.eventLoopGroup.next().makeFailedFuture(error)", with: 3)
                     gc.addLine("}",with: 1)
                 } else {
-                    gc.addLine("return request.send(method: .\(m.value.httpMethod ?? ""), path: \"\\(endpoint)/\(path)\", query: queryParams)", with: 2)
+                    gc.addLine("return request.send(method: .\(m.value.httpMethod ?? ""), path: \"\\(endpoint)\(path)\", query: queryParams)", with: 2)
                 }
                 gc.addLine("}", with: 1)
+//                gc =  + gc
                 
                 //                print(m.value)
                 //                m.value.printPretty()
             }
             gc.addLine("}", with: 0)
             gc.addLine()
-            
+            gc.addLine(laterlater, with: 0)
+            protocolLines.map { gc.addLine($0, with: 1)}
+            gc.addLine("}", with: 0)
+            gc.addLine(extensionStart, with: 0)
+            extensionLines.map { gc.addLine($0, with: 1)}
+            gc.addLine("}", with: 0)
         }
+
         
         return gc + later
     }
@@ -307,6 +336,30 @@ extension DiscoveryService {
     
     
     
+    func checkRequired(_ s : String, _ i: Int, _ b : Bool?, p: GoogleCloudDiscoveryParametersProperties) -> String {
+        var gc = ""
+        if let bool = b {
+            if bool {
+                if var d = p.description {
+                    d = d.replacingOccurrences(of: "/*", with: "/ *")
+                    
+                    gc.addLine("/* \(d) */", with: i)
+                }
+                
+                gc.addLine(s, with: i)
+                
+                return gc
+            }
+        }
+        if var d = p.description {
+            d = d.replacingOccurrences(of: "/*", with: "/ *")
+            
+            gc.addLine("/*\(d) */", with: i)
+        }
+        gc.addLine("\(s)?", with: i)
+        return gc
+    }
+    
     func createModels() -> String {
         var gc = "public struct PlaceHolderObject : GoogleCloudModel {}\npublic struct GoogleCloud\(capName)EmptyResponse : GoogleCloudModel {}\n"
         var later = ""
@@ -324,33 +377,41 @@ extension DiscoveryService {
                     
                     let something = p.value.properties?.sorted(by: {$0.key < $1.key}) ?? []
                     later += createSmallModel(modelName: modelName, name: propertyNameSafeCap, props: something)
-                    gc.addLine("public var \(propertyNameSafe): GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)", with: 1)
+                    
+                    gc += checkRequired("public var \(propertyNameSafe): GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)", 1, p.value.required, p: p.value)
+//                    gc.addLine("public var \(propertyNameSafe): GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)", with: 1)
+                    
+                    
                 case .array:
                     if let items = p.value.items {
                         switch items.type {
                         case .object:
                             
                             later += createSmallModel(modelName: modelName, name: propertyNameSafeCap, props: items.properties?.sorted(by: {$0.key < $1.key}) ?? [])
-                            gc.addLine("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", with: 1)
+//                            gc.addLine("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", with: 1)
+                            gc += checkRequired("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", 1, p.value.required, p: p.value)
                         case .array:
-                            gc.addLine("public var \(propertyNameSafe): [GoogleCloud\(capName)\(p.value.toType().dropFirst())", with: 1)
+                            gc += checkRequired("public var \(propertyNameSafe): [GoogleCloud\(capName)\(p.value.toType().dropFirst())", 1, p.value.required, p: p.value)
                         default:
                             let type = p.value.toType()
                             
                             if let _ = GoogleCloudDiscoveryJSONTypeEnum(rawValue: type.lowercased().replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")) {
-                                gc.addLine("public var \(propertyNameSafe): \(p.value.toType())", with: 1)
+                                gc += checkRequired("public var \(propertyNameSafe): \(p.value.toType())",  1, p.value.required, p: p.value)
+                                
                             } else {
-                                gc.addLine("public var \(propertyNameSafe): [GoogleCloud\(capName)\(p.value.toType().dropFirst())", with: 1)
+                                gc += checkRequired("public var \(propertyNameSafe): [GoogleCloud\(capName)\(p.value.toType().dropFirst())", 1, p.value.required, p: p.value)
                             }
                         }
                     }
                 default:
                     if p.value.type == nil {
                         if let reference = p.value.ref {
-                            gc.addLine("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference.makeSwiftSafe())", with: 1)
+                            gc += checkRequired("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference.makeSwiftSafe())",  1, p.value.required, p: p.value)
+//                            gc.addLine("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference.makeSwiftSafe())", with: 1)
                         }
                     } else {
-                        gc.addLine("public var \(propertyNameSafe): \(p.value.toType())", with: 1)
+//                        gc.addLine("public var \(propertyNameSafe): \(p.value.toType())", with: 1)
+                        gc += checkRequired("public var \(propertyNameSafe): \(p.value.toType())",  1, p.value.required, p: p.value)
                     }
                 }
                 
@@ -383,8 +444,8 @@ extension DiscoveryService {
         let (returnValue, later) = addClientParams()
         gc += returnValue
         gc.addLine()
-        gc.addLine("public init(credentials: GoogleCloudCredentialsConfiguration, \(name)Config: GoogleCloud\(capName)Configuration, httpClient: HTTPClient, eventLoop: EventLoop) throws {", with: 1)
-        gc.addLine("let refreshableToken = OAuthCredentialLoader.getRefreshableToken(credentials: credentials, withConfig: \(name)Config, andClient: httpClient, eventLoop: eventLoop)", with: 2)
+        gc.addLine("public init(credentials: GoogleCloudCredentialsConfiguration, \(name)Config: GoogleCloud\(capName)Configuration, httpClient: HTTPClient, eventLoop: EventLoop, withSubscription sub: String? = nil) throws {", with: 1)
+        gc.addLine("let refreshableToken = OAuthCredentialLoader.getRefreshableToken(credentials: credentials, withConfig: \(name)Config, andClient: httpClient, eventLoop: eventLoop, withSubscription: sub)", with: 2)
         gc.addLine("guard let projectId = ProcessInfo.processInfo.environment[\"PROJECT_ID\"] ??", with: 2)
         gc.addLine("(refreshableToken as? OAuthServiceAccount)?.credentials.projectId ??", with: 5)
         gc.addLine("\(name)Config.project ?? credentials.project else {", with: 5)
@@ -403,59 +464,37 @@ extension DiscoveryService {
         return gc
     }
     
+    func createDefaultQuery() -> String {
+        for p in self.parameters {
+            if p.value.location == "query" {
+                if let enums = p.value.enum {
+                    
+                    
+                    
+                    
+                } else {
+                    
+                 
+                    
+                    
+                }
+            }
+        }
+    }
+    
     public func GenerateCode() -> String {
         var generatedCode = ""
         self.apiList = []
-        generatedCode += addLicense()
-        generatedCode += addImports()
-        generatedCode += createCloudScope()
-        generatedCode += createCloudConfig()
-        generatedCode += createError()
-        generatedCode += createRequest()
-        generatedCode += createAPI(s: self)
-        generatedCode += createModels()
-        generatedCode += createClient()
+//        generatedCode += addLicense()
+//        generatedCode += addImports()
+//        generatedCode += createCloudScope()
+//        generatedCode += createCloudConfig()
+//        generatedCode += createError()
+//        generatedCode += createRequest()
+//        generatedCode += createAPI(s: self)
+//        generatedCode += createModels()
+//        generatedCode += createClient()
         
         return generatedCode
     }
 }
-
-
-
-/*
- 
- 
- public struct GoogleCloudStorgeDataResponse: GoogleCloudModel {
- public var data: Data?
- }
- 
- /// [Reference](https://cloud.google.com/storage/docs/json_api/v1/status-codes)
- public struct CloudStorageAPIError: GoogleCloudError, GoogleCloudModel {
- /// A container for the error information.
- public var error: CloudStorageAPIErrorBody
- }
- 
- public struct CloudStorageAPIErrorBody: Codable {
- /// A container for the error details.
- public var errors: [CloudStorageError]
- /// An HTTP status code value, without the textual description.
- public var code: Int
- /// Description of the error. Same as `errors.message`.
- public var message: String
- }
- 
- 
- public struct CloudStorageError: Codable {
- /// The scope of the error. Example values include: global, push and usageLimits.
- public var domain: String?
- /// Example values include invalid, invalidParameter, and required.
- public var reason: String?
- /// Description of the error.
- /// Example values include Invalid argument, Login required, and Required parameter: project.
- public var message: String?
- /// The location or part of the request that caused the error. Use with location to pinpoint the error. For example, if you specify an invalid value for a parameter, the locationType will be parameter and the location will be the name of the parameter.
- public var locationType: String?
- /// The specific item within the locationType that caused the error. For example, if you specify an invalid value for a parameter, the location will be the name of the parameter.
- public var location: String?
- }
- */

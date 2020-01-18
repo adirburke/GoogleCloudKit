@@ -38,6 +38,10 @@ enum OauthRefreshError: GoogleCloudError {
 public struct GoogleCloudAPIErrorMain: GoogleCloudError, GoogleCloudModel {
     /// A container for the error information.
     public var error: GoogleCloudAPIErrorBody
+    
+    public init (error : GoogleCloudAPIErrorBody ) {
+        self.error = error
+    }
 }
 
 public struct GoogleCloudAPIErrorBody: Codable {
@@ -47,6 +51,12 @@ public struct GoogleCloudAPIErrorBody: Codable {
     public var code: Int
     /// Description of the error. Same as `errors.message`.
     public var message: String
+    
+    public init (errors: [GoogleCloudAPIError], code: Int, message: String) {
+        self.errors = errors
+        self.code = code
+        self.message = message
+    }
 }
 
 public struct GoogleCloudAPIError: Codable {

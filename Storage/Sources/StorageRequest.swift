@@ -73,11 +73,12 @@ public final class GoogleCloudStorageRequest: GoogleCloudAPIRequest {
 
                 guard (200...299).contains(response.status.code) else {
                     let error: Error
-                    if let jsonError = try? self.responseDecoder.decode(CloudStorageAPIError.self, from: responseData) {
+                    if let jsonError = try? self.responseDecoder.decode(GoogleCloudAPIErrorMain.self, from: responseData) {
                         error = jsonError
                     } else {
                         let body = response.body?.getString(at: response.body?.readerIndex ?? 0, length: response.body?.readableBytes ?? 0) ?? ""
-                        error = CloudStorageAPIError(error: CloudStorageAPIErrorBody(errors: [], code: Int(response.status.code), message: body))
+//                        
+                        error = GoogleCloudAPIErrorMain(error: GoogleCloudAPIErrorBody(errors: [], code: Int(response.status.code), message: body))
                     }
 
                     return self.eventLoop.makeFailedFuture(error)

@@ -16,14 +16,17 @@ public class OAuthServiceAccount: OAuthRefreshable {
     public let credentials: GoogleServiceAccountCredentials
     public let scope: String
     private var eventLoop: EventLoop
+    public let subscription : String?
 
     private let decoder = JSONDecoder()
     
-    init(credentials: GoogleServiceAccountCredentials, scopes: [GoogleCloudAPIScope], httpClient: HTTPClient, eventLoop: EventLoop) {
+    init(credentials: GoogleServiceAccountCredentials, scopes: [GoogleCloudAPIScope], httpClient: HTTPClient, eventLoop: EventLoop, subscription: String? = nil) {
         self.credentials = credentials
         self.scope = scopes.map { $0.value }.joined(separator: " ")
         self.httpClient = httpClient
         self.eventLoop = eventLoop
+        self.subscription = subscription
+        
         decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
@@ -35,15 +38,13 @@ public class OAuthServiceAccount: OAuthRefreshable {
             let body: HTTPClient.Body = .string("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=\(token)"
                                         .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
             let request = try HTTPClient.Request(url: GoogleOAuthTokenUrl, method: .POST, headers: headers, body: body)
-            
-            return httpClient.execute(request: request, eventLoop: .delegate(on: self.eventLoop)).flatMap { response in
-                
+
+            return httpClient.execute(request: request).flatMap { response in
                 guard var byteBuffer = response.body,
                 let responseData = byteBuffer.readData(length: byteBuffer.readableBytes),
                 response.status == .ok else {
                     return self.eventLoop.makeFailedFuture(OauthRefreshError.noResponse(response.status))
                 }
-                
                 do {
                     return self.eventLoop.makeSucceededFuture(try self.decoder.decode(OAuthAccessToken.self, from: responseData))
                 } catch {
@@ -61,7 +62,10 @@ public class OAuthServiceAccount: OAuthRefreshable {
                                    scope: scope,
                                    aud: AudienceClaim(value: GoogleOAuthTokenAudience),
                                    exp: ExpirationClaim(value: Date().addingTimeInterval(3600)),
-                                   iat: IssuedAtClaim(value: Date()))
+                                   iat: IssuedAtClaim(value: Date())
+                                   ,sub: subscription
+                                    )
+        print(payload)
         let privateKey = try RSAKey.private(pem: credentials.privateKey.data(using: .utf8, allowLossyConversion: true) ?? Data())
         return try JWTSigner.rs256(key: privateKey).sign(payload)
     }

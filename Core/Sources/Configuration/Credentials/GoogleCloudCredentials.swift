@@ -51,45 +51,18 @@ public struct GoogleServiceAccountCredentials: Codable {
     public let authProviderX509CertUrl: URL
     public let clientX509CertUrl: URL
     
-//    enum CodingKeys : String, CodingKey {
-//      case type
-//      case projectId
-//      case privateKeyId
-//      case privateKey
-//      case clientEmail
-//      case clientId
-//      case authUri
-//      case tokenUri
-//      case authProviderX509CertUrl
-//      case clientX509CertUrl
-//    }
+//    public let subscription : String ?
+    
     
     public init(fromFilePath path: String) throws {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         if let contents = try String(contentsOfFile: path).data(using: .utf8) {
-//            print(String(data: contents, encoding: .utf8))
             self = try decoder.decode(GoogleServiceAccountCredentials.self, from: contents)
         } else {
             throw CredentialLoadError.fileLoadError(path)
         }
     }
-    
-//    public init(from decoder: Decoder) throws {
-//        let values = try decoder.container(keyedBy: CodingKeys.self)
-////        self.authProviderX509CertUrl = try values.decode(URL.self, forKey: .authProviderX509CertUrl)
-//        self.type = try? values.decode(String.self, forKey: .type)
-//        self.projectId = try values.decode(String.self, forKey: .projectId)
-//        self.privateKeyId = try values.decode(String.self, forKey: .privateKeyId)
-//        self.privateKey = try values.decode(String.self, forKey: .privateKey)
-//        self.clientEmail = try values.decode(String.self, forKey: .clientEmail)
-//        self.clientId =  try values.decode(String.self, forKey: .clientId)
-//        self.authUri = try values.decode(URL.self, forKey: .authUri)
-//        self.tokenUri = try values.decode(URL.self, forKey: .tokenUri)
-//        self.authProviderX509CertUrl = try values.decode(URL.self, forKey: .authProviderX509CertUrl)
-//        self.clientX509CertUrl = try values.decode(URL.self, forKey: .clientX509CertUrl)
-//        print(values)
-//    }
     
     public init(fromJsonString json: String) throws {
         let decoder = JSONDecoder()
@@ -107,14 +80,15 @@ public class OAuthCredentialLoader {
     public static func getRefreshableToken(credentials: GoogleCloudCredentialsConfiguration,
                                            withConfig config: GoogleCloudAPIConfiguration,
                                            andClient client: HTTPClient,
-                                           eventLoop: EventLoop) -> OAuthRefreshable {
+                                           eventLoop: EventLoop,
+                                           withSubscription sub: String?) -> OAuthRefreshable {
         
         // Check Service account first.
         if let serviceAccount = credentials.serviceAccountCredentials {
             return OAuthServiceAccount(credentials: serviceAccount,
                                        scopes: config.scope,
                                        httpClient: client,
-                                       eventLoop: eventLoop)
+                                       eventLoop: eventLoop, subscription: sub)
         }
         
         // Check Default application credentials next.

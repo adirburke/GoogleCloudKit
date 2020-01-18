@@ -21,6 +21,8 @@ public struct OAuthPayload: JWTPayload {
     /// The time the assertion was issued, specified as seconds since 00:00:00 UTC, January 1, 1970.
     var iat: IssuedAtClaim
     
+    var sub: String? = nil
+    
     public func verify(using signer: JWTSigner) throws {
         try exp.verifyNotExpired()
     }

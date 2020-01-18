@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import DiscoveryCodeGen
+import CodeGen
 
 let path = "discovery.json"
 let path2 = "storage.json"

@@ -48,7 +48,7 @@ let package = Package(
             path: "CodeGen/"
         ),
         .target(
-            name: "codegen-cli",
+            name: "CLI",
             dependencies: [],
             path: "codegen-cli/"
         ),
