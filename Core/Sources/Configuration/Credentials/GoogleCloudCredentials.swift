@@ -87,6 +87,7 @@ public class OAuthCredentialLoader {
         if let serviceAccount = credentials.serviceAccountCredentials {
             return OAuthServiceAccount(credentials: serviceAccount,
                                        scopes: config.scope,
+                                       subscription: config.subscription,
                                        httpClient: client,
                                        eventLoop: eventLoop, subscription: sub)
         }
