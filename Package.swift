@@ -23,7 +23,7 @@ let package = Package(
             targets: ["CodeGen"]
         ),
         .executable(
-            name: "codegen-cli",
+            name: "DiscoveryCodeGenCLI",
             targets: ["CLI"]
             ),
         .executable(
@@ -39,7 +39,7 @@ let package = Package(
     targets: [
         .target(
             name: "testingModules",
-            dependencies: ["AsyncHTTPClient", "JWTKit", "NIOFoundationCompat"],
+            dependencies: ["AsyncHTTPClient", "JWTKit", "NIOFoundationCompat", "Core"],
             path: "testingModules/"
         ),
         .target(
@@ -49,8 +49,8 @@ let package = Package(
         ),
         .target(
             name: "CLI",
-            dependencies: [],
-            path: "codegen-cli/"
+            dependencies: ["CodeGen"],
+            path: "CLI/"
         ),
         
         .target(
