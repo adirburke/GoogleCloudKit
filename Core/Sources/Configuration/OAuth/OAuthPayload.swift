@@ -23,8 +23,6 @@ public struct OAuthPayload: JWTPayload {
     /// Using to nominate the account you want access to on the domain from a service account
     var sub: String?
     
-    var sub: String? = nil
-    
     public func verify(using signer: JWTSigner) throws {
         try exp.verifyNotExpired()
     }

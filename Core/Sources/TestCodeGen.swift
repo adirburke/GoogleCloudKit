@@ -39,14 +39,19 @@ public enum GoogleCloudGmailScope : GoogleCloudAPIScope {
 
 
 public struct GoogleCloudGmailConfiguration : GoogleCloudAPIConfiguration {
+    
+    
    public var scope : [GoogleCloudAPIScope]
    public var serviceAccount: String
    public var project: String?
+    
+    public var subscription: String?
 
-   public init(scope: [GoogleCloudGmailScope], serviceAccount : String, project: String?) {
+    public init(scope: [GoogleCloudGmailScope], serviceAccount : String, project: String?, subscription : String?) {
       self.scope = scope
       self.serviceAccount = serviceAccount
       self.project = project
+        self.subscription = subscription
    }
 }
 

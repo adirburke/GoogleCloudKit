@@ -17,7 +17,6 @@ public class OAuthServiceAccount: OAuthRefreshable {
     public let scope: String
     public let subscription : String?
     private var eventLoop: EventLoop
-    public let subscription : String?
 
     private let decoder = JSONDecoder()
     
@@ -68,7 +67,6 @@ public class OAuthServiceAccount: OAuthRefreshable {
                                    iat: IssuedAtClaim(value: Date())
                                    ,sub: subscription
                                     )
-        print(payload)
         let privateKey = try RSAKey.private(pem: credentials.privateKey.data(using: .utf8, allowLossyConversion: true) ?? Data())
         return try JWTSigner.rs256(key: privateKey).sign(payload)
     }

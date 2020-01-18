@@ -51,9 +51,6 @@ public struct GoogleServiceAccountCredentials: Codable {
     public let authProviderX509CertUrl: URL
     public let clientX509CertUrl: URL
     
-//    public let subscription : String ?
-    
-    
     public init(fromFilePath path: String) throws {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -89,7 +86,7 @@ public class OAuthCredentialLoader {
                                        scopes: config.scope,
                                        subscription: config.subscription,
                                        httpClient: client,
-                                       eventLoop: eventLoop, subscription: sub)
+                                       eventLoop: eventLoop)
         }
         
         // Check Default application credentials next.
