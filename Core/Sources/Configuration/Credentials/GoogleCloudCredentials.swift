@@ -77,8 +77,7 @@ public class OAuthCredentialLoader {
     public static func getRefreshableToken(credentials: GoogleCloudCredentialsConfiguration,
                                            withConfig config: GoogleCloudAPIConfiguration,
                                            andClient client: HTTPClient,
-                                           eventLoop: EventLoop,
-                                           withSubscription sub: String?) -> OAuthRefreshable {
+                                           eventLoop: EventLoop) -> OAuthRefreshable {
         
         // Check Service account first.
         if let serviceAccount = credentials.serviceAccountCredentials {

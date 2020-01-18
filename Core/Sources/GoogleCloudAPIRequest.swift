@@ -30,6 +30,7 @@ extension GoogleCloudAPIRequest {
             let created = tokenCreatedTime,
             refreshableToken.isFresh(token: token, created: created) else {
             return refreshableToken.refresh().flatMap { newToken in
+                print(newToken)
                 self.currentToken = newToken
                 self.tokenCreatedTime = Date()
 

@@ -31,6 +31,8 @@ public enum GoogleCloudDiscoveryJSONTypeEnum : String, Codable {
     case null
     case any
     
+    case data
+    
     func toSwiftParameterName(_ itemType : String? = nil) -> String {
         switch self {
             
@@ -42,11 +44,25 @@ public enum GoogleCloudDiscoveryJSONTypeEnum : String, Codable {
         case .array: return "[\(itemType?.makeSwiftSafe() ?? "")]"
         case .null: return "String?"
         case .any: return "Any"
+        case .data: return "Data"
         @unknown default: return "Any"
         }
     }
     func itemType() -> String {
         ""
+    }
+    static func formatConverter(format : String) -> GoogleCloudDiscoveryJSONTypeEnum {
+        switch format {
+        case "int32", "int64": return .integer
+        case "float", "double": return .number
+        case "date-time": return .string
+            
+        case "byte": return .data
+            
+        default:
+            fatalError("undefined format")
+            
+        }
     }
     
     //MARK:- Need to do some type converstions and stuff
@@ -71,7 +87,7 @@ public class GoogleCloudDiscoveryParameters : Codable {
     public  var repeated : Bool?
     public  var location : String?
     public  var properties : [String : GoogleCloudDiscoveryParametersProperties]?
-    public  var additionalProperties : [String: String]?
+    public  var additionalProperties : GoogleCloudDiscoveryParametersProperties?
     public  var items : GoogleCloudDiscoveryParameters?
     public  var annotations : GoogleCloudDiscoveryParametersAnnotations?
     
@@ -106,7 +122,12 @@ public class GoogleCloudDiscoveryParameters : Codable {
     public func toType() -> String {
         if let ref = items?.ref {
             return self.type?.toSwiftParameterName(ref) ?? ""
-        } else {
+        }
+//        else if let format = format {
+//            return GoogleCloudDiscoveryJSONTypeEnum.formatConverter(format: format).toSwiftParameterName()
+////            return self.type?.toSwiftParameterName(format) ?? ""
+//        }
+        else {
             return self.type?.toSwiftParameterName(items?.type?.toSwiftParameterName()) ?? ""
         }
         

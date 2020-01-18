@@ -1577,7 +1577,7 @@ extension SmimeInfoAPIProtocol  {
    }
 
 }
-public struct PlaceHolderObject : GoogleCloudModel {}
+//public struct PlaceHolderObject : GoogleCloudModel {}
 public struct GoogleCloudGmailEmptyResponse : GoogleCloudModel {}
 public struct GoogleCloudGmailAutoForwarding : GoogleCloudModel {
    /*The state that a message should be left in after it has been forwarded. */
@@ -1975,7 +1975,7 @@ public final class GoogleCloudGmailClient {
 
 
    public init(credentials: GoogleCloudCredentialsConfiguration, gmailConfig: GoogleCloudGmailConfiguration, httpClient: HTTPClient, eventLoop: EventLoop, withSubscription sub: String? = nil) throws {
-      let refreshableToken = OAuthCredentialLoader.getRefreshableToken(credentials: credentials, withConfig: gmailConfig, andClient: httpClient, eventLoop: eventLoop, withSubscription: sub)
+      let refreshableToken = OAuthCredentialLoader.getRefreshableToken(credentials: credentials, withConfig: gmailConfig, andClient: httpClient, eventLoop: eventLoop)
       guard let projectId = ProcessInfo.processInfo.environment["PROJECT_ID"] ??
                (refreshableToken as? OAuthServiceAccount)?.credentials.projectId ??
                gmailConfig.project ?? credentials.project else {

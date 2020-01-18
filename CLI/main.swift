@@ -8,10 +8,11 @@
 import Foundation
 import CodeGen
 
-let path = "discovery.json"
+let path = "gmail.json"
 let path2 = "storage.json"
+let path3 = "drive.json"
 
-let data = try Data(contentsOf: URL(fileURLWithPath: path))
+let data = try Data(contentsOf: URL(fileURLWithPath: path3))
   let decoder = JSONDecoder()
   do {
     let service = try decoder.decode(DiscoveryService.self, from: data)

@@ -42,11 +42,19 @@ public class OAuthServiceAccount: OAuthRefreshable {
             let request = try HTTPClient.Request(url: GoogleOAuthTokenUrl, method: .POST, headers: headers, body: body)
 
             return httpClient.execute(request: request).flatMap { response in
+
+//                    var r = response
+//                    var rC = r.body?.readableBytes ?? 0
+//                    let body = r.body?.readData(length:  rC)
+//                    print(String(data: body ?? Data(), encoding: .utf8))
+
+                
                 guard var byteBuffer = response.body,
                 let responseData = byteBuffer.readData(length: byteBuffer.readableBytes),
                 response.status == .ok else {
                     return self.eventLoop.makeFailedFuture(OauthRefreshError.noResponse(response.status))
                 }
+//                print(String(data: responseData, encoding: .utf8))
                 do {
                     return self.eventLoop.makeSucceededFuture(try self.decoder.decode(OAuthAccessToken.self, from: responseData))
                 } catch {

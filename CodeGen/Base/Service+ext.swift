@@ -235,8 +235,8 @@ extension DiscoveryService {
         
         var gc = ""
         var later = ""
-//        var protocolLines = [String]()
-//        var laterlater = ""
+        //        var protocolLines = [String]()
+        //        var laterlater = ""
         for r in s.resources?.sorted(by: { $0.key < $1.key}) ?? [] {
             var protocolLines = [String]()
             var extensionLines = [String]()
@@ -299,7 +299,7 @@ extension DiscoveryService {
                     gc.addLine("return request.send(method: .\(m.value.httpMethod ?? ""), path: \"\\(endpoint)\(path)\", query: queryParams)", with: 2)
                 }
                 gc.addLine("}", with: 1)
-//                gc =  + gc
+                //                gc =  + gc
                 
                 //                print(m.value)
                 //                m.value.printPretty()
@@ -313,7 +313,7 @@ extension DiscoveryService {
             extensionLines.map { gc.addLine($0, with: 1)}
             gc.addLine("}", with: 0)
         }
-
+        
         
         return gc + later
     }
@@ -326,10 +326,10 @@ extension DiscoveryService {
             //            let propertyNameSafeCap = p.key.capitalized().makeSwiftSafe()
             if p.value.type == nil {
                 if let reference = p.value.ref {
-                    gc.addLine("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference)", with: 1)
+                    gc += checkRequired("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference)", 1, p.value.required,  p: p.value)
                 }
             } else {
-                gc.addLine("public var \(propertyNameSafe): \(p.value.toType())", with: 1)
+                gc += checkRequired("public var \(propertyNameSafe): \(p.value.toType())", 1, p.value.required, p: p.value)
             }
         }
         gc.addLine("}", with: 0)
@@ -362,6 +362,38 @@ extension DiscoveryService {
         return gc
     }
     
+    func createSmallModelFromAdditionalProperties(modelName : String, name : String,  props : GoogleCloudDiscoveryParametersProperties?) -> String {
+        var gc = ""
+        guard let p = props else { return gc }
+        
+        switch p.type {
+        case .array:
+            if let items = p.items {
+                switch items.type {
+                case .object:
+                    fatalError("Needs to be coded")
+                case .array:
+                    fatalError("Needs to be coded")
+                case .string:
+                    return "\(p.toType())"
+                    
+                default:
+                    fatalError("Needs to be coded")
+                }
+                
+                
+            }
+        case .object:
+            fatalError("Needs to be coded")
+            
+        default:
+            return "\(p.toType())"
+
+           
+        }
+        return ""
+    }
+    
     func createModels() -> String {
         var gc = "public struct PlaceHolderObject : GoogleCloudModel {}\npublic struct GoogleCloud\(capName)EmptyResponse : GoogleCloudModel {}\n"
         var later = ""
@@ -376,12 +408,18 @@ extension DiscoveryService {
                 let propertyNameSafeCap = p.key.capitalized().makeSwiftSafe()
                 switch p.value.type {
                 case .object:
+                    if propertyNameSafeCap == "ImportFormats" {
+                        
+                    }
                     
                     let something = p.value.properties?.sorted(by: {$0.key < $1.key}) ?? []
-                    later += createSmallModel(modelName: modelName, name: propertyNameSafeCap, props: something)
-                    
-                    gc += checkRequired("public var \(propertyNameSafe): GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)", 1, p.value.required, p: p.value)
-//                    gc.addLine("public var \(propertyNameSafe): GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)", with: 1)
+                    if something.count == 0 {
+                        let addProp = createSmallModelFromAdditionalProperties(modelName: modelName, name: propertyNameSafeCap, props: p.value.additionalProperties)
+                        gc += checkRequired("public var \(propertyNameSafe): [String : \(addProp)]", 1, true, p: p.value)
+                    } else {
+                        later += createSmallModel(modelName: modelName, name: propertyNameSafeCap, props: something)
+                        gc += checkRequired("public var \(propertyNameSafe): GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)", 1, p.value.required, p: p.value)
+                    }
                     
                     
                 case .array:
@@ -390,7 +428,7 @@ extension DiscoveryService {
                         case .object:
                             
                             later += createSmallModel(modelName: modelName, name: propertyNameSafeCap, props: items.properties?.sorted(by: {$0.key < $1.key}) ?? [])
-//                            gc.addLine("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", with: 1)
+                            //                            gc.addLine("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", with: 1)
                             gc += checkRequired("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", 1, p.value.required, p: p.value)
                         case .array:
                             gc += checkRequired("public var \(propertyNameSafe): [GoogleCloud\(capName)\(p.value.toType().dropFirst())", 1, p.value.required, p: p.value)
@@ -409,10 +447,10 @@ extension DiscoveryService {
                     if p.value.type == nil {
                         if let reference = p.value.ref {
                             gc += checkRequired("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference.makeSwiftSafe())",  1, p.value.required, p: p.value)
-//                            gc.addLine("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference.makeSwiftSafe())", with: 1)
+                            //                            gc.addLine("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference.makeSwiftSafe())", with: 1)
                         }
                     } else {
-//                        gc.addLine("public var \(propertyNameSafe): \(p.value.toType())", with: 1)
+                        //                        gc.addLine("public var \(propertyNameSafe): \(p.value.toType())", with: 1)
                         gc += checkRequired("public var \(propertyNameSafe): \(p.value.toType())",  1, p.value.required, p: p.value)
                     }
                 }
@@ -458,7 +496,7 @@ extension DiscoveryService {
         gc.addLine()
         gc.addLine()
         gc += later
-         gc.addLine("}", with: 1)
+        gc.addLine("}", with: 1)
         gc.addLine("}", with: 0)
         gc.addLine()
         
@@ -476,27 +514,40 @@ extension DiscoveryService {
                     
                 } else {
                     
-                 
+                    
                     
                     
                 }
             }
         }
+        return ""
     }
     
     public func GenerateCode() -> String {
         var generatedCode = ""
         self.apiList = []
-//        generatedCode += addLicense()
-//        generatedCode += addImports()
-//        generatedCode += createCloudScope()
-//        generatedCode += createCloudConfig()
-//        generatedCode += createError()
-//        generatedCode += createRequest()
-//        generatedCode += createAPI(s: self)
-//        generatedCode += createModels()
-//        generatedCode += createClient()
+        generatedCode += addLicense()
+        generatedCode += addImports()
+        generatedCode += createCloudScope()
+        generatedCode += createCloudConfig()
+        generatedCode += createError()
+        generatedCode += createRequest()
+        generatedCode += createAPI(s: self)
+        generatedCode += createModels()
+        generatedCode += createClient()
         
         return generatedCode
     }
 }
+
+
+
+
+/*
+ TODO
+ Create an computered properties for the formatted type
+ Create enum for query
+
+ 
+ 
+ */
