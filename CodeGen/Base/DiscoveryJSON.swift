@@ -119,14 +119,17 @@ public class GoogleCloudDiscoveryParameters : Codable {
         }
     }
     
-    public func toType() -> String {
+    public func toType(_ capName : String = "") -> String {
         if let ref = items?.ref {
-            return self.type?.toSwiftParameterName(ref) ?? ""
+            return self.type?.toSwiftParameterName("GoogleCloud" + capName + ref) ?? ""
+        } else if let ref = ref {
+            return "GoogleCloud\(capName)\(ref.makeSwiftSafe())"
         }
 //        else if let format = format {
 //            return GoogleCloudDiscoveryJSONTypeEnum.formatConverter(format: format).toSwiftParameterName()
 ////            return self.type?.toSwiftParameterName(format) ?? ""
 //        }
+ 
         else {
             return self.type?.toSwiftParameterName(items?.type?.toSwiftParameterName()) ?? ""
         }

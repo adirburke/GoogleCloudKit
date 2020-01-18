@@ -12,25 +12,25 @@ import NIOHTTP1
 public enum GoogleCloudDriveScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
-      case .DrivePhotosReadonly: return "https://www.googleapis.com/auth/drive.photos.readonly"
-      case .DriveFile: return "https://www.googleapis.com/auth/drive.file"
       case .DriveReadonly: return "https://www.googleapis.com/auth/drive.readonly"
-      case .DriveMetadataReadonly: return "https://www.googleapis.com/auth/drive.metadata.readonly"
-      case .Drive: return "https://www.googleapis.com/auth/drive"
       case .DriveAppdata: return "https://www.googleapis.com/auth/drive.appdata"
       case .DriveScripts: return "https://www.googleapis.com/auth/drive.scripts"
       case .DriveMetadata: return "https://www.googleapis.com/auth/drive.metadata"
+      case .DrivePhotosReadonly: return "https://www.googleapis.com/auth/drive.photos.readonly"
+      case .Drive: return "https://www.googleapis.com/auth/drive"
+      case .DriveMetadataReadonly: return "https://www.googleapis.com/auth/drive.metadata.readonly"
+      case .DriveFile: return "https://www.googleapis.com/auth/drive.file"
       }
    }
 
-   case DrivePhotosReadonly // View the photos, videos and albums in your Google Photos
-   case DriveFile // View and manage Google Drive files and folders that you have opened or created with this app
    case DriveReadonly // See and download all your Google Drive files
-   case DriveMetadataReadonly // View metadata for files in your Google Drive
-   case Drive // See, edit, create, and delete all of your Google Drive files
    case DriveAppdata // View and manage its own configuration data in your Google Drive
    case DriveScripts // Modify your Google Apps Script scripts' behavior
    case DriveMetadata // View and manage metadata of files in your Google Drive
+   case DrivePhotosReadonly // View the photos, videos and albums in your Google Photos
+   case Drive // See, edit, create, and delete all of your Google Drive files
+   case DriveMetadataReadonly // View metadata for files in your Google Drive
+   case DriveFile // View and manage Google Drive files and folders that you have opened or created with this app
 }
 
 
@@ -132,7 +132,7 @@ public final class GoogleCloudDriveRequest : GoogleCloudAPIRequest {
       }
    }
 }
-public final class GoogleCloudDriveAboutAPI : AboutAPIProtocol {
+public final class GoogleCloudDriveAboutAPI : DriveAboutAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -151,17 +151,17 @@ public final class GoogleCloudDriveAboutAPI : AboutAPIProtocol {
    }
 }
 
-public protocol AboutAPIProtocol  {
+public protocol DriveAboutAPIProtocol  {
    /// Gets information about the user, the user's Drive, and system capabilities.
    func get( queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveAbout>
 }
-extension AboutAPIProtocol  {
+extension DriveAboutAPIProtocol   {
       public func get( queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveAbout> {
       get(  queryParameters: queryParameters)
    }
 
 }
-public final class GoogleCloudDriveChangesAPI : ChangesAPIProtocol {
+public final class GoogleCloudDriveChangesAPI : DriveChangesAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -205,7 +205,7 @@ public final class GoogleCloudDriveChangesAPI : ChangesAPIProtocol {
    }
 }
 
-public protocol ChangesAPIProtocol  {
+public protocol DriveChangesAPIProtocol  {
    /// Gets the starting pageToken for listing future changes.
    func getStartPageToken( queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveStartPageToken>
    /// Lists the changes for a user or shared drive.
@@ -213,7 +213,7 @@ public protocol ChangesAPIProtocol  {
    /// Subscribes to changes for a user.
    func watch(pageToken : String, body : GoogleCloudDrive_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDrive_Channel>
 }
-extension ChangesAPIProtocol  {
+extension DriveChangesAPIProtocol   {
       public func getStartPageToken( queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveStartPageToken> {
       getStartPageToken(  queryParameters: queryParameters)
    }
@@ -227,7 +227,7 @@ extension ChangesAPIProtocol  {
    }
 
 }
-public final class GoogleCloudDriveChannelsAPI : ChannelsAPIProtocol {
+public final class GoogleCloudDriveChannelsAPI : DriveChannelsAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -251,17 +251,17 @@ public final class GoogleCloudDriveChannelsAPI : ChannelsAPIProtocol {
    }
 }
 
-public protocol ChannelsAPIProtocol  {
+public protocol DriveChannelsAPIProtocol  {
    /// Stop watching resources through this channel
    func stop(body : GoogleCloudDrive_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveEmptyResponse>
 }
-extension ChannelsAPIProtocol  {
+extension DriveChannelsAPIProtocol   {
       public func stop(body : GoogleCloudDrive_Channel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveEmptyResponse> {
       stop( body: body, queryParameters: queryParameters)
    }
 
 }
-public final class GoogleCloudDriveCommentsAPI : CommentsAPIProtocol {
+public final class GoogleCloudDriveCommentsAPI : DriveCommentsAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -334,7 +334,7 @@ public final class GoogleCloudDriveCommentsAPI : CommentsAPIProtocol {
    }
 }
 
-public protocol CommentsAPIProtocol  {
+public protocol DriveCommentsAPIProtocol  {
    /// Creates a new comment on a file.
    func create(fileId : String, body : GoogleCloudDriveComment, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveComment>
    /// Deletes a comment.
@@ -346,7 +346,7 @@ public protocol CommentsAPIProtocol  {
    /// Updates a comment with patch semantics.
    func update(fileId : String, commentId : String, body : GoogleCloudDriveComment, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveComment>
 }
-extension CommentsAPIProtocol  {
+extension DriveCommentsAPIProtocol   {
       public func create(fileId : String, body : GoogleCloudDriveComment, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveComment> {
       create(fileId: fileId, body: body, queryParameters: queryParameters)
    }
@@ -368,7 +368,7 @@ extension CommentsAPIProtocol  {
    }
 
 }
-public final class GoogleCloudDriveDrivesAPI : DrivesAPIProtocol {
+public final class GoogleCloudDriveDrivesAPI : DriveDrivesAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -457,7 +457,7 @@ public final class GoogleCloudDriveDrivesAPI : DrivesAPIProtocol {
    }
 }
 
-public protocol DrivesAPIProtocol  {
+public protocol DriveDrivesAPIProtocol  {
    /// Creates a new shared drive.
    func create(requestId : String, body : GoogleCloudDriveDrive, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveDrive>
    /// Permanently deletes a shared drive for which the user is an organizer. The shared drive cannot contain any untrashed items.
@@ -473,7 +473,7 @@ public protocol DrivesAPIProtocol  {
    /// Updates the metadate for a shared drive.
    func update(driveId : String, body : GoogleCloudDriveDrive, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveDrive>
 }
-extension DrivesAPIProtocol  {
+extension DriveDrivesAPIProtocol   {
       public func create(requestId : String, body : GoogleCloudDriveDrive, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveDrive> {
       create(requestId: requestId, body: body, queryParameters: queryParameters)
    }
@@ -503,7 +503,7 @@ extension DrivesAPIProtocol  {
    }
 
 }
-public final class GoogleCloudDriveFilesAPI : FilesAPIProtocol {
+public final class GoogleCloudDriveFilesAPI : DriveFilesAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -630,7 +630,7 @@ public final class GoogleCloudDriveFilesAPI : FilesAPIProtocol {
    }
 }
 
-public protocol FilesAPIProtocol  {
+public protocol DriveFilesAPIProtocol  {
    /// Creates a copy of a file and applies any requested updates with patch semantics.
    func copy(fileId : String, body : GoogleCloudDriveFile, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveFile>
    /// Creates a new file.
@@ -652,7 +652,7 @@ public protocol FilesAPIProtocol  {
    /// Subscribes to changes to a file
    func watch(fileId : String, body : GoogleCloudDrive_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDrive_Channel>
 }
-extension FilesAPIProtocol  {
+extension DriveFilesAPIProtocol   {
       public func copy(fileId : String, body : GoogleCloudDriveFile, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveFile> {
       copy(fileId: fileId, body: body, queryParameters: queryParameters)
    }
@@ -694,7 +694,7 @@ extension FilesAPIProtocol  {
    }
 
 }
-public final class GoogleCloudDrivePermissionsAPI : PermissionsAPIProtocol {
+public final class GoogleCloudDrivePermissionsAPI : DrivePermissionsAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -767,7 +767,7 @@ public final class GoogleCloudDrivePermissionsAPI : PermissionsAPIProtocol {
    }
 }
 
-public protocol PermissionsAPIProtocol  {
+public protocol DrivePermissionsAPIProtocol  {
    /// Creates a permission for a file or shared drive.
    func create(fileId : String, body : GoogleCloudDrivePermission, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDrivePermission>
    /// Deletes a permission.
@@ -779,7 +779,7 @@ public protocol PermissionsAPIProtocol  {
    /// Updates a permission with patch semantics.
    func update(fileId : String, permissionId : String, body : GoogleCloudDrivePermission, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDrivePermission>
 }
-extension PermissionsAPIProtocol  {
+extension DrivePermissionsAPIProtocol   {
       public func create(fileId : String, body : GoogleCloudDrivePermission, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDrivePermission> {
       create(fileId: fileId, body: body, queryParameters: queryParameters)
    }
@@ -801,7 +801,7 @@ extension PermissionsAPIProtocol  {
    }
 
 }
-public final class GoogleCloudDriveRepliesAPI : RepliesAPIProtocol {
+public final class GoogleCloudDriveRepliesAPI : DriveRepliesAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -879,7 +879,7 @@ public final class GoogleCloudDriveRepliesAPI : RepliesAPIProtocol {
    }
 }
 
-public protocol RepliesAPIProtocol  {
+public protocol DriveRepliesAPIProtocol  {
    /// Creates a new reply to a comment.
    func create(fileId : String, commentId : String, body : GoogleCloudDriveReply, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveReply>
    /// Deletes a reply.
@@ -891,7 +891,7 @@ public protocol RepliesAPIProtocol  {
    /// Updates a reply with patch semantics.
    func update(fileId : String, commentId : String, replyId : String, body : GoogleCloudDriveReply, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveReply>
 }
-extension RepliesAPIProtocol  {
+extension DriveRepliesAPIProtocol   {
       public func create(fileId : String, commentId : String, body : GoogleCloudDriveReply, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveReply> {
       create(fileId: fileId,commentId: commentId, body: body, queryParameters: queryParameters)
    }
@@ -913,7 +913,7 @@ extension RepliesAPIProtocol  {
    }
 
 }
-public final class GoogleCloudDriveRevisionsAPI : RevisionsAPIProtocol {
+public final class GoogleCloudDriveRevisionsAPI : DriveRevisionsAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -971,7 +971,7 @@ public final class GoogleCloudDriveRevisionsAPI : RevisionsAPIProtocol {
    }
 }
 
-public protocol RevisionsAPIProtocol  {
+public protocol DriveRevisionsAPIProtocol  {
    /// Permanently deletes a file version. You can only delete revisions for files with binary content in Google Drive, like images or videos. Revisions for other files, like Google Docs or Sheets, and the last remaining file version can't be deleted.
    func delete(fileId : String, revisionId : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveEmptyResponse>
    /// Gets a revision's metadata or content by ID.
@@ -981,7 +981,7 @@ public protocol RevisionsAPIProtocol  {
    /// Updates a revision with patch semantics.
    func update(fileId : String, revisionId : String, body : GoogleCloudDriveRevision, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveRevision>
 }
-extension RevisionsAPIProtocol  {
+extension DriveRevisionsAPIProtocol   {
       public func delete(fileId : String, revisionId : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveEmptyResponse> {
       delete(fileId: fileId,revisionId: revisionId,  queryParameters: queryParameters)
    }
@@ -999,7 +999,7 @@ extension RevisionsAPIProtocol  {
    }
 
 }
-public final class GoogleCloudDriveTeamdrivesAPI : TeamdrivesAPIProtocol {
+public final class GoogleCloudDriveTeamdrivesAPI : DriveTeamdrivesAPIProtocol {
    let endpoint = "https://www.googleapis.com/drive/v3/"
    let request : GoogleCloudDriveRequest
 
@@ -1068,7 +1068,7 @@ public final class GoogleCloudDriveTeamdrivesAPI : TeamdrivesAPIProtocol {
    }
 }
 
-public protocol TeamdrivesAPIProtocol  {
+public protocol DriveTeamdrivesAPIProtocol  {
    /// Deprecated use drives.create instead.
    func create(requestId : String, body : GoogleCloudDriveTeamDrive, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveTeamDrive>
    /// Deprecated use drives.delete instead.
@@ -1080,7 +1080,7 @@ public protocol TeamdrivesAPIProtocol  {
    /// Deprecated use drives.update instead
    func update(teamDriveId : String, body : GoogleCloudDriveTeamDrive, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveTeamDrive>
 }
-extension TeamdrivesAPIProtocol  {
+extension DriveTeamdrivesAPIProtocol   {
       public func create(requestId : String, body : GoogleCloudDriveTeamDrive, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveTeamDrive> {
       create(requestId: requestId, body: body, queryParameters: queryParameters)
    }
@@ -1102,7 +1102,7 @@ extension TeamdrivesAPIProtocol  {
    }
 
 }
-public struct PlaceHolderObject : GoogleCloudModel {}
+//public struct PlaceHolderObject : GoogleCloudModel {}
 public struct GoogleCloudDriveEmptyResponse : GoogleCloudModel {}
 public struct GoogleCloudDriveAbout : GoogleCloudModel {
    /*Whether the user has installed the requesting app. */
@@ -1113,16 +1113,16 @@ public struct GoogleCloudDriveAbout : GoogleCloudModel {
    public var canCreateTeamDrives: Bool?
    /*A list of themes that are supported for shared drives. */
    public var driveThemes: [GoogleCloudDriveAboutDriveThemes]?
-   /* A map of source MIME type to possible targets for all supported exports. */
-   public var exportFormats: [String : [String]]
+   /*A map of source MIME type to possible targets for all supported exports. */
+   public var exportFormats: [String : [String]]?
    /*The currently supported folder colors as RGB hex strings. */
    public var folderColorPalette: [String]?
-   /* A map of source MIME type to possible targets for all supported imports. */
-   public var importFormats: [String : [String]]
+   /*A map of source MIME type to possible targets for all supported imports. */
+   public var importFormats: [String : [String]]?
    /*Identifies what kind of resource this is. Value: the fixed string "drive#about". */
    public var kind: String?
-   /* A map of maximum import sizes by MIME type, in bytes. */
-   public var maxImportSizes: [String : String]
+   /*A map of maximum import sizes by MIME type, in bytes. */
+   public var maxImportSizes: [String : String]?
    /*The maximum upload size in bytes. */
    public var maxUploadSize: String?
    /*The user's storage quota limits and usage. All fields are measured in bytes. */
@@ -1175,8 +1175,8 @@ public struct GoogleCloudDrive_Channel : GoogleCloudModel {
    public var id: String?
    /*Identifies this as a notification channel used to watch for changes to a resource, which is "api#channel". */
    public var kind: String?
-   /* Additional parameters controlling delivery channel behavior. Optional. */
-   public var params: [String : String]
+   /*Additional parameters controlling delivery channel behavior. Optional. */
+   public var params: [String : String]?
    /*A Boolean value to indicate whether payload is wanted. Optional. */
    public var payload: Bool?
    /*An opaque ID that identifies the resource being watched on this channel. Stable across different API versions. */
@@ -1255,9 +1255,9 @@ public struct GoogleCloudDriveDriveList : GoogleCloudModel {
    public var nextPageToken: String?
 }
 public struct GoogleCloudDriveFile : GoogleCloudModel {
-   /* A collection of arbitrary key-value pairs which are private to the requesting app.
+   /*A collection of arbitrary key-value pairs which are private to the requesting app.
 Entries with null values are cleared in update and copy requests. */
-   public var appProperties: [String : String]
+   public var appProperties: [String : String]?
    /*Capabilities the current user has on this file. Each capability corresponds to a fine-grained action that a user may take. */
    public var capabilities: GoogleCloudDriveFileCapabilities?
    /*Additional information about the content of the file. These fields are never populated in responses. */
@@ -1272,8 +1272,8 @@ Entries with null values are cleared in update and copy requests. */
    public var driveId: String?
    /*Whether the file has been explicitly trashed, as opposed to recursively trashed from a parent folder. */
    public var explicitlyTrashed: Bool?
-   /* Links for exporting Google Docs to specific formats. */
-   public var exportLinks: [String : String]
+   /*Links for exporting Google Docs to specific formats. */
+   public var exportLinks: [String : String]?
    /*The final component of fullFileExtension. This is only available for files with binary content in Google Drive. */
    public var fileExtension: String?
    /*The color for a folder as an RGB hex string. The supported colors are published in the folderColorPalette field of the About resource.
@@ -1328,9 +1328,9 @@ If not specified as part of a create request, the file will be placed directly i
    public var permissionIds: [String]?
    /*The full list of permissions for the file. This is only available if the requesting user can share the file. Not populated for items in shared drives. */
    public var permissions: [GoogleCloudDrivePermission]?
-   /* A collection of arbitrary key-value pairs which are visible to all apps.
+   /*A collection of arbitrary key-value pairs which are visible to all apps.
 Entries with null values are cleared in update and copy requests. */
-   public var properties: [String : String]
+   public var properties: [String : String]?
    /*The number of storage quota bytes used by the file. This includes the head revision as well as previous revisions with keepForever enabled. */
    public var quotaBytesUsed: String?
    /*Whether the file has been shared. Not populated for items in shared drives. */
@@ -1476,8 +1476,8 @@ public struct GoogleCloudDriveReplyList : GoogleCloudModel {
    public var replies: [GoogleCloudDriveReply]?
 }
 public struct GoogleCloudDriveRevision : GoogleCloudModel {
-   /* Links for exporting Google Docs to specific formats. */
-   public var exportLinks: [String : String]
+   /*Links for exporting Google Docs to specific formats. */
+   public var exportLinks: [String : String]?
    /*The ID of the revision. */
    public var id: String?
    /*Whether to keep this revision forever, even if it is no longer the head revision. If not set, the revision will be automatically purged 30 days after newer content is uploaded. This can be set on a maximum of 200 revisions for a file.
@@ -1860,16 +1860,16 @@ public struct GoogleCloudDriveTeamDriveRestrictions : GoogleCloudModel {
    public var teamMembersOnly: Bool?
 }
 public final class GoogleCloudDriveClient {
-   public var about : AboutAPIProtocol
-   public var changes : ChangesAPIProtocol
-   public var channels : ChannelsAPIProtocol
-   public var comments : CommentsAPIProtocol
-   public var drives : DrivesAPIProtocol
-   public var files : FilesAPIProtocol
-   public var permissions : PermissionsAPIProtocol
-   public var replies : RepliesAPIProtocol
-   public var revisions : RevisionsAPIProtocol
-   public var teamdrives : TeamdrivesAPIProtocol
+   public var about : DriveAboutAPIProtocol
+   public var changes : DriveChangesAPIProtocol
+   public var channels : DriveChannelsAPIProtocol
+   public var comments : DriveCommentsAPIProtocol
+   public var drives : DriveDrivesAPIProtocol
+   public var files : DriveFilesAPIProtocol
+   public var permissions : DrivePermissionsAPIProtocol
+   public var replies : DriveRepliesAPIProtocol
+   public var revisions : DriveRevisionsAPIProtocol
+   public var teamdrives : DriveTeamdrivesAPIProtocol
 
 
    public init(credentials: GoogleCloudCredentialsConfiguration, driveConfig: GoogleCloudDriveConfiguration, httpClient: HTTPClient, eventLoop: EventLoop) throws {

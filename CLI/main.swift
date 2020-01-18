@@ -11,8 +11,9 @@ import CodeGen
 let path = "gmail.json"
 let path2 = "storage.json"
 let path3 = "drive.json"
+let path4 = "calendar.json"
 
-let data = try Data(contentsOf: URL(fileURLWithPath: path3))
+let data = try Data(contentsOf: URL(fileURLWithPath: path4))
   let decoder = JSONDecoder()
   do {
     let service = try decoder.decode(DiscoveryService.self, from: data)
