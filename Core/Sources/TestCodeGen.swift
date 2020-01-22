@@ -12,63 +12,47 @@ import NIOHTTP1
 public enum GoogleCloudGmailScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
+      case .GmailLabels: return "https://www.googleapis.com/auth/gmail.labels"
       case .GmailModify: return "https://www.googleapis.com/auth/gmail.modify"
       case .GmailCompose: return "https://www.googleapis.com/auth/gmail.compose"
+      case .GmailInsert: return "https://www.googleapis.com/auth/gmail.insert"
       case .FullAccess: return "https://mail.google.com/"
+      case .GmailSend: return "https://www.googleapis.com/auth/gmail.send"
+      case .GmailReadonly: return "https://www.googleapis.com/auth/gmail.readonly"
       case .GmailSettingsBasic: return "https://www.googleapis.com/auth/gmail.settings.basic"
       case .GmailSettingsSharing: return "https://www.googleapis.com/auth/gmail.settings.sharing"
-      case .GmailReadonly: return "https://www.googleapis.com/auth/gmail.readonly"
       case .GmailMetadata: return "https://www.googleapis.com/auth/gmail.metadata"
-      case .GmailLabels: return "https://www.googleapis.com/auth/gmail.labels"
-      case .GmailSend: return "https://www.googleapis.com/auth/gmail.send"
-      case .GmailInsert: return "https://www.googleapis.com/auth/gmail.insert"
       }
    }
 
+   case GmailLabels // Manage mailbox labels
    case GmailModify // View and modify but not delete your email
    case GmailCompose // Manage drafts and send emails
+   case GmailInsert // Insert mail into your mailbox
    case FullAccess // Read, compose, send, and permanently delete all your email from Gmail
+   case GmailSend // Send email on your behalf
+   case GmailReadonly // View your email messages and settings
    case GmailSettingsBasic // Manage your basic mail settings
    case GmailSettingsSharing // Manage your sensitive mail settings, including who can manage your mail
-   case GmailReadonly // View your email messages and settings
    case GmailMetadata // View your email message metadata such as labels and headers, but not the email body
-   case GmailLabels // Manage mailbox labels
-   case GmailSend // Send email on your behalf
-   case GmailInsert // Insert mail into your mailbox
 }
 
 
 public struct GoogleCloudGmailConfiguration : GoogleCloudAPIConfiguration {
-    
-    
    public var scope : [GoogleCloudAPIScope]
    public var serviceAccount: String
    public var project: String?
-    
-    public var subscription: String?
+   public var subscription: String?
 
-    public init(scope: [GoogleCloudGmailScope], serviceAccount : String, project: String?, subscription : String?) {
+   public init(scope: [GoogleCloudGmailScope], serviceAccount : String, project: String?, subscription: String?) {
       self.scope = scope
       self.serviceAccount = serviceAccount
       self.project = project
-        self.subscription = subscription
+      self.subscription = subscription
    }
 }
 
 
-public enum GoogleCloudGmailError: GoogleCloudError {
-   case projectIdMissing
-   case unknownError(String)
-
-   var localizedDescription: String {
-      switch self {
-      case .projectIdMissing:
-         return "Missing project id for Gmail API. Did you forget to set your project id?"
-      case .unknownError(let reason):
-         return "An unknown error occured: \(reason)"
-      }
-   }
-}
 public final class GoogleCloudGmailRequest : GoogleCloudAPIRequest {
    public var refreshableToken: OAuthRefreshable
    public var project: String
@@ -139,7 +123,7 @@ public final class GoogleCloudGmailRequest : GoogleCloudAPIRequest {
       }
    }
 }
-public final class GoogleCloudGmailUsersAPI : UsersAPIProtocol {
+public final class GoogleCloudGmailUsersAPI : GmailUsersAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -184,7 +168,7 @@ public final class GoogleCloudGmailUsersAPI : UsersAPIProtocol {
    }
 }
 
-public protocol UsersAPIProtocol  {
+public protocol GmailUsersAPIProtocol  {
    /// Gets the current user's Gmail profile.
    func getProfile(userId : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailProfile>
    /// Stop receiving push notifications for the given user mailbox.
@@ -192,7 +176,7 @@ public protocol UsersAPIProtocol  {
    /// Set up or update a push notification watch on the given user mailbox.
    func watch(userId : String, body : GoogleCloudGmailWatchRequest, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailWatchResponse>
 }
-extension UsersAPIProtocol  {
+extension GmailUsersAPIProtocol   {
       public func getProfile(userId : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailProfile> {
       getProfile(userId: userId,  queryParameters: queryParameters)
    }
@@ -206,7 +190,7 @@ extension UsersAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailDraftsAPI : DraftsAPIProtocol {
+public final class GoogleCloudGmailDraftsAPI : GmailDraftsAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -294,7 +278,7 @@ public final class GoogleCloudGmailDraftsAPI : DraftsAPIProtocol {
    }
 }
 
-public protocol DraftsAPIProtocol  {
+public protocol GmailDraftsAPIProtocol  {
    /// Creates a new draft with the DRAFT label.
    func create(userId : String, body : GoogleCloudGmailDraft, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailDraft>
    /// Immediately and permanently deletes the specified draft. Does not simply trash it.
@@ -308,7 +292,7 @@ public protocol DraftsAPIProtocol  {
    /// Replaces a draft's content.
    func update(userId : String, id : String, body : GoogleCloudGmailDraft, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailDraft>
 }
-extension DraftsAPIProtocol  {
+extension GmailDraftsAPIProtocol   {
       public func create(userId : String, body : GoogleCloudGmailDraft, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailDraft> {
       create(userId: userId, body: body, queryParameters: queryParameters)
    }
@@ -334,7 +318,7 @@ extension DraftsAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailHistoryAPI : HistoryAPIProtocol {
+public final class GoogleCloudGmailHistoryAPI : GmailHistoryAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -354,17 +338,17 @@ public final class GoogleCloudGmailHistoryAPI : HistoryAPIProtocol {
    }
 }
 
-public protocol HistoryAPIProtocol  {
+public protocol GmailHistoryAPIProtocol  {
    /// Lists the history of all changes to the given mailbox. History results are returned in chronological order (increasing historyId).
    func list(userId : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailListHistoryResponse>
 }
-extension HistoryAPIProtocol  {
+extension GmailHistoryAPIProtocol   {
       public func list(userId : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailListHistoryResponse> {
       list(userId: userId,  queryParameters: queryParameters)
    }
 
 }
-public final class GoogleCloudGmailLabelsAPI : LabelsAPIProtocol {
+public final class GoogleCloudGmailLabelsAPI : GmailLabelsAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -453,7 +437,7 @@ public final class GoogleCloudGmailLabelsAPI : LabelsAPIProtocol {
    }
 }
 
-public protocol LabelsAPIProtocol  {
+public protocol GmailLabelsAPIProtocol  {
    /// Creates a new label.
    func create(userId : String, body : GoogleCloudGmailLabel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailLabel>
    /// Immediately and permanently deletes the specified label and removes it from any messages and threads that it is applied to.
@@ -467,7 +451,7 @@ public protocol LabelsAPIProtocol  {
    /// Updates the specified label.
    func update(userId : String, id : String, body : GoogleCloudGmailLabel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailLabel>
 }
-extension LabelsAPIProtocol  {
+extension GmailLabelsAPIProtocol   {
       public func create(userId : String, body : GoogleCloudGmailLabel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailLabel> {
       create(userId: userId, body: body, queryParameters: queryParameters)
    }
@@ -493,7 +477,7 @@ extension LabelsAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailMessagesAPI : MessagesAPIProtocol {
+public final class GoogleCloudGmailMessagesAPI : GmailMessagesAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -556,7 +540,7 @@ public final class GoogleCloudGmailMessagesAPI : MessagesAPIProtocol {
    /// Imports a message into only this user's mailbox, with standard email delivery scanning and classification similar to receiving via SMTP. Does not send a message.
    /// - Parameter userId: The user's email address. The special value me can be used to indicate the authenticated user.
 
-   public func _import(userId : String, body : GoogleCloudGmailMessage, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailMessage> {
+   public func `import`(userId : String, body : GoogleCloudGmailMessage, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailMessage> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -648,7 +632,7 @@ public final class GoogleCloudGmailMessagesAPI : MessagesAPIProtocol {
    }
 }
 
-public protocol MessagesAPIProtocol  {
+public protocol GmailMessagesAPIProtocol  {
    /// Deletes many messages by message ID. Provides no guarantees that messages were not already deleted or even existed at all.
    func batchDelete(userId : String, body : GoogleCloudGmailBatchDeleteMessagesRequest, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailEmptyResponse>
    /// Modifies the labels on the specified messages.
@@ -658,7 +642,7 @@ public protocol MessagesAPIProtocol  {
    /// Gets the specified message.
    func get(userId : String, id : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailMessage>
    /// Imports a message into only this user's mailbox, with standard email delivery scanning and classification similar to receiving via SMTP. Does not send a message.
-   func _import(userId : String, body : GoogleCloudGmailMessage, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailMessage>
+   func `import`(userId : String, body : GoogleCloudGmailMessage, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailMessage>
    /// Directly inserts a message into only this user's mailbox similar to IMAP APPEND, bypassing most scanning and classification. Does not send a message.
    func insert(userId : String, body : GoogleCloudGmailMessage, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailMessage>
    /// Lists the messages in the user's mailbox.
@@ -672,7 +656,7 @@ public protocol MessagesAPIProtocol  {
    /// Removes the specified message from the trash.
    func untrash(userId : String, id : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailMessage>
 }
-extension MessagesAPIProtocol  {
+extension GmailMessagesAPIProtocol   {
       public func batchDelete(userId : String, body : GoogleCloudGmailBatchDeleteMessagesRequest, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailEmptyResponse> {
       batchDelete(userId: userId, body: body, queryParameters: queryParameters)
    }
@@ -689,8 +673,8 @@ extension MessagesAPIProtocol  {
       get(userId: userId,id: id,  queryParameters: queryParameters)
    }
 
-      public func _import(userId : String, body : GoogleCloudGmailMessage, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailMessage> {
-      _import(userId: userId, body: body, queryParameters: queryParameters)
+      public func `import`(userId : String, body : GoogleCloudGmailMessage, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailMessage> {
+      `import`(userId: userId, body: body, queryParameters: queryParameters)
    }
 
       public func insert(userId : String, body : GoogleCloudGmailMessage, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailMessage> {
@@ -718,7 +702,7 @@ extension MessagesAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailSettingsAPI : SettingsAPIProtocol {
+public final class GoogleCloudGmailSettingsAPI : GmailSettingsAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -853,7 +837,7 @@ public final class GoogleCloudGmailSettingsAPI : SettingsAPIProtocol {
    }
 }
 
-public protocol SettingsAPIProtocol  {
+public protocol GmailSettingsAPIProtocol  {
    /// Gets the auto-forwarding setting for the specified account.
    func getAutoForwarding(userId : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailAutoForwarding>
    /// Gets IMAP settings.
@@ -875,7 +859,7 @@ public protocol SettingsAPIProtocol  {
    /// Updates vacation responder settings.
    func updateVacation(userId : String, body : GoogleCloudGmailVacationSettings, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailVacationSettings>
 }
-extension SettingsAPIProtocol  {
+extension GmailSettingsAPIProtocol   {
       public func getAutoForwarding(userId : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailAutoForwarding> {
       getAutoForwarding(userId: userId,  queryParameters: queryParameters)
    }
@@ -917,7 +901,7 @@ extension SettingsAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailThreadsAPI : ThreadsAPIProtocol {
+public final class GoogleCloudGmailThreadsAPI : GmailThreadsAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -997,7 +981,7 @@ public final class GoogleCloudGmailThreadsAPI : ThreadsAPIProtocol {
    }
 }
 
-public protocol ThreadsAPIProtocol  {
+public protocol GmailThreadsAPIProtocol  {
    /// Immediately and permanently deletes the specified thread. This operation cannot be undone. Prefer threads.trash instead.
    func delete(userId : String, id : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailEmptyResponse>
    /// Gets the specified thread.
@@ -1011,7 +995,7 @@ public protocol ThreadsAPIProtocol  {
    /// Removes the specified thread from the trash.
    func untrash(userId : String, id : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailThread>
 }
-extension ThreadsAPIProtocol  {
+extension GmailThreadsAPIProtocol   {
       public func delete(userId : String, id : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailEmptyResponse> {
       delete(userId: userId,id: id,  queryParameters: queryParameters)
    }
@@ -1037,7 +1021,7 @@ extension ThreadsAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailAttachmentsAPI : AttachmentsAPIProtocol {
+public final class GoogleCloudGmailAttachmentsAPI : GmailAttachmentsAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -1059,17 +1043,17 @@ public final class GoogleCloudGmailAttachmentsAPI : AttachmentsAPIProtocol {
    }
 }
 
-public protocol AttachmentsAPIProtocol  {
+public protocol GmailAttachmentsAPIProtocol  {
    /// Gets the specified message attachment.
    func get(userId : String, messageId : String, id : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailMessagePartBody>
 }
-extension AttachmentsAPIProtocol  {
+extension GmailAttachmentsAPIProtocol   {
       public func get(userId : String, messageId : String, id : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailMessagePartBody> {
       get(userId: userId,messageId: messageId,id: id,  queryParameters: queryParameters)
    }
 
 }
-public final class GoogleCloudGmailDelegatesAPI : DelegatesAPIProtocol {
+public final class GoogleCloudGmailDelegatesAPI : GmailDelegatesAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -1126,7 +1110,7 @@ public final class GoogleCloudGmailDelegatesAPI : DelegatesAPIProtocol {
    }
 }
 
-public protocol DelegatesAPIProtocol  {
+public protocol GmailDelegatesAPIProtocol  {
    /// Adds a delegate with its verification status set directly to accepted, without sending any verification email. The delegate user must be a member of the same G Suite organization as the delegator user.  Gmail imposes limitations on the number of delegates and delegators each user in a G Suite organization can have. These limits depend on your organization, but in general each user can have up to 25 delegates and up to 10 delegators.  Note that a delegate user must be referred to by their primary email address, and not an email alias.  Also note that when a new delegate is created, there may be up to a one minute delay before the new delegate is available for use.  This method is only available to service account clients that have been delegated domain-wide authority.
    func create(userId : String, body : GoogleCloudGmailDelegate, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailDelegate>
    /// Removes the specified delegate (which can be of any verification status), and revokes any verification that may have been required for using it.  Note that a delegate user must be referred to by their primary email address, and not an email alias.  This method is only available to service account clients that have been delegated domain-wide authority.
@@ -1136,7 +1120,7 @@ public protocol DelegatesAPIProtocol  {
    /// Lists the delegates for the specified account.  This method is only available to service account clients that have been delegated domain-wide authority.
    func list(userId : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailListDelegatesResponse>
 }
-extension DelegatesAPIProtocol  {
+extension GmailDelegatesAPIProtocol   {
       public func create(userId : String, body : GoogleCloudGmailDelegate, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailDelegate> {
       create(userId: userId, body: body, queryParameters: queryParameters)
    }
@@ -1154,7 +1138,7 @@ extension DelegatesAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailFiltersAPI : FiltersAPIProtocol {
+public final class GoogleCloudGmailFiltersAPI : GmailFiltersAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -1211,7 +1195,7 @@ public final class GoogleCloudGmailFiltersAPI : FiltersAPIProtocol {
    }
 }
 
-public protocol FiltersAPIProtocol  {
+public protocol GmailFiltersAPIProtocol  {
    /// Creates a filter.
    func create(userId : String, body : GoogleCloudGmailFilter, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailFilter>
    /// Deletes a filter.
@@ -1221,7 +1205,7 @@ public protocol FiltersAPIProtocol  {
    /// Lists the message filters of a Gmail user.
    func list(userId : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailListFiltersResponse>
 }
-extension FiltersAPIProtocol  {
+extension GmailFiltersAPIProtocol   {
       public func create(userId : String, body : GoogleCloudGmailFilter, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailFilter> {
       create(userId: userId, body: body, queryParameters: queryParameters)
    }
@@ -1239,7 +1223,7 @@ extension FiltersAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailForwardingAddressesAPI : ForwardingAddressesAPIProtocol {
+public final class GoogleCloudGmailForwardingAddressesAPI : GmailForwardingAddressesAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -1296,7 +1280,7 @@ public final class GoogleCloudGmailForwardingAddressesAPI : ForwardingAddressesA
    }
 }
 
-public protocol ForwardingAddressesAPIProtocol  {
+public protocol GmailForwardingAddressesAPIProtocol  {
    /// Creates a forwarding address. If ownership verification is required, a message will be sent to the recipient and the resource's verification status will be set to pending; otherwise, the resource will be created with verification status set to accepted.  This method is only available to service account clients that have been delegated domain-wide authority.
    func create(userId : String, body : GoogleCloudGmailForwardingAddress, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailForwardingAddress>
    /// Deletes the specified forwarding address and revokes any verification that may have been required.  This method is only available to service account clients that have been delegated domain-wide authority.
@@ -1306,7 +1290,7 @@ public protocol ForwardingAddressesAPIProtocol  {
    /// Lists the forwarding addresses for the specified account.
    func list(userId : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailListForwardingAddressesResponse>
 }
-extension ForwardingAddressesAPIProtocol  {
+extension GmailForwardingAddressesAPIProtocol   {
       public func create(userId : String, body : GoogleCloudGmailForwardingAddress, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailForwardingAddress> {
       create(userId: userId, body: body, queryParameters: queryParameters)
    }
@@ -1324,7 +1308,7 @@ extension ForwardingAddressesAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailSendAsAPI : SendAsAPIProtocol {
+public final class GoogleCloudGmailSendAsAPI : GmailSendAsAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -1424,7 +1408,7 @@ public final class GoogleCloudGmailSendAsAPI : SendAsAPIProtocol {
    }
 }
 
-public protocol SendAsAPIProtocol  {
+public protocol GmailSendAsAPIProtocol  {
    /// Creates a custom "from" send-as alias. If an SMTP MSA is specified, Gmail will attempt to connect to the SMTP service to validate the configuration before creating the alias. If ownership verification is required for the alias, a message will be sent to the email address and the resource's verification status will be set to pending; otherwise, the resource will be created with verification status set to accepted. If a signature is provided, Gmail will sanitize the HTML before saving it with the alias.  This method is only available to service account clients that have been delegated domain-wide authority.
    func create(userId : String, body : GoogleCloudGmailSendAs, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailSendAs>
    /// Deletes the specified send-as alias. Revokes any verification that may have been required for using it.  This method is only available to service account clients that have been delegated domain-wide authority.
@@ -1440,7 +1424,7 @@ public protocol SendAsAPIProtocol  {
    /// Sends a verification email to the specified send-as alias address. The verification status must be pending.  This method is only available to service account clients that have been delegated domain-wide authority.
    func verify(userId : String, sendAsEmail : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailEmptyResponse>
 }
-extension SendAsAPIProtocol  {
+extension GmailSendAsAPIProtocol   {
       public func create(userId : String, body : GoogleCloudGmailSendAs, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailSendAs> {
       create(userId: userId, body: body, queryParameters: queryParameters)
    }
@@ -1470,7 +1454,7 @@ extension SendAsAPIProtocol  {
    }
 
 }
-public final class GoogleCloudGmailSmimeInfoAPI : SmimeInfoAPIProtocol {
+public final class GoogleCloudGmailSmimeInfoAPI : GmailSmimeInfoAPIProtocol {
    let endpoint = "https://www.googleapis.com/gmail/v1/users/"
    let request : GoogleCloudGmailRequest
 
@@ -1543,7 +1527,7 @@ public final class GoogleCloudGmailSmimeInfoAPI : SmimeInfoAPIProtocol {
    }
 }
 
-public protocol SmimeInfoAPIProtocol  {
+public protocol GmailSmimeInfoAPIProtocol  {
    /// Deletes the specified S/MIME config for the specified send-as alias.
    func delete(userId : String, sendAsEmail : String, id : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailEmptyResponse>
    /// Gets the specified S/MIME config for the specified send-as alias.
@@ -1555,7 +1539,7 @@ public protocol SmimeInfoAPIProtocol  {
    /// Sets the default S/MIME config for the specified send-as alias.
    func setDefault(userId : String, sendAsEmail : String, id : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudGmailEmptyResponse>
 }
-extension SmimeInfoAPIProtocol  {
+extension GmailSmimeInfoAPIProtocol   {
       public func delete(userId : String, sendAsEmail : String, id : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudGmailEmptyResponse> {
       delete(userId: userId,sendAsEmail: sendAsEmail,id: id,  queryParameters: queryParameters)
    }
@@ -1577,7 +1561,6 @@ extension SmimeInfoAPIProtocol  {
    }
 
 }
-//public struct PlaceHolderObject : GoogleCloudModel {}
 public struct GoogleCloudGmailEmptyResponse : GoogleCloudModel {}
 public struct GoogleCloudGmailAutoForwarding : GoogleCloudModel {
    /*The state that a message should be left in after it has been forwarded. */
@@ -1726,7 +1709,7 @@ public struct GoogleCloudGmailLabelColor : GoogleCloudModel {
 public struct GoogleCloudGmailLanguageSettings : GoogleCloudModel {
    /*The language to display Gmail in, formatted as an RFC 3066 Language Tag (for example en-GB, fr or ja for British English, French, or Japanese respectively).
 
-The set of languages supported by Gmail evolves over time, so please refer to the "Language" dropdown in the Gmail settings  for all available options, as described in the language settings help article. A table of sample values is also provided in the Managing Language Settings guide
+The set of languages supported by Gmail evolves over time, so please refer to the "Language" dropdown in the Gmail settings  for all available options, as described in the language settings help article. A table of sample values is also provided in the Managing Language Settings guide 
 
 Not all Gmail clients can display the same set of languages. In the case that a user's display language is not available for use on a particular client, said client automatically chooses to display in the closest supported variant (or a reasonable default). */
    public var displayLanguage: String?
@@ -1804,9 +1787,9 @@ public struct GoogleCloudGmailMessage : GoogleCloudModel {
    public var sizeEstimate: Int?
    /*A short part of the message text. */
    public var snippet: String?
-   /*The ID of the thread the message belongs to. To add a message or draft to a thread, the following criteria must be met:
-- The requested threadId must be specified on the Message or Draft.Message you supply with your request.
-- The References and In-Reply-To headers must be set in compliance with the RFC 2822 standard.
+   /*The ID of the thread the message belongs to. To add a message or draft to a thread, the following criteria must be met: 
+- The requested threadId must be specified on the Message or Draft.Message you supply with your request. 
+- The References and In-Reply-To headers must be set in compliance with the RFC 2822 standard. 
 - The Subject headers must match. */
    public var threadId: String?
 }
@@ -1959,27 +1942,27 @@ public struct GoogleCloudGmailWatchResponse : GoogleCloudModel {
    public var historyId: String?
 }
 public final class GoogleCloudGmailClient {
-   public var users : UsersAPIProtocol
-   public var drafts : DraftsAPIProtocol
-   public var history : HistoryAPIProtocol
-   public var labels : LabelsAPIProtocol
-   public var messages : MessagesAPIProtocol
-   public var attachments : AttachmentsAPIProtocol
-   public var settings : SettingsAPIProtocol
-   public var delegates : DelegatesAPIProtocol
-   public var filters : FiltersAPIProtocol
-   public var forwardingAddresses : ForwardingAddressesAPIProtocol
-   public var sendAs : SendAsAPIProtocol
-   public var smimeInfo : SmimeInfoAPIProtocol
-   public var threads : ThreadsAPIProtocol
+   public var users : GmailUsersAPIProtocol
+   public var drafts : GmailDraftsAPIProtocol
+   public var history : GmailHistoryAPIProtocol
+   public var labels : GmailLabelsAPIProtocol
+   public var messages : GmailMessagesAPIProtocol
+   public var attachments : GmailAttachmentsAPIProtocol
+   public var settings : GmailSettingsAPIProtocol
+   public var delegates : GmailDelegatesAPIProtocol
+   public var filters : GmailFiltersAPIProtocol
+   public var forwardingAddresses : GmailForwardingAddressesAPIProtocol
+   public var sendAs : GmailSendAsAPIProtocol
+   public var smimeInfo : GmailSmimeInfoAPIProtocol
+   public var threads : GmailThreadsAPIProtocol
 
 
-   public init(credentials: GoogleCloudCredentialsConfiguration, gmailConfig: GoogleCloudGmailConfiguration, httpClient: HTTPClient, eventLoop: EventLoop, withSubscription sub: String? = nil) throws {
+   public init(credentials: GoogleCloudCredentialsConfiguration, gmailConfig: GoogleCloudGmailConfiguration, httpClient: HTTPClient, eventLoop: EventLoop) throws {
       let refreshableToken = OAuthCredentialLoader.getRefreshableToken(credentials: credentials, withConfig: gmailConfig, andClient: httpClient, eventLoop: eventLoop)
       guard let projectId = ProcessInfo.processInfo.environment["PROJECT_ID"] ??
                (refreshableToken as? OAuthServiceAccount)?.credentials.projectId ??
                gmailConfig.project ?? credentials.project else {
-         throw GoogleCloudGmailError.projectIdMissing
+         throw GoogleCloudInternalError.projectIdMissing
       }
 
       let request = GoogleCloudGmailRequest(httpClient: httpClient, eventLoop: eventLoop, oauth: refreshableToken, project: projectId)
@@ -2000,3 +1983,4 @@ public final class GoogleCloudGmailClient {
       threads = GoogleCloudGmailThreadsAPI(request: request)
    }
 }
+

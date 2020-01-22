@@ -8,16 +8,35 @@
 import Foundation
 import CodeGen
 
-let path = "gmail.json"
-let path2 = "storage.json"
-let path3 = "drive.json"
-let path4 = "calendar.json"
+var testing = [(String, String)]()
 
-let data = try Data(contentsOf: URL(fileURLWithPath: path4))
+testing.append(( "gmail.json", "Core/Sources/TestCodeGen.swift"))
+testing.append(( "storage.json", "Core/Sources/StorageCodeGen.swift"))
+testing.append((  "drive.json", "Core/Sources/DriveTestGen.swift"))
+testing.append((  "calendar.json", "Core/Sources/CalTestGen.swift"))
+
+
+
+for (i, o) in testing {
+
+let data = try Data(contentsOf: URL(fileURLWithPath: i))
   let decoder = JSONDecoder()
   do {
     let service = try decoder.decode(DiscoveryService.self, from: data)
-    print(service.GenerateCode())
+    let fileManager = FileManager.default
+    if !fileManager.fileExists(atPath: o) {
+        do {
+            try "".write(toFile: o, atomically: true, encoding: String.Encoding.utf8)
+        } catch _ {
+        }
+    } else {
+        fileManager.createFile(atPath: o, contents: nil, attributes: nil)
+    }
+    if let fileHandle = FileHandle(forWritingAtPath: o) {
+        fileHandle.write(service.GenerateCode().data(using: .utf8) ?? Data())
+        fileHandle.closeFile()
+    }
+//    print(service.GenerateCode())
     
 //    service.name
   } catch {
@@ -25,6 +44,7 @@ let data = try Data(contentsOf: URL(fileURLWithPath: path4))
     print(error.localizedDescription)
 //    print("error \(error)\n")
   }
+}
 
 
 

@@ -9,6 +9,8 @@ import NIOHTTP1
 
 public protocol GoogleCloudError: Error {}
 
+
+
 enum CredentialLoadError: GoogleCloudError {
     case fileLoadError(String)
     case jsonLoadError
@@ -34,6 +36,20 @@ enum OauthRefreshError: GoogleCloudError {
     }
 }
 
+
+public enum GoogleCloudInternalError: GoogleCloudError {
+   case projectIdMissing
+   case unknownError(String)
+
+   var localizedDescription: String {
+      switch self {
+      case .projectIdMissing:
+         return "Missing project id for Calendar API. Did you forget to set your project id?"
+      case .unknownError(let reason):
+         return "An unknown error occured: \(reason)"
+      }
+   }
+}
 
 public struct GoogleCloudAPIErrorMain: GoogleCloudError, GoogleCloudModel {
     /// A container for the error information.

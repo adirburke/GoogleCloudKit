@@ -41,7 +41,7 @@ public enum GoogleCloudDiscoveryJSONTypeEnum : String, Codable {
         case .integer: return "Int"
         case .boolean: return "Bool"
         case .object: return "PlaceHolderObject"
-        case .array: return "[\(itemType?.makeSwiftSafe() ?? "")]"
+        case .array: return "[\(itemType ?? "")]"
         case .null: return "String?"
         case .any: return "Any"
         case .data: return "Data"

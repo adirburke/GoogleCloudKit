@@ -80,7 +80,7 @@ extension DiscoveryService {
         returnString.addLine("self.scope = scope", with: 2)
         returnString.addLine("self.serviceAccount = serviceAccount", with: 2)
         returnString.addLine("self.project = project", with: 2)
-        returnString.addLine("self.subscription = subscription")
+        returnString.addLine("self.subscription = subscription", with: 2)
         returnString.addLine("}", with: 1)
         returnString.addLine("}", with: 0)
         returnString.addLine()
@@ -91,20 +91,6 @@ extension DiscoveryService {
     
     func createError() -> String {
         var gc = ""
-        gc.addLine("public enum GoogleCloud\(capName)InternalError: GoogleCloudError {", with: 0)
-        gc.addLine("case projectIdMissing", with: 1)
-        gc.addLine("case unknownError(String)", with: 1)
-        gc.addLine()
-        gc.addLine("var localizedDescription: String {", with: 1)
-        gc.addLine("switch self {", with: 2)
-        gc.addLine("case .projectIdMissing:", with: 2)
-        gc.addLine("return \"Missing project id for \(capName) API. Did you forget to set your project id?\"", with: 3)
-        gc.addLine("case .unknownError(let reason):", with: 2)
-        gc.addLine("return \"An unknown error occured: \\(reason)\"", with: 3)
-        gc.addLine("}", with: 2)
-        gc.addLine("}", with: 1)
-        gc.addLine("}", with: 0)
-        
         return gc
     }
     
@@ -196,9 +182,9 @@ extension DiscoveryService {
             if let parm = m.value.parameters?[order] {
                 var d = parm.description ?? ""
                 d = d.replacingOccurrences(of: "\n", with: " ")
-                commentSection.addLine("/// - Parameter \(order.makeSwiftSafe()): \(d)")
+                commentSection.addLine("/// - Parameter \(order): \(d)")
                 funcParm += "\(order.makeSwiftSafe()) : \(parm.type!.toSwiftParameterName()), "
-                repeatedParms += "\(order.makeSwiftSafe()): \(order.makeSwiftSafe()),"
+                repeatedParms += "\(order.makeSwiftSafe()): \(order),"
             }
         }
         return (funcParm, commentSection, repeatedParms)
@@ -261,14 +247,14 @@ extension DiscoveryService {
                 let commentSection = "/// \(m.value.description ?? "")".replacingOccurrences(of: "\n", with: " ")
                 let (funcParm, comment, repeatedParm) = getMethodParams(m)
                 
-                var responseValue = m.value.response?.reference.makeSwiftSafe() ?? "EmptyResponse"
-                responseValue = "GoogleCloud\(capName)\(responseValue.makeSwiftSafe())"
+                var responseValue = m.value.response?.reference ?? "EmptyResponse"
+                responseValue = "GoogleCloud\(capName)\(responseValue)"
                 var requestValue = ""
                 var requestRequired = false
                 var repeatedRequest = ""
-                if let request = m.value.request?.reference.makeSwiftSafe() {
+                if let request = m.value.request?.reference {
                     requestRequired = true
-                    requestValue = "body : GoogleCloud\(capName)\(request.makeSwiftSafe()),"
+                    requestValue = "body : GoogleCloud\(capName)\(request),"
                     repeatedRequest = "body: body,"
                 }
                 
@@ -327,7 +313,10 @@ extension DiscoveryService {
                 if let reference = p.value.ref {
                     gc += checkRequiredAndAddComment("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference)", 1, p.value.required,  p: p.value)
                 }
-            } else {
+            } else if let addtional =  p.value.additionalProperties {
+                let addProp = createSmallModelFromAdditionalProperties(modelName: modelName, name: propertyNameSafe, props: addtional)
+                gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [String :\(addProp)]", 1, p.value.required, p: p.value)
+        } else {
                 gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(p.value.toType(capName))", 1, p.value.required, p: p.value)
             }
         }
@@ -385,23 +374,19 @@ extension DiscoveryService {
     }
     
     func createModels() -> String {
-        var gc = "public struct PlaceHolderObject : GoogleCloudModel {}\npublic struct GoogleCloud\(capName)EmptyResponse : GoogleCloudModel {}\n"
+        var gc = "public struct GoogleCloud\(capName)EmptyResponse : GoogleCloudModel {}\n"
         var later = ""
         for schema in schemas.sorted(by: { $0.key < $1.key }) {
-            
-            let modelName = schema.key.makeSwiftSafe()
-            //            print(modelName)
+            let modelName = schema.key
             gc.addLine("public struct GoogleCloud\(capName)\(modelName) : GoogleCloudModel {")
             for p in schema.value.properties?.sorted(by: {$0.key < $1.key}) ?? [] {
-                //                print(p.key, p.value)
                 let propertyNameSafe = p.key.makeSwiftSafe()
                 let propertyNameSafeCap = p.key.capitalized().makeSwiftSafe()
+                if propertyNameSafe == "extendedProperties" {
+                    
+                }
                 switch p.value.type {
                 case .object:
-                    if propertyNameSafeCap == "Reminders" {
-                        
-                    }
-                    
                     let something = p.value.properties?.sorted(by: {$0.key < $1.key}) ?? []
                     if something.count == 0 {
                         let addProp = createSmallModelFromAdditionalProperties(modelName: modelName, name: propertyNameSafeCap, props: p.value.additionalProperties)
@@ -418,7 +403,6 @@ extension DiscoveryService {
                         case .object:
                             
                             later += createSmallModel(modelName: modelName, name: propertyNameSafeCap, props: items.properties?.sorted(by: {$0.key < $1.key}) ?? [])
-                            //                            gc.addLine("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", with: 1)
                             gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", 1, p.value.required, p: p.value)
                         case .array:
                             gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [GoogleCloud\(capName)\(p.value.toType(capName).dropFirst())", 1, p.value.required, p: p.value)
@@ -436,22 +420,15 @@ extension DiscoveryService {
                 default:
                     if p.value.type == nil {
                         if let reference = p.value.ref {
-                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference.makeSwiftSafe())",  1, p.value.required, p: p.value)
-                            //                            gc.addLine("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference.makeSwiftSafe())", with: 1)
+                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference)",  1, p.value.required, p: p.value)
                         }
                     } else {
-                        //                        gc.addLine("public var \(propertyNameSafe): \(p.value.toType())", with: 1)
                         gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(p.value.toType(capName))",  1, p.value.required, p: p.value)
                     }
                 }
-                
             }
             gc.addLine("}", with: 0)
-            
-            
         }
-        
-        
         return gc + later
     }
     
@@ -459,8 +436,6 @@ extension DiscoveryService {
         var gc = ""
         var assignment = ""
         for api in apiList ?? [] {
-            //   "\(apiName)APIProtocol"
-            
             let varString = String(api.dropLast(11)).lowercaseFirst()
             let funcString = String(api.dropLast(8))
             gc.addLine("public var \(varString) : \(capName)\(api)", with: indent)
@@ -481,7 +456,7 @@ extension DiscoveryService {
         gc.addLine("guard let projectId = ProcessInfo.processInfo.environment[\"PROJECT_ID\"] ??", with: 2)
         gc.addLine("(refreshableToken as? OAuthServiceAccount)?.credentials.projectId ??", with: 5)
         gc.addLine("\(name)Config.project ?? credentials.project else {", with: 5)
-        gc.addLine("throw GoogleCloud\(capName)InternalError.projectIdMissing", with: 3)
+        gc.addLine("throw GoogleCloudInternalError.projectIdMissing", with: 3)
         gc.addLine("}", with: 2)
         gc.addLine()
         gc.addLine("let request = GoogleCloud\(capName)Request(httpClient: httpClient, eventLoop: eventLoop, oauth: refreshableToken, project: projectId)", with: 2)

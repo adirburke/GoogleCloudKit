@@ -90,7 +90,7 @@ extension String {
     
     public func makeSwiftSafe() -> String {
         return isSwiftKeyword || startsWithNumber
-        ? "_" + self
+        ? "`" + self + "`"
         : self
     }
 

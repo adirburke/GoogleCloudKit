@@ -11,3 +11,4 @@ public struct GoogleCloudDataResponse: GoogleCloudModel {
     public var data: Data?
 }
 
+public struct PlaceHolderObject : GoogleCloudModel {}

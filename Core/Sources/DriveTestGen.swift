@@ -12,25 +12,25 @@ import NIOHTTP1
 public enum GoogleCloudDriveScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
-      case .DriveReadonly: return "https://www.googleapis.com/auth/drive.readonly"
-      case .DriveAppdata: return "https://www.googleapis.com/auth/drive.appdata"
       case .DriveScripts: return "https://www.googleapis.com/auth/drive.scripts"
-      case .DriveMetadata: return "https://www.googleapis.com/auth/drive.metadata"
-      case .DrivePhotosReadonly: return "https://www.googleapis.com/auth/drive.photos.readonly"
       case .Drive: return "https://www.googleapis.com/auth/drive"
+      case .DriveMetadata: return "https://www.googleapis.com/auth/drive.metadata"
+      case .DriveReadonly: return "https://www.googleapis.com/auth/drive.readonly"
       case .DriveMetadataReadonly: return "https://www.googleapis.com/auth/drive.metadata.readonly"
+      case .DrivePhotosReadonly: return "https://www.googleapis.com/auth/drive.photos.readonly"
       case .DriveFile: return "https://www.googleapis.com/auth/drive.file"
+      case .DriveAppdata: return "https://www.googleapis.com/auth/drive.appdata"
       }
    }
 
-   case DriveReadonly // See and download all your Google Drive files
-   case DriveAppdata // View and manage its own configuration data in your Google Drive
    case DriveScripts // Modify your Google Apps Script scripts' behavior
-   case DriveMetadata // View and manage metadata of files in your Google Drive
-   case DrivePhotosReadonly // View the photos, videos and albums in your Google Photos
    case Drive // See, edit, create, and delete all of your Google Drive files
+   case DriveMetadata // View and manage metadata of files in your Google Drive
+   case DriveReadonly // See and download all your Google Drive files
    case DriveMetadataReadonly // View metadata for files in your Google Drive
+   case DrivePhotosReadonly // View the photos, videos and albums in your Google Photos
    case DriveFile // View and manage Google Drive files and folders that you have opened or created with this app
+   case DriveAppdata // View and manage its own configuration data in your Google Drive
 }
 
 
@@ -44,24 +44,11 @@ public struct GoogleCloudDriveConfiguration : GoogleCloudAPIConfiguration {
       self.scope = scope
       self.serviceAccount = serviceAccount
       self.project = project
-self.subscription = subscription
+      self.subscription = subscription
    }
 }
 
 
-public enum GoogleCloudDriveError: GoogleCloudError {
-   case projectIdMissing
-   case unknownError(String)
-
-   var localizedDescription: String {
-      switch self {
-      case .projectIdMissing:
-         return "Missing project id for Drive API. Did you forget to set your project id?"
-      case .unknownError(let reason):
-         return "An unknown error occured: \(reason)"
-      }
-   }
-}
 public final class GoogleCloudDriveRequest : GoogleCloudAPIRequest {
    public var refreshableToken: OAuthRefreshable
    public var project: String
@@ -191,7 +178,7 @@ public final class GoogleCloudDriveChangesAPI : DriveChangesAPIProtocol {
    /// Subscribes to changes for a user.
    /// - Parameter pageToken: The token for continuing a previous list request on the next page. This should be set to the value of 'nextPageToken' from the previous response or to the response from the getStartPageToken method.
 
-   public func watch(pageToken : String, body : GoogleCloudDrive_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDrive_Channel> {
+   public func watch(pageToken : String, body : GoogleCloudDriveChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveChannel> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -211,7 +198,7 @@ public protocol DriveChangesAPIProtocol  {
    /// Lists the changes for a user or shared drive.
    func list(pageToken : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveChangeList>
    /// Subscribes to changes for a user.
-   func watch(pageToken : String, body : GoogleCloudDrive_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDrive_Channel>
+   func watch(pageToken : String, body : GoogleCloudDriveChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveChannel>
 }
 extension DriveChangesAPIProtocol   {
       public func getStartPageToken( queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveStartPageToken> {
@@ -222,7 +209,7 @@ extension DriveChangesAPIProtocol   {
       list(pageToken: pageToken,  queryParameters: queryParameters)
    }
 
-      public func watch(pageToken : String, body : GoogleCloudDrive_Channel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDrive_Channel> {
+      public func watch(pageToken : String, body : GoogleCloudDriveChannel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveChannel> {
       watch(pageToken: pageToken, body: body, queryParameters: queryParameters)
    }
 
@@ -237,7 +224,7 @@ public final class GoogleCloudDriveChannelsAPI : DriveChannelsAPIProtocol {
 
    /// Stop watching resources through this channel
    
-   public func stop(body : GoogleCloudDrive_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveEmptyResponse> {
+   public func stop(body : GoogleCloudDriveChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveEmptyResponse> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -253,10 +240,10 @@ public final class GoogleCloudDriveChannelsAPI : DriveChannelsAPIProtocol {
 
 public protocol DriveChannelsAPIProtocol  {
    /// Stop watching resources through this channel
-   func stop(body : GoogleCloudDrive_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveEmptyResponse>
+   func stop(body : GoogleCloudDriveChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveEmptyResponse>
 }
 extension DriveChannelsAPIProtocol   {
-      public func stop(body : GoogleCloudDrive_Channel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveEmptyResponse> {
+      public func stop(body : GoogleCloudDriveChannel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveEmptyResponse> {
       stop( body: body, queryParameters: queryParameters)
    }
 
@@ -616,7 +603,7 @@ public final class GoogleCloudDriveFilesAPI : DriveFilesAPIProtocol {
    /// Subscribes to changes to a file
    /// - Parameter fileId: The ID of the file.
 
-   public func watch(fileId : String, body : GoogleCloudDrive_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDrive_Channel> {
+   public func watch(fileId : String, body : GoogleCloudDriveChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveChannel> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -650,7 +637,7 @@ public protocol DriveFilesAPIProtocol  {
    /// Updates a file's metadata and/or content with patch semantics.
    func update(fileId : String, body : GoogleCloudDriveFile, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveFile>
    /// Subscribes to changes to a file
-   func watch(fileId : String, body : GoogleCloudDrive_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDrive_Channel>
+   func watch(fileId : String, body : GoogleCloudDriveChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudDriveChannel>
 }
 extension DriveFilesAPIProtocol   {
       public func copy(fileId : String, body : GoogleCloudDriveFile, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveFile> {
@@ -689,7 +676,7 @@ extension DriveFilesAPIProtocol   {
       update(fileId: fileId, body: body, queryParameters: queryParameters)
    }
 
-      public func watch(fileId : String, body : GoogleCloudDrive_Channel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDrive_Channel> {
+      public func watch(fileId : String, body : GoogleCloudDriveChannel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudDriveChannel> {
       watch(fileId: fileId, body: body, queryParameters: queryParameters)
    }
 
@@ -1102,7 +1089,6 @@ extension DriveTeamdrivesAPIProtocol   {
    }
 
 }
-//public struct PlaceHolderObject : GoogleCloudModel {}
 public struct GoogleCloudDriveEmptyResponse : GoogleCloudModel {}
 public struct GoogleCloudDriveAbout : GoogleCloudModel {
    /*Whether the user has installed the requesting app. */
@@ -1166,7 +1152,7 @@ public struct GoogleCloudDriveChangeList : GoogleCloudModel {
    /*The page token for the next page of changes. This will be absent if the end of the changes list has been reached. If the token is rejected for any reason, it should be discarded, and pagination should be restarted from the first page of results. */
    public var nextPageToken: String?
 }
-public struct GoogleCloudDrive_Channel : GoogleCloudModel {
+public struct GoogleCloudDriveChannel : GoogleCloudModel {
    /*The address where notifications are delivered for this channel. */
    public var address: String?
    /*Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds. Optional. */
@@ -1397,19 +1383,19 @@ public struct GoogleCloudDrivePermission : GoogleCloudModel {
    public var allowFileDiscovery: Bool?
    /*Whether the account associated with this permission has been deleted. This field only pertains to user and group permissions. */
    public var deleted: Bool?
-   /*The "pretty" name of the value of the permission. The following is a list of examples for each type of permission:
-- user - User's full name, as defined for their Google account, such as "Joe Smith."
-- group - Name of the Google Group, such as "The Company Administrators."
-- domain - String domain name, such as "thecompany.com."
+   /*The "pretty" name of the value of the permission. The following is a list of examples for each type of permission:  
+- user - User's full name, as defined for their Google account, such as "Joe Smith." 
+- group - Name of the Google Group, such as "The Company Administrators." 
+- domain - String domain name, such as "thecompany.com." 
 - anyone - No displayName is present. */
    public var displayName: String?
    /*The domain to which this permission refers. */
    public var domain: String?
    /*The email address of the user or group to which this permission refers. */
    public var emailAddress: String?
-   /*The time at which this permission will expire (RFC 3339 date-time). Expiration times have the following restrictions:
-- They can only be set on user and group permissions
-- The time must be in the future
+   /*The time at which this permission will expire (RFC 3339 date-time). Expiration times have the following restrictions:  
+- They can only be set on user and group permissions 
+- The time must be in the future 
 - The time cannot be more than a year in the future */
    public var expirationTime: String?
    /*The ID of this permission. This is a unique identifier for the grantee, and is published in User resources as permissionId. IDs should be treated as opaque values. */
@@ -1420,20 +1406,20 @@ public struct GoogleCloudDrivePermission : GoogleCloudModel {
    public var permissionDetails: [GoogleCloudDrivePermissionPermissionDetails]?
    /*A link to the user's profile photo, if available. */
    public var photoLink: String?
-   /*The role granted by this permission. While new values may be supported in the future, the following are currently allowed:
-- owner
-- organizer
-- fileOrganizer
-- writer
-- commenter
+   /*The role granted by this permission. While new values may be supported in the future, the following are currently allowed:  
+- owner 
+- organizer 
+- fileOrganizer 
+- writer 
+- commenter 
 - reader */
    public var role: String?
    /*Deprecated - use permissionDetails instead. */
    public var teamDrivePermissionDetails: [GoogleCloudDrivePermissionTeamDrivePermissionDetails]?
-   /*The type of the grantee. Valid values are:
-- user
-- group
-- domain
+   /*The type of the grantee. Valid values are:  
+- user 
+- group 
+- domain 
 - anyone  When creating a permission, if type is user or group, you must provide an emailAddress for the user or group. When type is domain, you must provide a domain. There isn't extra information required for a anyone type. */
    public var type: String?
 }
@@ -1446,8 +1432,8 @@ public struct GoogleCloudDrivePermissionList : GoogleCloudModel {
    public var permissions: [GoogleCloudDrivePermission]?
 }
 public struct GoogleCloudDriveReply : GoogleCloudModel {
-   /*The action the reply performed to the parent comment. Valid values are:
-- resolve
+   /*The action the reply performed to the parent comment. Valid values are:  
+- resolve 
 - reopen */
    public var action: String?
    /*The author of the reply. The author's email address and permission ID will not be populated. */
@@ -1777,15 +1763,15 @@ public struct GoogleCloudDrivePermissionPermissionDetails : GoogleCloudModel {
    public var inherited: Bool?
    /*The ID of the item from which this permission is inherited. This is an output-only field and is only populated for members of the shared drive. */
    public var inheritedFrom: String?
-   /*The permission type for this user. While new values may be added in future, the following are currently possible:
-- file
+   /*The permission type for this user. While new values may be added in future, the following are currently possible:  
+- file 
 - member */
    public var permissionType: String?
-   /*The primary role for this user. While new values may be added in the future, the following are currently possible:
-- organizer
-- fileOrganizer
-- writer
-- commenter
+   /*The primary role for this user. While new values may be added in the future, the following are currently possible:  
+- organizer 
+- fileOrganizer 
+- writer 
+- commenter 
 - reader */
    public var role: String?
 }
@@ -1877,7 +1863,7 @@ public final class GoogleCloudDriveClient {
       guard let projectId = ProcessInfo.processInfo.environment["PROJECT_ID"] ??
                (refreshableToken as? OAuthServiceAccount)?.credentials.projectId ??
                driveConfig.project ?? credentials.project else {
-         throw GoogleCloudDriveError.projectIdMissing
+         throw GoogleCloudInternalError.projectIdMissing
       }
 
       let request = GoogleCloudDriveRequest(httpClient: httpClient, eventLoop: eventLoop, oauth: refreshableToken, project: projectId)
@@ -1895,3 +1881,4 @@ public final class GoogleCloudDriveClient {
       teamdrives = GoogleCloudDriveTeamdrivesAPI(request: request)
    }
 }
+

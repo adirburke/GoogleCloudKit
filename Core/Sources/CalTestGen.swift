@@ -12,19 +12,19 @@ import NIOHTTP1
 public enum GoogleCloudCalendarScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
-      case .CalendarEventsReadonly: return "https://www.googleapis.com/auth/calendar.events.readonly"
-      case .Calendar: return "https://www.googleapis.com/auth/calendar"
       case .CalendarEvents: return "https://www.googleapis.com/auth/calendar.events"
-      case .CalendarReadonly: return "https://www.googleapis.com/auth/calendar.readonly"
+      case .CalendarEventsReadonly: return "https://www.googleapis.com/auth/calendar.events.readonly"
       case .CalendarSettingsReadonly: return "https://www.googleapis.com/auth/calendar.settings.readonly"
+      case .CalendarReadonly: return "https://www.googleapis.com/auth/calendar.readonly"
+      case .Calendar: return "https://www.googleapis.com/auth/calendar"
       }
    }
 
-   case CalendarEventsReadonly // View events on all your calendars
-   case Calendar // See, edit, share, and permanently delete all the calendars you can access using Google Calendar
    case CalendarEvents // View and edit events on all your calendars
-   case CalendarReadonly // View your calendars
+   case CalendarEventsReadonly // View events on all your calendars
    case CalendarSettingsReadonly // View your Calendar settings
+   case CalendarReadonly // View your calendars
+   case Calendar // See, edit, share, and permanently delete all the calendars you can access using Google Calendar
 }
 
 
@@ -38,24 +38,11 @@ public struct GoogleCloudCalendarConfiguration : GoogleCloudAPIConfiguration {
       self.scope = scope
       self.serviceAccount = serviceAccount
       self.project = project
-self.subscription = subscription
+      self.subscription = subscription
    }
 }
 
 
-public enum GoogleCloudCalendarInternalError: GoogleCloudError {
-   case projectIdMissing
-   case unknownError(String)
-
-   var localizedDescription: String {
-      switch self {
-      case .projectIdMissing:
-         return "Missing project id for Calendar API. Did you forget to set your project id?"
-      case .unknownError(let reason):
-         return "An unknown error occured: \(reason)"
-      }
-   }
-}
 public final class GoogleCloudCalendarRequest : GoogleCloudAPIRequest {
    public var refreshableToken: OAuthRefreshable
    public var project: String
@@ -216,7 +203,7 @@ public final class GoogleCloudCalendarAclAPI : CalendarAclAPIProtocol {
    /// Watch for changes to ACL resources.
    /// - Parameter calendarId: Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the "primary" keyword.
 
-   public func watch(calendarId : String, body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendar_Channel> {
+   public func watch(calendarId : String, body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarChannel> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -244,7 +231,7 @@ public protocol CalendarAclAPIProtocol  {
    /// Updates an access control rule.
    func update(calendarId : String, ruleId : String, body : GoogleCloudCalendarAclRule, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarAclRule>
    /// Watch for changes to ACL resources.
-   func watch(calendarId : String, body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendar_Channel>
+   func watch(calendarId : String, body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarChannel>
 }
 extension CalendarAclAPIProtocol   {
       public func delete(calendarId : String, ruleId : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarEmptyResponse> {
@@ -271,7 +258,7 @@ extension CalendarAclAPIProtocol   {
       update(calendarId: calendarId,ruleId: ruleId, body: body, queryParameters: queryParameters)
    }
 
-      public func watch(calendarId : String, body : GoogleCloudCalendar_Channel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendar_Channel> {
+      public func watch(calendarId : String, body : GoogleCloudCalendarChannel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarChannel> {
       watch(calendarId: calendarId, body: body, queryParameters: queryParameters)
    }
 
@@ -359,7 +346,7 @@ public final class GoogleCloudCalendarCalendarListAPI : CalendarCalendarListAPIP
    }
    /// Watch for changes to CalendarList resources.
    
-   public func watch(body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendar_Channel> {
+   public func watch(body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarChannel> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -387,7 +374,7 @@ public protocol CalendarCalendarListAPIProtocol  {
    /// Updates an existing calendar on the user's calendar list.
    func update(calendarId : String, body : GoogleCloudCalendarCalendarListEntry, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarCalendarListEntry>
    /// Watch for changes to CalendarList resources.
-   func watch(body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendar_Channel>
+   func watch(body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarChannel>
 }
 extension CalendarCalendarListAPIProtocol   {
       public func delete(calendarId : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarEmptyResponse> {
@@ -414,7 +401,7 @@ extension CalendarCalendarListAPIProtocol   {
       update(calendarId: calendarId, body: body, queryParameters: queryParameters)
    }
 
-      public func watch(body : GoogleCloudCalendar_Channel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendar_Channel> {
+      public func watch(body : GoogleCloudCalendarChannel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarChannel> {
       watch( body: body, queryParameters: queryParameters)
    }
 
@@ -553,7 +540,7 @@ public final class GoogleCloudCalendarChannelsAPI : CalendarChannelsAPIProtocol 
 
    /// Stop watching resources through this channel
    
-   public func stop(body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEmptyResponse> {
+   public func stop(body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEmptyResponse> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -569,10 +556,10 @@ public final class GoogleCloudCalendarChannelsAPI : CalendarChannelsAPIProtocol 
 
 public protocol CalendarChannelsAPIProtocol  {
    /// Stop watching resources through this channel
-   func stop(body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEmptyResponse>
+   func stop(body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEmptyResponse>
 }
 extension CalendarChannelsAPIProtocol   {
-      public func stop(body : GoogleCloudCalendar_Channel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarEmptyResponse> {
+      public func stop(body : GoogleCloudCalendarChannel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarEmptyResponse> {
       stop( body: body, queryParameters: queryParameters)
    }
 
@@ -639,7 +626,7 @@ public final class GoogleCloudCalendarEventsAPI : CalendarEventsAPIProtocol {
    /// Imports an event. This operation is used to add a private copy of an existing event to a calendar.
    /// - Parameter calendarId: Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the "primary" keyword.
 
-   public func _import(calendarId : String, body : GoogleCloudCalendarEvent, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEvent> {
+   public func `import`(calendarId : String, body : GoogleCloudCalendarEvent, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEvent> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -745,7 +732,7 @@ public final class GoogleCloudCalendarEventsAPI : CalendarEventsAPIProtocol {
    /// Watch for changes to Events resources.
    /// - Parameter calendarId: Calendar identifier. To retrieve calendar IDs call the calendarList.list method. If you want to access the primary calendar of the currently logged in user, use the "primary" keyword.
 
-   public func watch(calendarId : String, body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendar_Channel> {
+   public func watch(calendarId : String, body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarChannel> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -765,7 +752,7 @@ public protocol CalendarEventsAPIProtocol  {
    /// Returns an event.
    func get(calendarId : String, eventId : String,  queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEvent>
    /// Imports an event. This operation is used to add a private copy of an existing event to a calendar.
-   func _import(calendarId : String, body : GoogleCloudCalendarEvent, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEvent>
+   func `import`(calendarId : String, body : GoogleCloudCalendarEvent, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEvent>
    /// Creates an event.
    func insert(calendarId : String, body : GoogleCloudCalendarEvent, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEvent>
    /// Returns instances of the specified recurring event.
@@ -781,7 +768,7 @@ public protocol CalendarEventsAPIProtocol  {
    /// Updates an event.
    func update(calendarId : String, eventId : String, body : GoogleCloudCalendarEvent, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarEvent>
    /// Watch for changes to Events resources.
-   func watch(calendarId : String, body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendar_Channel>
+   func watch(calendarId : String, body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarChannel>
 }
 extension CalendarEventsAPIProtocol   {
       public func delete(calendarId : String, eventId : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarEmptyResponse> {
@@ -792,8 +779,8 @@ extension CalendarEventsAPIProtocol   {
       get(calendarId: calendarId,eventId: eventId,  queryParameters: queryParameters)
    }
 
-      public func _import(calendarId : String, body : GoogleCloudCalendarEvent, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarEvent> {
-      _import(calendarId: calendarId, body: body, queryParameters: queryParameters)
+      public func `import`(calendarId : String, body : GoogleCloudCalendarEvent, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarEvent> {
+      `import`(calendarId: calendarId, body: body, queryParameters: queryParameters)
    }
 
       public func insert(calendarId : String, body : GoogleCloudCalendarEvent, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarEvent> {
@@ -824,7 +811,7 @@ extension CalendarEventsAPIProtocol   {
       update(calendarId: calendarId,eventId: eventId, body: body, queryParameters: queryParameters)
    }
 
-      public func watch(calendarId : String, body : GoogleCloudCalendar_Channel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendar_Channel> {
+      public func watch(calendarId : String, body : GoogleCloudCalendarChannel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarChannel> {
       watch(calendarId: calendarId, body: body, queryParameters: queryParameters)
    }
 
@@ -892,7 +879,7 @@ public final class GoogleCloudCalendarSettingsAPI : CalendarSettingsAPIProtocol 
    }
    /// Watch for changes to Settings resources.
    
-   public func watch(body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendar_Channel> {
+   public func watch(body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarChannel> {
       var queryParams = ""
       if let queryParameters = queryParameters {
          queryParams = queryParameters.queryParameters
@@ -912,7 +899,7 @@ public protocol CalendarSettingsAPIProtocol  {
    /// Returns all user settings for the authenticated user.
    func list( queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarSettings>
    /// Watch for changes to Settings resources.
-   func watch(body : GoogleCloudCalendar_Channel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendar_Channel>
+   func watch(body : GoogleCloudCalendarChannel, queryParameters: [String: String]?) -> EventLoopFuture<GoogleCloudCalendarChannel>
 }
 extension CalendarSettingsAPIProtocol   {
       public func get(setting : String,  queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarSetting> {
@@ -923,12 +910,11 @@ extension CalendarSettingsAPIProtocol   {
       list(  queryParameters: queryParameters)
    }
 
-      public func watch(body : GoogleCloudCalendar_Channel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendar_Channel> {
+      public func watch(body : GoogleCloudCalendarChannel, queryParameters: [String: String]? = nil) -> EventLoopFuture<GoogleCloudCalendarChannel> {
       watch( body: body, queryParameters: queryParameters)
    }
 
 }
-public struct PlaceHolderObject : GoogleCloudModel {}
 public struct GoogleCloudCalendarEmptyResponse : GoogleCloudModel {}
 public struct GoogleCloudCalendarAcl : GoogleCloudModel {
    /*ETag of the collection. */
@@ -949,11 +935,11 @@ public struct GoogleCloudCalendarAclRule : GoogleCloudModel {
    public var id: String?
    /*Type of the resource ("calendar#aclRule"). */
    public var kind: String?
-   /*The role assigned to the scope. Possible values are:
-- "none" - Provides no access.
-- "freeBusyReader" - Provides read access to free/busy information.
-- "reader" - Provides read access to the calendar. Private events will appear to users with reader access, but event details will be hidden.
-- "writer" - Provides read and write access to the calendar. Private events will appear to users with writer access, and event details will be visible.
+   /*The role assigned to the scope. Possible values are:  
+- "none" - Provides no access. 
+- "freeBusyReader" - Provides read access to free/busy information. 
+- "reader" - Provides read access to the calendar. Private events will appear to users with reader access, but event details will be hidden. 
+- "writer" - Provides read and write access to the calendar. Private events will appear to users with writer access, and event details will be visible. 
 - "owner" - Provides ownership of the calendar. This role has all of the permissions of the writer role with the additional ability to see and manipulate ACLs. */
    public var role: String?
    /*The scope of the rule. */
@@ -990,10 +976,10 @@ public struct GoogleCloudCalendarCalendarList : GoogleCloudModel {
    public var nextSyncToken: String?
 }
 public struct GoogleCloudCalendarCalendarListEntry : GoogleCloudModel {
-   /*The effective access role that the authenticated user has on the calendar. Read-only. Possible values are:
-- "freeBusyReader" - Provides read access to free/busy information.
-- "reader" - Provides read access to the calendar. Private events will appear to users with reader access, but event details will be hidden.
-- "writer" - Provides read and write access to the calendar. Private events will appear to users with writer access, and event details will be visible.
+   /*The effective access role that the authenticated user has on the calendar. Read-only. Possible values are:  
+- "freeBusyReader" - Provides read access to free/busy information. 
+- "reader" - Provides read access to the calendar. Private events will appear to users with reader access, but event details will be hidden. 
+- "writer" - Provides read and write access to the calendar. Private events will appear to users with writer access, and event details will be visible. 
 - "owner" - Provides ownership of the calendar. This role has all of the permissions of the writer role with the additional ability to see and manipulate ACLs. */
    public var accessRole: String?
    /*The main color of the calendar in the hexadecimal format "#0088aa". This property supersedes the index-based colorId property. To set or change this property, you need to specify colorRgbFormat=true in the parameters of the insert, update and patch methods. Optional. */
@@ -1034,22 +1020,22 @@ public struct GoogleCloudCalendarCalendarListEntry : GoogleCloudModel {
    public var timeZone: String?
 }
 public struct GoogleCloudCalendarCalendarNotification : GoogleCloudModel {
-   /*The method used to deliver the notification. Possible values are:
-- "email" - Notifications are sent via email.
+   /*The method used to deliver the notification. Possible values are:  
+- "email" - Notifications are sent via email. 
 - "sms" - Deprecated. Once this feature is shutdown, the API will no longer return notifications using this method. Any newly added SMS notifications will be ignored. See  Google Calendar SMS notifications to be removed for more information.
-Notifications are sent via SMS. This value is read-only and is ignored on inserts and updates. SMS notifications are only available for G Suite customers.
+Notifications are sent via SMS. This value is read-only and is ignored on inserts and updates. SMS notifications are only available for G Suite customers.  
 Required when adding a notification. */
    public var method: String?
-   /*The type of notification. Possible values are:
-- "eventCreation" - Notification sent when a new event is put on the calendar.
-- "eventChange" - Notification sent when an event is changed.
-- "eventCancellation" - Notification sent when an event is cancelled.
-- "eventResponse" - Notification sent when an attendee responds to the event invitation.
-- "agenda" - An agenda with the events of the day (sent out in the morning).
+   /*The type of notification. Possible values are:  
+- "eventCreation" - Notification sent when a new event is put on the calendar. 
+- "eventChange" - Notification sent when an event is changed. 
+- "eventCancellation" - Notification sent when an event is cancelled. 
+- "eventResponse" - Notification sent when an attendee responds to the event invitation. 
+- "agenda" - An agenda with the events of the day (sent out in the morning).  
 Required when adding a notification. */
    public var type: String?
 }
-public struct GoogleCloudCalendar_Channel : GoogleCloudModel {
+public struct GoogleCloudCalendarChannel : GoogleCloudModel {
    /*The address where notifications are delivered for this channel. */
    public var address: String?
    /*Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds. Optional. */
@@ -1090,7 +1076,7 @@ public struct GoogleCloudCalendarColors : GoogleCloudModel {
 public struct GoogleCloudCalendarConferenceData : GoogleCloudModel {
    /*The ID of the conference.
 Can be used by developers to keep track of conferences, should not be displayed to users.
-Values for solution types:
+Values for solution types:  
 - "eventHangout": unset.
 - "eventNamedHangout": the name of the Hangout.
 - "hangoutsMeet": the 10-letter meeting code, for example "aaa-bbbb-ccc".
@@ -1126,15 +1112,15 @@ public struct GoogleCloudCalendarConferenceParametersAddOnParameters : GoogleClo
 }
 public struct GoogleCloudCalendarConferenceProperties : GoogleCloudModel {
    /*The types of conference solutions that are supported for this calendar.
-The possible values are:
-- "eventHangout"
-- "eventNamedHangout"
+The possible values are:  
+- "eventHangout" 
+- "eventNamedHangout" 
 - "hangoutsMeet"  Optional. */
    public var allowedConferenceSolutionTypes: [String]?
 }
 public struct GoogleCloudCalendarConferenceRequestStatus : GoogleCloudModel {
    /*The current status of the conference create request. Read-only.
-The possible values are:
+The possible values are:  
 - "pending": the conference create request is still being processed.
 - "success": the conference create request succeeded, the entry points are populated.
 - "failure": the conference create request failed, there are no entry points. */
@@ -1151,7 +1137,7 @@ public struct GoogleCloudCalendarConferenceSolution : GoogleCloudModel {
 public struct GoogleCloudCalendarConferenceSolutionKey : GoogleCloudModel {
    /*The conference solution type.
 If a client encounters an unfamiliar or empty type, it should still be able to display the entry points. However, it should disallow modifications.
-The possible values are:
+The possible values are:  
 - "eventHangout" for Hangouts for consumers (http://hangouts.google.com)
 - "eventNamedHangout" for classic Hangouts for G Suite users (http://hangouts.google.com)
 - "hangoutsMeet" for Hangouts Meet (http://meet.google.com)
@@ -1175,18 +1161,18 @@ Optional. */
    /*Features of the entry point, such as being toll or toll-free. One entry point can have multiple features. However, toll and toll-free cannot be both set on the same entry point. */
    public var entryPointFeatures: [String]?
    /*The type of the conference entry point.
-Possible values are:
+Possible values are:  
 - "video" - joining a conference over HTTP. A conference can have zero or one video entry point.
 - "phone" - joining a conference by dialing a phone number. A conference can have zero or more phone entry points.
 - "sip" - joining a conference over SIP. A conference can have zero or one sip entry point.
 - "more" - further conference joining instructions, for example additional phone numbers. A conference can have zero or one more entry point. A conference with only a more entry point is not a valid conference. */
    public var entryPointType: String?
    /*The label for the URI. Visible to end users. Not localized. The maximum length is 512 characters.
-Examples:
+Examples:  
 - for video: meet.google.com/aaa-bbbb-ccc
 - for phone: +1 123 268 2601
 - for sip: 12345678@altostrat.com
-- for more: should not be filled
+- for more: should not be filled  
 Optional. */
    public var label: String?
    /*The meeting code to access the conference. The maximum length is 128 characters.
@@ -1208,7 +1194,7 @@ Optional. */
 Calendar backend will populate this field only for EntryPointType.PHONE. */
    public var regionCode: String?
    /*The URI of the entry point. The maximum length is 1300 characters.
-Format:
+Format:  
 - for video, http: or https: schema is required.
 - for phone, tel: schema is required. The URI should include the entire dial sequence (e.g., tel:+12345678900,,,123456789;1234).
 - for sip, sip: schema is required, e.g., sip:12345678@myprovider.com.
@@ -1218,10 +1204,10 @@ Format:
 public struct GoogleCloudCalendarError : GoogleCloudModel {
    /*Domain, or broad category, of the error. */
    public var domain: String?
-   /*Specific reason for the error. Some of the possible values are:
-- "groupTooBig" - The group of users requested is too large for a single query.
-- "tooManyCalendarsRequested" - The number of calendars requested is too large for a single query.
-- "notFound" - The requested resource was not found.
+   /*Specific reason for the error. Some of the possible values are:  
+- "groupTooBig" - The group of users requested is too large for a single query. 
+- "tooManyCalendarsRequested" - The number of calendars requested is too large for a single query. 
+- "notFound" - The requested resource was not found. 
 - "internalError" - The API service has encountered an internal error.  Additional error types may be added in the future, so clients should gracefully handle additional error statuses not included in this list. */
    public var reason: String?
 }
@@ -1269,9 +1255,9 @@ There can be at most 25 attachments per event, */
    /*Event unique identifier as defined in RFC5545. It is used to uniquely identify events accross calendaring systems and must be supplied when importing events via the import method.
 Note that the icalUID and the id are not identical and only one of them should be supplied at event creation time. One difference in their semantics is that in recurring events, all occurrences of one event have different ids while they all share the same icalUIDs. */
    public var iCalUID: String?
-   /*Opaque identifier of the event. When creating new single or recurring events, you can specify their IDs. Provided IDs must follow these rules:
-- characters allowed in the ID are those used in base32hex encoding, i.e. lowercase letters a-v and digits 0-9, see section 3.1.2 in RFC2938
-- the length of the ID must be between 5 and 1024 characters
+   /*Opaque identifier of the event. When creating new single or recurring events, you can specify their IDs. Provided IDs must follow these rules:  
+- characters allowed in the ID are those used in base32hex encoding, i.e. lowercase letters a-v and digits 0-9, see section 3.1.2 in RFC2938 
+- the length of the ID must be between 5 and 1024 characters 
 - the ID must be unique per calendar  Due to the globally distributed nature of the system, we cannot guarantee that ID collisions will be detected at event creation time. To minimize the risk of collisions we recommend using an established UUID algorithm such as one described in RFC4122.
 If you do not specify an ID, it will be automatically generated by the server.
 Note that the icalUID and the id are not identical and only one of them should be supplied at event creation time. One difference in their semantics is that in recurring events, all occurrences of one event have different ids while they all share the same icalUIDs. */
@@ -1300,29 +1286,29 @@ Note that the icalUID and the id are not identical and only one of them should b
    public var source: GoogleCloudCalendarEventSource?
    /*The (inclusive) start time of the event. For a recurring event, this is the start time of the first instance. */
    public var start:  GoogleCloudCalendarEventDateTime?
-   /*Status of the event. Optional. Possible values are:
-- "confirmed" - The event is confirmed. This is the default status.
-- "tentative" - The event is tentatively confirmed.
+   /*Status of the event. Optional. Possible values are:  
+- "confirmed" - The event is confirmed. This is the default status. 
+- "tentative" - The event is tentatively confirmed. 
 - "cancelled" - The event is cancelled (deleted). The list method returns cancelled events only on incremental sync (when syncToken or updatedMin are specified) or if the showDeleted flag is set to true. The get method always returns them.
-A cancelled status represents two different states depending on the event type:
+A cancelled status represents two different states depending on the event type:  
 - Cancelled exceptions of an uncancelled recurring event indicate that this instance should no longer be presented to the user. Clients should store these events for the lifetime of the parent recurring event.
-Cancelled exceptions are only guaranteed to have values for the id, recurringEventId and originalStartTime fields populated. The other fields might be empty.
+Cancelled exceptions are only guaranteed to have values for the id, recurringEventId and originalStartTime fields populated. The other fields might be empty.  
 - All other cancelled events represent deleted events. Clients should remove their locally synced copies. Such cancelled events will eventually disappear, so do not rely on them being available indefinitely.
 Deleted events are only guaranteed to have the id field populated.   On the organizer's calendar, cancelled events continue to expose event details (summary, location, etc.) so that they can be restored (undeleted). Similarly, the events to which the user was invited and that they manually removed continue to provide details. However, incremental sync requests with showDeleted set to false will not return these details.
 If an event changes its organizer (for example via the move operation) and the original organizer is not on the attendee list, it will leave behind a cancelled event where only the id field is guaranteed to be populated. */
    public var status: String?
    /*Title of the event. */
    public var summary: String?
-   /*Whether the event blocks time on the calendar. Optional. Possible values are:
-- "opaque" - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
+   /*Whether the event blocks time on the calendar. Optional. Possible values are:  
+- "opaque" - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI. 
 - "transparent" - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI. */
    public var transparency: String?
    /*Last modification time of the event (as a RFC3339 timestamp). Read-only. */
    public var updated: String?
-   /*Visibility of the event. Optional. Possible values are:
-- "default" - Uses the default visibility for events on the calendar. This is the default value.
-- "public" - The event is public and event details are visible to all readers of the calendar.
-- "private" - The event is private and only event attendees may view event details.
+   /*Visibility of the event. Optional. Possible values are:  
+- "default" - Uses the default visibility for events on the calendar. This is the default value. 
+- "public" - The event is public and event details are visible to all readers of the calendar. 
+- "private" - The event is private and only event attendees may view event details. 
 - "confidential" - The event is private. This value is provided for compatibility reasons. */
    public var visibility: String?
 }
@@ -1359,14 +1345,14 @@ Required when adding an attendee. */
    public var organizer: Bool?
    /*Whether the attendee is a resource. Can only be set when the attendee is added to the event for the first time. Subsequent modifications are ignored. Optional. The default is False. */
    public var resource: Bool?
-   /*The attendee's response status. Possible values are:
-- "needsAction" - The attendee has not responded to the invitation.
-- "declined" - The attendee has declined the invitation.
-- "tentative" - The attendee has tentatively accepted the invitation.
+   /*The attendee's response status. Possible values are:  
+- "needsAction" - The attendee has not responded to the invitation. 
+- "declined" - The attendee has declined the invitation. 
+- "tentative" - The attendee has tentatively accepted the invitation. 
 - "accepted" - The attendee has accepted the invitation. */
    public var responseStatus: String?
    /*Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False. */
-   public var _self: Bool?
+   public var `self`: Bool?
 }
 public struct GoogleCloudCalendarEventDateTime : GoogleCloudModel {
    /*The date, in the format "yyyy-mm-dd", if this is an all-day event. */
@@ -1377,11 +1363,11 @@ public struct GoogleCloudCalendarEventDateTime : GoogleCloudModel {
    public var timeZone: String?
 }
 public struct GoogleCloudCalendarEventReminder : GoogleCloudModel {
-   /*The method used by this reminder. Possible values are:
-- "email" - Reminders are sent via email.
+   /*The method used by this reminder. Possible values are:  
+- "email" - Reminders are sent via email. 
 - "sms" - Deprecated. Once this feature is shutdown, the API will no longer return reminders using this method. Any newly added SMS reminders will be ignored. See  Google Calendar SMS notifications to be removed for more information.
-Reminders are sent via SMS. These are only available for G Suite customers. Requests to set SMS reminders for other account types are ignored.
-- "popup" - Reminders are sent via a UI popup.
+Reminders are sent via SMS. These are only available for G Suite customers. Requests to set SMS reminders for other account types are ignored. 
+- "popup" - Reminders are sent via a UI popup.  
 Required when adding a reminder. */
    public var method: String?
    /*Number of minutes before the start of the event when the reminder should trigger. Valid values are between 0 and 40320 (4 weeks in minutes).
@@ -1389,11 +1375,11 @@ Required when adding a reminder. */
    public var minutes: Int?
 }
 public struct GoogleCloudCalendarEvents : GoogleCloudModel {
-   /*The user's access role for this calendar. Read-only. Possible values are:
-- "none" - The user has no access.
-- "freeBusyReader" - The user has read access to free/busy information.
-- "reader" - The user has read access to the calendar. Private events will appear to users with reader access, but event details will be hidden.
-- "writer" - The user has read and write access to the calendar. Private events will appear to users with writer access, and event details will be visible.
+   /*The user's access role for this calendar. Read-only. Possible values are:  
+- "none" - The user has no access. 
+- "freeBusyReader" - The user has read access to free/busy information. 
+- "reader" - The user has read access to the calendar. Private events will appear to users with reader access, but event details will be hidden. 
+- "writer" - The user has read and write access to the calendar. Private events will appear to users with writer access, and event details will be visible. 
 - "owner" - The user has ownership of the calendar. This role has all of the permissions of the writer role with the additional ability to see and manipulate ACLs. */
    public var accessRole: String?
    /*The default reminders on the calendar for the authenticated user. These reminders apply to all events on this calendar that do not explicitly override them (i.e. do not have reminders.useDefault set to True). */
@@ -1488,10 +1474,10 @@ public struct GoogleCloudCalendarTimePeriod : GoogleCloudModel {
    public var start: String?
 }
 public struct GoogleCloudCalendarAclRuleScope : GoogleCloudModel {
-   /*The type of the scope. Possible values are:
-- "default" - The public scope. This is the default value.
-- "user" - Limits the scope to a single user.
-- "group" - Limits the scope to a group.
+   /*The type of the scope. Possible values are:  
+- "default" - The public scope. This is the default value. 
+- "user" - Limits the scope to a single user. 
+- "group" - Limits the scope to a group. 
 - "domain" - Limits the scope to a domain.  Note: The permissions granted to the "default", or public, scope apply to any user, authenticated or not. */
    public var type: String?
    /*The email address of a user or group, or the name of a domain, depending on the scope type. Omitted for type "default". */
@@ -1509,17 +1495,17 @@ public struct GoogleCloudCalendarEventCreator : GoogleCloudModel {
    /*The creator's Profile ID, if available. It corresponds to the id field in the People collection of the Google+ API */
    public var id: String?
    /*Whether the creator corresponds to the calendar on which this copy of the event appears. Read-only. The default is False. */
-   public var _self: Bool?
+   public var `self`: Bool?
 }
 public struct GoogleCloudCalendarEventExtendedProperties : GoogleCloudModel {
    /*Properties that are private to the copy of the event that appears on this calendar. */
-   public var _private: PlaceHolderObject?
+   public var `private`: [String :String]?
    /*Properties that are shared between copies of the event on other attendees' calendars. */
-   public var shared: PlaceHolderObject?
+   public var shared: [String :String]?
 }
 public struct GoogleCloudCalendarEventGadget : GoogleCloudModel {
-   /*The gadget's display mode. Optional. Possible values are:
-- "icon" - The gadget displays next to the event's title in the calendar view.
+   /*The gadget's display mode. Optional. Possible values are:  
+- "icon" - The gadget displays next to the event's title in the calendar view. 
 - "chip" - The gadget displays when the event is clicked. */
    public var display: String?
    /*The gadget's height in pixels. The height must be an integer greater than 0. Optional. */
@@ -1529,7 +1515,7 @@ public struct GoogleCloudCalendarEventGadget : GoogleCloudModel {
    /*The gadget's URL. The URL scheme must be HTTPS. */
    public var link: String?
    /*Preferences. */
-   public var preferences: PlaceHolderObject?
+   public var preferences: [String :String]?
    /*The gadget's title. */
    public var title: String?
    /*The gadget's type. */
@@ -1545,7 +1531,7 @@ public struct GoogleCloudCalendarEventOrganizer : GoogleCloudModel {
    /*The organizer's Profile ID, if available. It corresponds to the id field in the People collection of the Google+ API */
    public var id: String?
    /*Whether the organizer corresponds to the calendar on which this copy of the event appears. Read-only. The default is False. */
-   public var _self: Bool?
+   public var `self`: Bool?
 }
 public struct GoogleCloudCalendarEventReminders : GoogleCloudModel {
    /*If the event doesn't use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5. */
@@ -1575,7 +1561,7 @@ public final class GoogleCloudCalendarClient {
       guard let projectId = ProcessInfo.processInfo.environment["PROJECT_ID"] ??
                (refreshableToken as? OAuthServiceAccount)?.credentials.projectId ??
                calendarConfig.project ?? credentials.project else {
-         throw GoogleCloudCalendarInternalError.projectIdMissing
+         throw GoogleCloudInternalError.projectIdMissing
       }
 
       let request = GoogleCloudCalendarRequest(httpClient: httpClient, eventLoop: eventLoop, oauth: refreshableToken, project: projectId)
@@ -1591,3 +1577,4 @@ public final class GoogleCloudCalendarClient {
       settings = GoogleCloudCalendarSettingsAPI(request: request)
    }
 }
+

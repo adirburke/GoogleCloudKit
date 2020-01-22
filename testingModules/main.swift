@@ -28,8 +28,20 @@ do {
 
     let config = GoogleCloudCalendarConfiguration(scope: [.Calendar], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
     let calClient = try GoogleCloudCalendarClient(credentials: cred, calendarConfig: config, httpClient: httpClient, eventLoop: ev.next())
-    let s = try calClient.calendarList.list().wait()
-    print(s)
+//    let s = try calClient.calendarList.list().wait()
+//    for cal in s.items ?? [] {
+//        print(cal.id)
+//    }
+//    let t = try calClient.calendars.get(calendarId: "hanave.com_87j3qa2c4h2005a1qbmqinakss@group.calendar.google.com", queryParameters: nil).wait()
+//    print(t.id)
+//    let e = try calClient.events.list(calendarId: "hanave.com_87j3qa2c4h2005a1qbmqinakss@group.calendar.google.com", queryParameters: nil).wait()
+//    for ev in e.items ?? []{
+//        print(ev.id)
+//    }
+    
+    let evv = try calClient.events.get(calendarId: "hanave.com_87j3qa2c4h2005a1qbmqinakss@group.calendar.google.com", eventId: "1uhvorh1h7i2169rp7kmh91t8o_20190803", queryParameters: nil).wait()
+    
+    print(evv.extendedProperties)
     
 } catch {
     print(error)
