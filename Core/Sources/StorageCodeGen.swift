@@ -7,24 +7,25 @@ import NIO
 import Core
 import NIOFoundationCompat
 import NIOHTTP1
+import CodableWrappers
 
 
 public enum GoogleCloudStorageScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
       case .CloudPlatformReadOnly: return "https://www.googleapis.com/auth/cloud-platform.read-only"
-      case .DevstorageReadOnly: return "https://www.googleapis.com/auth/devstorage.read_only"
       case .DevstorageFullControl: return "https://www.googleapis.com/auth/devstorage.full_control"
-      case .DevstorageReadWrite: return "https://www.googleapis.com/auth/devstorage.read_write"
       case .CloudPlatform: return "https://www.googleapis.com/auth/cloud-platform"
+      case .DevstorageReadOnly: return "https://www.googleapis.com/auth/devstorage.read_only"
+      case .DevstorageReadWrite: return "https://www.googleapis.com/auth/devstorage.read_write"
       }
    }
 
    case CloudPlatformReadOnly // View your data across Google Cloud Platform services
-   case DevstorageReadOnly // View your data in Google Cloud Storage
    case DevstorageFullControl // Manage your data and permissions in Google Cloud Storage
-   case DevstorageReadWrite // Manage your data in Google Cloud Storage
    case CloudPlatform // View and manage your data across Google Cloud Platform services
+   case DevstorageReadOnly // View your data in Google Cloud Storage
+   case DevstorageReadWrite // Manage your data in Google Cloud Storage
 }
 
 
@@ -1278,13 +1279,13 @@ public struct GoogleCloudStorageBucket : GoogleCloudModel {
    /*The bucket's logging configuration, which defines the destination bucket and optional name prefix for the current bucket's logs. */
    public var logging: GoogleCloudStorageBucketLogging?
    /*The metadata generation of this bucket. */
-   public var metageneration: String?
+   @CodingUses<Coder> public var metageneration: Int?
    /*The name of the bucket. */
    public var name: String?
    /*The owner of the bucket. This is always the project team's owner group. */
    public var owner: GoogleCloudStorageBucketOwner?
    /*The project number of the project the bucket belongs to. */
-   public var projectNumber: String?
+   @CodingUses<Coder> public var projectNumber: UInt?
    /*The bucket's retention policy. The retention policy enforces a minimum retention time for all objects contained in the bucket, based on their creation time. Any attempt to overwrite or delete objects younger than the retention period will result in a PERMISSION_DENIED error. An unlocked retention policy can be modified or removed from the bucket via a storage.buckets.update operation. A locked retention policy cannot be removed or shortened in duration for the lifetime of the bucket. Attempting to remove or decrease period of a locked retention policy will result in a PERMISSION_DENIED error. */
    public var retentionPolicy: GoogleCloudStorageBucketRetentionPolicy?
    /*The URI of this bucket. */
@@ -1292,9 +1293,9 @@ public struct GoogleCloudStorageBucket : GoogleCloudModel {
    /*The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. Values include MULTI_REGIONAL, REGIONAL, STANDARD, NEARLINE, COLDLINE, ARCHIVE, and DURABLE_REDUCED_AVAILABILITY. If this value is not specified when the bucket is created, it will default to STANDARD. For more information, see storage classes. */
    public var storageClass: String?
    /*The creation time of the bucket in RFC 3339 format. */
-   public var timeCreated: String?
+   @CodingUses<Coder> public var timeCreated: String?
    /*The modification time of the bucket in RFC 3339 format. */
-   public var updated: String?
+   @CodingUses<Coder> public var updated: String?
    /*The bucket's versioning configuration. */
    public var versioning: GoogleCloudStorageBucketVersioning?
    /*The bucket's website configuration, controlling how the service behaves when accessing bucket contents as a web site. See the Static Website Examples for more information. */
@@ -1353,7 +1354,7 @@ public struct GoogleCloudStorageChannel : GoogleCloudModel {
    /*The address where notifications are delivered for this channel. */
    public var address: String?
    /*Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds. Optional. */
-   public var expiration: String?
+   @CodingUses<Coder> public var expiration: Int?
    /*A UUID or similar unique string that identifies this channel. */
    public var id: String?
    /*Identifies this as a notification channel used to watch for changes to a resource, which is "api#channel". */
@@ -1415,9 +1416,9 @@ public struct GoogleCloudStorageHmacKeyMetadata : GoogleCloudModel {
    /*The state of the key. Can be one of ACTIVE, INACTIVE, or DELETED. */
    public var state: String?
    /*The creation time of the HMAC key in RFC 3339 format. */
-   public var timeCreated: String?
+   @CodingUses<Coder> public var timeCreated: String?
    /*The last modification time of the HMAC key metadata in RFC 3339 format. */
-   public var updated: String?
+   @CodingUses<Coder> public var updated: String?
 }
 public struct GoogleCloudStorageHmacKeysMetadata : GoogleCloudModel {
    /*The list of items. */
@@ -1461,7 +1462,7 @@ public struct GoogleCloudStorageObject : GoogleCloudModel {
    /*Cache-Control directive for the object data. If omitted, and the object is accessible to all anonymous users, the default will be public, max-age=3600. */
    public var cacheControl: String?
    /*Number of underlying components that make up this object. Components are accumulated by compose operations. */
-   public var componentCount: Int?
+   @CodingUses<Coder> public var componentCount: Int?
    /*Content-Disposition of the object data. */
    public var contentDisposition: String?
    /*Content-Encoding of the object data. */
@@ -1479,7 +1480,7 @@ public struct GoogleCloudStorageObject : GoogleCloudModel {
    /*Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One sample use case of this flag is for banks to hold loan documents for at least 3 years after loan is paid in full. Here, bucket-level retention is 3 years and the event is the loan being paid in full. In this example, these objects will be held intact for any number of years until the event has occurred (event-based hold on the object is released) and then 3 more years after that. That means retention duration of the objects begins from the moment event-based hold transitioned from true to false. */
    public var eventBasedHold: Bool?
    /*The content generation of this object. Used for object versioning. */
-   public var generation: String?
+   @CodingUses<Coder> public var generation: Int?
    /*The ID of the object, including the bucket name, object name, and generation number. */
    public var id: String?
    /*The kind of item this is. For objects, this is always storage#object. */
@@ -1493,29 +1494,29 @@ public struct GoogleCloudStorageObject : GoogleCloudModel {
    /*User-provided metadata, in key/value pairs. */
    public var metadata: [String : String]?
    /*The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. */
-   public var metageneration: String?
+   @CodingUses<Coder> public var metageneration: Int?
    /*The name of the object. Required if not specified by URL parameter. */
    public var name: String?
    /*The owner of the object. This will always be the uploader of the object. */
    public var owner: GoogleCloudStorageObjectOwner?
    /*A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This value can be provided even when temporary hold is set (so that the user can reason about policy without having to first unset the temporary hold). */
-   public var retentionExpirationTime: String?
+   @CodingUses<Coder> public var retentionExpirationTime: String?
    /*The link to this object. */
    public var selfLink: String?
    /*Content-Length of the data in bytes. */
-   public var size: String?
+   @CodingUses<Coder> public var size: UInt?
    /*Storage class of the object. */
    public var storageClass: String?
    /*Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold, temporary hold does not impact retention expiration time of an object. */
    public var temporaryHold: Bool?
    /*The creation time of the object in RFC 3339 format. */
-   public var timeCreated: String?
+   @CodingUses<Coder> public var timeCreated: String?
    /*The deletion time of the object in RFC 3339 format. Will be returned if and only if this version of the object has been deleted. */
-   public var timeDeleted: String?
+   @CodingUses<Coder> public var timeDeleted: String?
    /*The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. */
-   public var timeStorageClassUpdated: String?
+   @CodingUses<Coder> public var timeStorageClassUpdated: String?
    /*The modification time of the object metadata in RFC 3339 format. */
-   public var updated: String?
+   @CodingUses<Coder> public var updated: String?
 }
 public struct GoogleCloudStorageObjectAccessControl : GoogleCloudModel {
    /*The name of the bucket. */
@@ -1542,7 +1543,7 @@ public struct GoogleCloudStorageObjectAccessControl : GoogleCloudModel {
    /*HTTP 1.1 Entity tag for the access-control entry. */
    public var etag: String?
    /*The content generation of the object, if applied to an object. */
-   public var generation: String?
+   @CodingUses<Coder> public var generation: Int?
    /*The ID of the access-control entry. */
    public var id: String?
    /*The kind of item this is. For object access control entries, this is always storage#objectAccessControl. */
@@ -1576,13 +1577,13 @@ public struct GoogleCloudStoragePolicy : GoogleCloudModel {
    /*An association between a role, which comes with a set of permissions, and members who may assume that role. */
    public var bindings: [GoogleCloudStoragePolicyBindings]?
    /*HTTP 1.1  Entity tag for the policy. */
-   public var etag: String?
+   @CodingUses<Coder> public var etag: Data?
    /*The kind of item this is. For policies, this is always storage#policy. This field is ignored on input. */
    public var kind: String?
    /*The ID of the resource to which this policy belongs. Will be of the form projects/_/buckets/bucket for buckets, and projects/_/buckets/bucket/objects/object for objects. A specific generation may be specified by appending #generationNumber to the end of the object name, e.g. projects/_/buckets/my-bucket/objects/data.txt#17. The current generation can be denoted with #0. This field is ignored on input. */
    public var resourceId: String?
    /*The IAM policy format version. */
-   public var version: Int?
+   @CodingUses<Coder> public var version: Int?
 }
 public struct GoogleCloudStorageRewriteResponse : GoogleCloudModel {
    /*true if the copy is finished; otherwise, false if the copy is in progress. This property is always present in the response. */
@@ -1590,13 +1591,13 @@ public struct GoogleCloudStorageRewriteResponse : GoogleCloudModel {
    /*The kind of item this is. */
    public var kind: String?
    /*The total size of the object being copied in bytes. This property is always present in the response. */
-   public var objectSize: String?
+   @CodingUses<Coder> public var objectSize: Int?
    /*A resource containing the metadata for the copied-to object. This property is present in the response only when copying completes. */
    public var resource:  GoogleCloudStorageObject?
    /*A token to use in subsequent requests to continue copying data. This token is present in the response only when there is more data to copy. */
    public var rewriteToken: String?
    /*The total bytes written so far, which can be used to provide a waiting user with a progress indicator. This property is always present in the response. */
-   public var totalBytesRewritten: String?
+   @CodingUses<Coder> public var totalBytesRewritten: Int?
 }
 public struct GoogleCloudStorageServiceAccount : GoogleCloudModel {
    /*The ID of the notification. */
@@ -1630,7 +1631,7 @@ public struct GoogleCloudStorageBucketBilling : GoogleCloudModel {
 }
 public struct GoogleCloudStorageBucketCors : GoogleCloudModel {
    /*The value, in seconds, to return in the  Access-Control-Max-Age header used in preflight responses. */
-   public var maxAgeSeconds: Int?
+   @CodingUses<Coder> public var maxAgeSeconds: Int?
    /*The list of HTTP methods on which to include CORS response headers, (GET, OPTIONS, POST, etc) Note: "*" is permitted in the list of methods, and means "any method". */
    public var method: [String]?
    /*The list of Origins eligible to receive CORS response headers. Note: "*" is permitted in the list of origins, and means "any Origin". */
@@ -1666,11 +1667,11 @@ public struct GoogleCloudStorageBucketOwner : GoogleCloudModel {
 }
 public struct GoogleCloudStorageBucketRetentionPolicy : GoogleCloudModel {
    /*Server-determined value that indicates the time from which policy was enforced and effective. This value is in RFC 3339 format. */
-   public var effectiveTime: String?
+   @CodingUses<Coder> public var effectiveTime: String?
    /*Once locked, an object retention policy cannot be modified. */
    public var isLocked: Bool?
    /*The duration in seconds that objects need to be retained. Retention duration must be greater than zero and less than 100 years. Note that enforcement of retention periods less than a day is not guaranteed. Such periods should only be used for testing purposes. */
-   public var retentionPeriod: String?
+   @CodingUses<Coder> public var retentionPeriod: Int?
 }
 public struct GoogleCloudStorageBucketVersioning : GoogleCloudModel {
    /*While set to true, versioning is fully enabled for this bucket. */
@@ -1690,7 +1691,7 @@ public struct GoogleCloudStorageBucketAccessControlProjectTeam : GoogleCloudMode
 }
 public struct GoogleCloudStorageComposeRequestSourceObjects : GoogleCloudModel {
    /*The generation of this object to use as the source. */
-   public var generation: String?
+   @CodingUses<Coder> public var generation: Int?
    /*The source object's name. All source objects must reside in the same bucket. */
    public var name: String?
    /*Conditions that must be met for this operation to execute. */

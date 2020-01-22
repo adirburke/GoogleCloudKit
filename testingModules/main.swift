@@ -22,12 +22,16 @@ do {
     }
     let cred = try GoogleCloudCredentialsConfiguration(projectId: projectId, credentialsFile: "cred.json")
 //    let config = GoogleCloudGmailConfiguration(scope: [.FullAccess], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
-//    let driveConfig = GoogleCloudDriveConfiguration(scope: [.Drive], serviceAccount: "AdirServer", project: projectId, subscription: nil)
+    let driveConfig = GoogleCloudDriveConfiguration(scope: [.Drive], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
 //    let gcClient = try GoogleCloudGmailClient(credentials: cred, gmailConfig: config, httpClient: httpClient, eventLoop: ev.next())
-//    let gdClient = try GoogleCloudDriveClient(credentials: cred, driveConfig: driveConfig, httpClient: httpClient, eventLoop: ev.next())
+    let gdClient = try GoogleCloudDriveClient(credentials: cred, driveConfig: driveConfig, httpClient: httpClient, eventLoop: ev.next())
+    
+    let tubeConfig = GoogleCloudYoutubeConfiguration(scope: [.Youtube], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
+    let ytClient = try GoogleCloudYoutubeClient(credentials: cred, youtubeConfig: tubeConfig, httpClient: httpClient, eventLoop: ev.next())
+    let s = try ytClient.comments.list(part: "*", queryParameters: nil).wait()
 
-    let config = GoogleCloudCalendarConfiguration(scope: [.Calendar], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
-    let calClient = try GoogleCloudCalendarClient(credentials: cred, calendarConfig: config, httpClient: httpClient, eventLoop: ev.next())
+//    let config = GoogleCloudCalendarConfiguration(scope: [.Calendar], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
+//    let calClient = try GoogleCloudCalendarClient(credentials: cred, calendarConfig: config, httpClient: httpClient, eventLoop: ev.next())
 //    let s = try calClient.calendarList.list().wait()
 //    for cal in s.items ?? [] {
 //        print(cal.id)
@@ -38,11 +42,13 @@ do {
 //    for ev in e.items ?? []{
 //        print(ev.id)
 //    }
+//    let s = try gdClient.files.list(queryParameters: nil).wait()
+//    for f in s.files ?? [] {
+//    }
+//
     
-    let evv = try calClient.events.get(calendarId: "hanave.com_87j3qa2c4h2005a1qbmqinakss@group.calendar.google.com", eventId: "1uhvorh1h7i2169rp7kmh91t8o_20190803", queryParameters: nil).wait()
     
-    print(evv.extendedProperties)
-    
+
 } catch {
     print(error)
 }

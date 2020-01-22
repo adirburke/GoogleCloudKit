@@ -7,30 +7,31 @@ import NIO
 import Core
 import NIOFoundationCompat
 import NIOHTTP1
+import CodableWrappers
 
 
 public enum GoogleCloudDriveScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
-      case .DriveScripts: return "https://www.googleapis.com/auth/drive.scripts"
-      case .Drive: return "https://www.googleapis.com/auth/drive"
       case .DriveMetadata: return "https://www.googleapis.com/auth/drive.metadata"
       case .DriveReadonly: return "https://www.googleapis.com/auth/drive.readonly"
-      case .DriveMetadataReadonly: return "https://www.googleapis.com/auth/drive.metadata.readonly"
+      case .DriveScripts: return "https://www.googleapis.com/auth/drive.scripts"
       case .DrivePhotosReadonly: return "https://www.googleapis.com/auth/drive.photos.readonly"
       case .DriveFile: return "https://www.googleapis.com/auth/drive.file"
+      case .DriveMetadataReadonly: return "https://www.googleapis.com/auth/drive.metadata.readonly"
       case .DriveAppdata: return "https://www.googleapis.com/auth/drive.appdata"
+      case .Drive: return "https://www.googleapis.com/auth/drive"
       }
    }
 
-   case DriveScripts // Modify your Google Apps Script scripts' behavior
-   case Drive // See, edit, create, and delete all of your Google Drive files
    case DriveMetadata // View and manage metadata of files in your Google Drive
    case DriveReadonly // See and download all your Google Drive files
-   case DriveMetadataReadonly // View metadata for files in your Google Drive
+   case DriveScripts // Modify your Google Apps Script scripts' behavior
    case DrivePhotosReadonly // View the photos, videos and albums in your Google Photos
    case DriveFile // View and manage Google Drive files and folders that you have opened or created with this app
+   case DriveMetadataReadonly // View metadata for files in your Google Drive
    case DriveAppdata // View and manage its own configuration data in your Google Drive
+   case Drive // See, edit, create, and delete all of your Google Drive files
 }
 
 
@@ -102,6 +103,7 @@ public final class GoogleCloudDriveRequest : GoogleCloudAPIRequest {
                fatalError("Response body from Google is missing! This should never happen.")
             }
             let responseData = byteBuffer.readData(length: byteBuffer.readableBytes)!
+            print(String(data:responseData, encoding: .utf8))
                guard (200...299).contains(response.status.code) else {
                let error: Error
                if let jsonError = try? self.responseDecoder.decode(GoogleCloudAPIErrorMain.self, from: responseData) {
@@ -1108,9 +1110,9 @@ public struct GoogleCloudDriveAbout : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#about". */
    public var kind: String?
    /*A map of maximum import sizes by MIME type, in bytes. */
-   public var maxImportSizes: [String : String]?
+   public var maxImportSizes: [String : Int]?
    /*The maximum upload size in bytes. */
-   public var maxUploadSize: String?
+   @CodingUses<Coder> public var maxUploadSize: Int?
    /*The user's storage quota limits and usage. All fields are measured in bytes. */
    public var storageQuota: GoogleCloudDriveAboutStorageQuota?
    /*Deprecated - use driveThemes instead. */
@@ -1138,7 +1140,7 @@ public struct GoogleCloudDriveChange : GoogleCloudModel {
    /*Deprecated - use driveId instead. */
    public var teamDriveId: String?
    /*The time of this change (RFC 3339 date-time). */
-   public var time: String?
+   @CodingUses<Coder> public var time: String?
    /*Deprecated - use changeType instead. */
    public var type: String?
 }
@@ -1156,7 +1158,7 @@ public struct GoogleCloudDriveChannel : GoogleCloudModel {
    /*The address where notifications are delivered for this channel. */
    public var address: String?
    /*Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds. Optional. */
-   public var expiration: String?
+   @CodingUses<Coder> public var expiration: Int?
    /*A UUID or similar unique string that identifies this channel. */
    public var id: String?
    /*Identifies this as a notification channel used to watch for changes to a resource, which is "api#channel". */
@@ -1182,7 +1184,7 @@ public struct GoogleCloudDriveComment : GoogleCloudModel {
    /*The plain text content of the comment. This field is used for setting the content, while htmlContent should be displayed. */
    public var content: String?
    /*The time at which the comment was created (RFC 3339 date-time). */
-   public var createdTime: String?
+   @CodingUses<Coder> public var createdTime: String?
    /*Whether the comment has been deleted. A deleted comment has no content. */
    public var deleted: Bool?
    /*The content of the comment with HTML formatting. */
@@ -1192,7 +1194,7 @@ public struct GoogleCloudDriveComment : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#comment". */
    public var kind: String?
    /*The last time the comment or any of its replies was modified (RFC 3339 date-time). */
-   public var modifiedTime: String?
+   @CodingUses<Coder> public var modifiedTime: String?
    /*The file content to which the comment refers, typically within the anchor region. For a text file, for example, this would be the text at the location of the comment. */
    public var quotedFileContent: GoogleCloudDriveCommentQuotedFileContent?
    /*The full list of replies to the comment in chronological order. */
@@ -1218,7 +1220,7 @@ public struct GoogleCloudDriveDrive : GoogleCloudModel {
    /*The color of this shared drive as an RGB hex string. It can only be set on a drive.drives.update request that does not set themeId. */
    public var colorRgb: String?
    /*The time at which the shared drive was created (RFC 3339 date-time). */
-   public var createdTime: String?
+   @CodingUses<Coder> public var createdTime: String?
    /*Whether the shared drive is hidden from default view. */
    public var hidden: Bool?
    /*The ID of this shared drive which is also the ID of the top level folder of this shared drive. */
@@ -1251,7 +1253,7 @@ Entries with null values are cleared in update and copy requests. */
    /*Whether the options to copy, print, or download this file, should be disabled for readers and commenters. */
    public var copyRequiresWriterPermission: Bool?
    /*The time at which the file was created (RFC 3339 date-time). */
-   public var createdTime: String?
+   @CodingUses<Coder> public var createdTime: String?
    /*A short description of the file. */
    public var description: String?
    /*ID of the shared drive the file resides in. Only populated for items in shared drives. */
@@ -1295,10 +1297,10 @@ If a file is created with a Google Doc MIME type, the uploaded content will be i
    /*Whether the file has been modified by this user. */
    public var modifiedByMe: Bool?
    /*The last time the file was modified by the user (RFC 3339 date-time). */
-   public var modifiedByMeTime: String?
+   @CodingUses<Coder> public var modifiedByMeTime: String?
    /*The last time the file was modified by anyone (RFC 3339 date-time).
 Note that setting modifiedTime will also update modifiedByMeTime for the user. */
-   public var modifiedTime: String?
+   @CodingUses<Coder> public var modifiedTime: String?
    /*The name of the file. This is not necessarily unique within a folder. Note that for immutable items such as the top level folders of shared drives, My Drive root folder, and Application Data folder the name is constant. */
    public var name: String?
    /*The original filename of the uploaded content if available, or else the original value of the name field. This is only available for files with binary content in Google Drive. */
@@ -1318,15 +1320,15 @@ If not specified as part of a create request, the file will be placed directly i
 Entries with null values are cleared in update and copy requests. */
    public var properties: [String : String]?
    /*The number of storage quota bytes used by the file. This includes the head revision as well as previous revisions with keepForever enabled. */
-   public var quotaBytesUsed: String?
+   @CodingUses<Coder> public var quotaBytesUsed: Int?
    /*Whether the file has been shared. Not populated for items in shared drives. */
    public var shared: Bool?
    /*The time at which the file was shared with the user, if applicable (RFC 3339 date-time). */
-   public var sharedWithMeTime: String?
+   @CodingUses<Coder> public var sharedWithMeTime: String?
    /*The user who shared the file with the requesting user, if applicable. */
    public var sharingUser:  GoogleCloudDriveUser?
    /*The size of the file's content in bytes. This is only applicable to files with binary content in Google Drive. */
-   public var size: String?
+   @CodingUses<Coder> public var size: Int?
    /*The list of spaces which contain the file. The currently supported values are 'drive', 'appDataFolder' and 'photos'. */
    public var spaces: [String]?
    /*Whether the user has starred the file. */
@@ -1336,21 +1338,21 @@ Entries with null values are cleared in update and copy requests. */
    /*A short-lived link to the file's thumbnail, if available. Typically lasts on the order of hours. Only populated when the requesting app can access the file's content. */
    public var thumbnailLink: String?
    /*The thumbnail version for use in thumbnail cache invalidation. */
-   public var thumbnailVersion: String?
+   @CodingUses<Coder> public var thumbnailVersion: Int?
    /*Whether the file has been trashed, either explicitly or from a trashed parent folder. Only the owner may trash a file, and other users cannot see files in the owner's trash. */
    public var trashed: Bool?
    /*The time that the item was trashed (RFC 3339 date-time). Only populated for items in shared drives. */
-   public var trashedTime: String?
+   @CodingUses<Coder> public var trashedTime: String?
    /*If the file has been explicitly trashed, the user who trashed it. Only populated for items in shared drives. */
    public var trashingUser:  GoogleCloudDriveUser?
    /*A monotonically increasing version number for the file. This reflects every change made to the file on the server, even those not visible to the user. */
-   public var version: String?
+   @CodingUses<Coder> public var version: Int?
    /*Additional metadata about video media. This may not be available immediately upon upload. */
    public var videoMediaMetadata: GoogleCloudDriveFileVideoMediaMetadata?
    /*Whether the file has been viewed by this user. */
    public var viewedByMe: Bool?
    /*The last time the file was viewed by the user (RFC 3339 date-time). */
-   public var viewedByMeTime: String?
+   @CodingUses<Coder> public var viewedByMeTime: String?
    /*Deprecated - use copyRequiresWriterPermission instead. */
    public var viewersCanCopyContent: Bool?
    /*A link for downloading the content of the file in a browser. This is only available for files with binary content in Google Drive. */
@@ -1397,7 +1399,7 @@ public struct GoogleCloudDrivePermission : GoogleCloudModel {
 - They can only be set on user and group permissions 
 - The time must be in the future 
 - The time cannot be more than a year in the future */
-   public var expirationTime: String?
+   @CodingUses<Coder> public var expirationTime: String?
    /*The ID of this permission. This is a unique identifier for the grantee, and is published in User resources as permissionId. IDs should be treated as opaque values. */
    public var id: String?
    /*Identifies what kind of resource this is. Value: the fixed string "drive#permission". */
@@ -1441,7 +1443,7 @@ public struct GoogleCloudDriveReply : GoogleCloudModel {
    /*The plain text content of the reply. This field is used for setting the content, while htmlContent should be displayed. This is required on creates if no action is specified. */
    public var content: String?
    /*The time at which the reply was created (RFC 3339 date-time). */
-   public var createdTime: String?
+   @CodingUses<Coder> public var createdTime: String?
    /*Whether the reply has been deleted. A deleted reply has no content. */
    public var deleted: Bool?
    /*The content of the reply with HTML formatting. */
@@ -1451,7 +1453,7 @@ public struct GoogleCloudDriveReply : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#reply". */
    public var kind: String?
    /*The last time the reply was modified (RFC 3339 date-time). */
-   public var modifiedTime: String?
+   @CodingUses<Coder> public var modifiedTime: String?
 }
 public struct GoogleCloudDriveReplyList : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#replyList". */
@@ -1478,7 +1480,7 @@ This field is only applicable to files with binary content in Drive. */
    /*The MIME type of the revision. */
    public var mimeType: String?
    /*The last time the revision was modified (RFC 3339 date-time). */
-   public var modifiedTime: String?
+   @CodingUses<Coder> public var modifiedTime: String?
    /*The original filename used to create this revision. This is only applicable to files with binary content in Drive. */
    public var originalFilename: String?
    /*Whether subsequent revisions will be automatically republished. This is only applicable to Google Docs. */
@@ -1488,7 +1490,7 @@ This field is only applicable to files with binary content in Drive. */
    /*Whether this revision is published outside the domain. This is only applicable to Google Docs. */
    public var publishedOutsideDomain: Bool?
    /*The size of the revision's content in bytes. This is only applicable to files with binary content in Drive. */
-   public var size: String?
+   @CodingUses<Coder> public var size: Int?
 }
 public struct GoogleCloudDriveRevisionList : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#revisionList". */
@@ -1514,7 +1516,7 @@ public struct GoogleCloudDriveTeamDrive : GoogleCloudModel {
    /*The color of this Team Drive as an RGB hex string. It can only be set on a drive.teamdrives.update request that does not set themeId. */
    public var colorRgb: String?
    /*The time at which the Team Drive was created (RFC 3339 date-time). */
-   public var createdTime: String?
+   @CodingUses<Coder> public var createdTime: String?
    /*The ID of this Team Drive which is also the ID of the top level folder of this Team Drive. */
    public var id: String?
    /*Identifies what kind of resource this is. Value: the fixed string "drive#teamDrive". */
@@ -1558,13 +1560,13 @@ public struct GoogleCloudDriveAboutDriveThemes : GoogleCloudModel {
 }
 public struct GoogleCloudDriveAboutStorageQuota : GoogleCloudModel {
    /*The usage limit, if applicable. This will not be present if the user has unlimited storage. */
-   public var limit: String?
+   @CodingUses<Coder> public var limit: Int?
    /*The total usage across all services. */
-   public var usage: String?
+   @CodingUses<Coder> public var usage: Int?
    /*The usage by all files in Google Drive. */
-   public var usageInDrive: String?
+   @CodingUses<Coder> public var usageInDrive: Int?
    /*The usage by trashed files in Google Drive. */
-   public var usageInDriveTrash: String?
+   @CodingUses<Coder> public var usageInDriveTrash: Int?
 }
 public struct GoogleCloudDriveAboutTeamDriveThemes : GoogleCloudModel {
    /*Deprecated - use driveThemes/backgroundImageLink instead. */
@@ -1584,11 +1586,11 @@ public struct GoogleCloudDriveDriveBackgroundImageFile : GoogleCloudModel {
    /*The ID of an image file in Google Drive to use for the background image. */
    public var id: String?
    /*The width of the cropped image in the closed range of 0 to 1. This value represents the width of the cropped image divided by the width of the entire image. The height is computed by applying a width to height aspect ratio of 80 to 9. The resulting image must be at least 1280 pixels wide and 144 pixels high. */
-   public var width: Double?
+   @CodingUses<Coder> public var width: Double?
    /*The X coordinate of the upper left corner of the cropping area in the background image. This is a value in the closed range of 0 to 1. This value represents the horizontal distance from the left side of the entire image to the left side of the cropping area divided by the width of the entire image. */
-   public var xCoordinate: Double?
+   @CodingUses<Coder> public var xCoordinate: Double?
    /*The Y coordinate of the upper left corner of the cropping area in the background image. This is a value in the closed range of 0 to 1. This value represents the vertical distance from the top side of the entire image to the top side of the cropping area divided by the height of the entire image. */
-   public var yCoordinate: Double?
+   @CodingUses<Coder> public var yCoordinate: Double?
 }
 public struct GoogleCloudDriveDriveCapabilities : GoogleCloudModel {
    /*Whether the current user can add children to folders in this shared drive. */
@@ -1708,7 +1710,7 @@ public struct GoogleCloudDriveFileContentHints : GoogleCloudModel {
 }
 public struct GoogleCloudDriveFileImageMediaMetadata : GoogleCloudModel {
    /*The aperture used to create the photo (f-number). */
-   public var aperture: Double?
+   @CodingUses<Coder> public var aperture: Double?
    /*The make of the camera used to create the photo. */
    public var cameraMake: String?
    /*The model of the camera used to create the photo. */
@@ -1716,47 +1718,47 @@ public struct GoogleCloudDriveFileImageMediaMetadata : GoogleCloudModel {
    /*The color space of the photo. */
    public var colorSpace: String?
    /*The exposure bias of the photo (APEX value). */
-   public var exposureBias: Double?
+   @CodingUses<Coder> public var exposureBias: Double?
    /*The exposure mode used to create the photo. */
    public var exposureMode: String?
    /*The length of the exposure, in seconds. */
-   public var exposureTime: Double?
+   @CodingUses<Coder> public var exposureTime: Double?
    /*Whether a flash was used to create the photo. */
    public var flashUsed: Bool?
    /*The focal length used to create the photo, in millimeters. */
-   public var focalLength: Double?
+   @CodingUses<Coder> public var focalLength: Double?
    /*The height of the image in pixels. */
-   public var height: Int?
+   @CodingUses<Coder> public var height: Int?
    /*The ISO speed used to create the photo. */
-   public var isoSpeed: Int?
+   @CodingUses<Coder> public var isoSpeed: Int?
    /*The lens used to create the photo. */
    public var lens: String?
    /*Geographic location information stored in the image. */
    public var location: PlaceHolderObject?
    /*The smallest f-number of the lens at the focal length used to create the photo (APEX value). */
-   public var maxApertureValue: Double?
+   @CodingUses<Coder> public var maxApertureValue: Double?
    /*The metering mode used to create the photo. */
    public var meteringMode: String?
    /*The rotation in clockwise degrees from the image's original orientation. */
-   public var rotation: Int?
+   @CodingUses<Coder> public var rotation: Int?
    /*The type of sensor used to create the photo. */
    public var sensor: String?
    /*The distance to the subject of the photo, in meters. */
-   public var subjectDistance: Int?
+   @CodingUses<Coder> public var subjectDistance: Int?
    /*The date and time the photo was taken (EXIF DateTime). */
    public var time: String?
    /*The white balance mode used to create the photo. */
    public var whiteBalance: String?
    /*The width of the image in pixels. */
-   public var width: Int?
+   @CodingUses<Coder> public var width: Int?
 }
 public struct GoogleCloudDriveFileVideoMediaMetadata : GoogleCloudModel {
    /*The duration of the video in milliseconds. */
-   public var durationMillis: String?
+   @CodingUses<Coder> public var durationMillis: Int?
    /*The height of the video in pixels. */
-   public var height: Int?
+   @CodingUses<Coder> public var height: Int?
    /*The width of the video in pixels. */
-   public var width: Int?
+   @CodingUses<Coder> public var width: Int?
 }
 public struct GoogleCloudDrivePermissionPermissionDetails : GoogleCloudModel {
    /*Whether this permission is inherited. This field is always populated. This is an output-only field. */
@@ -1789,11 +1791,11 @@ public struct GoogleCloudDriveTeamDriveBackgroundImageFile : GoogleCloudModel {
    /*The ID of an image file in Drive to use for the background image. */
    public var id: String?
    /*The width of the cropped image in the closed range of 0 to 1. This value represents the width of the cropped image divided by the width of the entire image. The height is computed by applying a width to height aspect ratio of 80 to 9. The resulting image must be at least 1280 pixels wide and 144 pixels high. */
-   public var width: Double?
+   @CodingUses<Coder> public var width: Double?
    /*The X coordinate of the upper left corner of the cropping area in the background image. This is a value in the closed range of 0 to 1. This value represents the horizontal distance from the left side of the entire image to the left side of the cropping area divided by the width of the entire image. */
-   public var xCoordinate: Double?
+   @CodingUses<Coder> public var xCoordinate: Double?
    /*The Y coordinate of the upper left corner of the cropping area in the background image. This is a value in the closed range of 0 to 1. This value represents the vertical distance from the top side of the entire image to the top side of the cropping area divided by the height of the entire image. */
-   public var yCoordinate: Double?
+   @CodingUses<Coder> public var yCoordinate: Double?
 }
 public struct GoogleCloudDriveTeamDriveCapabilities : GoogleCloudModel {
    /*Whether the current user can add children to folders in this Team Drive. */

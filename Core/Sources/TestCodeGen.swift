@@ -7,34 +7,35 @@ import NIO
 import Core
 import NIOFoundationCompat
 import NIOHTTP1
+import CodableWrappers
 
 
 public enum GoogleCloudGmailScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
+      case .GmailMetadata: return "https://www.googleapis.com/auth/gmail.metadata"
       case .GmailLabels: return "https://www.googleapis.com/auth/gmail.labels"
+      case .FullAccess: return "https://mail.google.com/"
+      case .GmailInsert: return "https://www.googleapis.com/auth/gmail.insert"
       case .GmailModify: return "https://www.googleapis.com/auth/gmail.modify"
       case .GmailCompose: return "https://www.googleapis.com/auth/gmail.compose"
-      case .GmailInsert: return "https://www.googleapis.com/auth/gmail.insert"
-      case .FullAccess: return "https://mail.google.com/"
+      case .GmailSettingsSharing: return "https://www.googleapis.com/auth/gmail.settings.sharing"
       case .GmailSend: return "https://www.googleapis.com/auth/gmail.send"
       case .GmailReadonly: return "https://www.googleapis.com/auth/gmail.readonly"
       case .GmailSettingsBasic: return "https://www.googleapis.com/auth/gmail.settings.basic"
-      case .GmailSettingsSharing: return "https://www.googleapis.com/auth/gmail.settings.sharing"
-      case .GmailMetadata: return "https://www.googleapis.com/auth/gmail.metadata"
       }
    }
 
+   case GmailMetadata // View your email message metadata such as labels and headers, but not the email body
    case GmailLabels // Manage mailbox labels
+   case FullAccess // Read, compose, send, and permanently delete all your email from Gmail
+   case GmailInsert // Insert mail into your mailbox
    case GmailModify // View and modify but not delete your email
    case GmailCompose // Manage drafts and send emails
-   case GmailInsert // Insert mail into your mailbox
-   case FullAccess // Read, compose, send, and permanently delete all your email from Gmail
+   case GmailSettingsSharing // Manage your sensitive mail settings, including who can manage your mail
    case GmailSend // Send email on your behalf
    case GmailReadonly // View your email messages and settings
    case GmailSettingsBasic // Manage your basic mail settings
-   case GmailSettingsSharing // Manage your sensitive mail settings, including who can manage your mail
-   case GmailMetadata // View your email message metadata such as labels and headers, but not the email body
 }
 
 
@@ -1622,7 +1623,7 @@ public struct GoogleCloudGmailFilterCriteria : GoogleCloudModel {
    /*Only return messages matching the specified query. Supports the same query format as the Gmail search box. For example, "from:someuser@example.com rfc822msgid: is:unread". */
    public var query: String?
    /*The size of the entire RFC822 message in bytes, including all headers and attachments. */
-   public var size: Int?
+   @CodingUses<Coder> public var size: Int?
    /*How the message size in bytes should be in relation to the size field. */
    public var sizeComparison: String?
    /*Case-insensitive phrase found in the message's subject. Trailing and leading whitespace are be trimmed and adjacent spaces are collapsed. */
@@ -1638,7 +1639,7 @@ public struct GoogleCloudGmailForwardingAddress : GoogleCloudModel {
 }
 public struct GoogleCloudGmailHistory : GoogleCloudModel {
    /*The mailbox sequence ID. */
-   public var id: String?
+   @CodingUses<Coder> public var id: UInt?
    /*Labels added to messages in this history record. */
    public var labelsAdded: [GoogleCloudGmailHistoryLabelAdded]?
    /*Labels removed from messages in this history record. */
@@ -1674,7 +1675,7 @@ public struct GoogleCloudGmailImapSettings : GoogleCloudModel {
    /*The action that will be executed on a message when it is marked as deleted and expunged from the last visible IMAP folder. */
    public var expungeBehavior: String?
    /*An optional limit on the number of messages that an IMAP folder may contain. Legal values are 0, 1000, 2000, 5000 or 10000. A value of zero is interpreted to mean that there is no limit. */
-   public var maxFolderSize: Int?
+   @CodingUses<Coder> public var maxFolderSize: Int?
 }
 public struct GoogleCloudGmailLabel : GoogleCloudModel {
    /*The color to assign to the label. Color is only available for labels that have their type set to user. */
@@ -1686,15 +1687,15 @@ public struct GoogleCloudGmailLabel : GoogleCloudModel {
    /*The visibility of the label in the message list in the Gmail web interface. */
    public var messageListVisibility: String?
    /*The total number of messages with the label. */
-   public var messagesTotal: Int?
+   @CodingUses<Coder> public var messagesTotal: Int?
    /*The number of unread messages with the label. */
-   public var messagesUnread: Int?
+   @CodingUses<Coder> public var messagesUnread: Int?
    /*The display name of the label. */
    public var name: String?
    /*The total number of threads with the label. */
-   public var threadsTotal: Int?
+   @CodingUses<Coder> public var threadsTotal: Int?
    /*The number of unread threads with the label. */
-   public var threadsUnread: Int?
+   @CodingUses<Coder> public var threadsUnread: Int?
    /*The owner type for the label. User labels are created by the user and can be modified and deleted by the user and can be applied to any message or thread. System labels are internally created and cannot be added, modified, or deleted. System labels may be able to be applied to or removed from messages and threads under some circumstances but this is not guaranteed. For example, users can apply and remove the INBOX and UNREAD labels from messages and threads, but cannot apply or remove the DRAFTS or SENT labels from messages or threads. */
    public var type: String?
 }
@@ -1724,7 +1725,7 @@ public struct GoogleCloudGmailListDraftsResponse : GoogleCloudModel {
    /*Token to retrieve the next page of results in the list. */
    public var nextPageToken: String?
    /*Estimated total number of results. */
-   public var resultSizeEstimate: Int?
+   @CodingUses<Coder> public var resultSizeEstimate: UInt?
 }
 public struct GoogleCloudGmailListFiltersResponse : GoogleCloudModel {
    /*List of a user's filters. */
@@ -1738,7 +1739,7 @@ public struct GoogleCloudGmailListHistoryResponse : GoogleCloudModel {
    /*List of history records. Any messages contained in the response will typically only have id and threadId fields populated. */
    public var history: [GoogleCloudGmailHistory]?
    /*The ID of the mailbox's current history record. */
-   public var historyId: String?
+   @CodingUses<Coder> public var historyId: UInt?
    /*Page token to retrieve the next page of results in the list. */
    public var nextPageToken: String?
 }
@@ -1752,7 +1753,7 @@ public struct GoogleCloudGmailListMessagesResponse : GoogleCloudModel {
    /*Token to retrieve the next page of results in the list. */
    public var nextPageToken: String?
    /*Estimated total number of results. */
-   public var resultSizeEstimate: Int?
+   @CodingUses<Coder> public var resultSizeEstimate: UInt?
 }
 public struct GoogleCloudGmailListSendAsResponse : GoogleCloudModel {
    /*List of send-as aliases. */
@@ -1766,25 +1767,25 @@ public struct GoogleCloudGmailListThreadsResponse : GoogleCloudModel {
    /*Page token to retrieve the next page of results in the list. */
    public var nextPageToken: String?
    /*Estimated total number of results. */
-   public var resultSizeEstimate: Int?
+   @CodingUses<Coder> public var resultSizeEstimate: UInt?
    /*List of threads. Note that each thread resource does not contain a list of messages. The list of messages for a given thread can be fetched using the threads.get method. */
    public var threads: [GoogleCloudGmailThread]?
 }
 public struct GoogleCloudGmailMessage : GoogleCloudModel {
    /*The ID of the last history record that modified this message. */
-   public var historyId: String?
+   @CodingUses<Coder> public var historyId: UInt?
    /*The immutable ID of the message. */
    public var id: String?
    /*The internal message creation timestamp (epoch ms), which determines ordering in the inbox. For normal SMTP-received email, this represents the time the message was originally accepted by Google, which is more reliable than the Date header. However, for API-migrated mail, it can be configured by client to be based on the Date header. */
-   public var internalDate: String?
+   @CodingUses<Coder> public var internalDate: Int?
    /*List of IDs of labels applied to this message. */
    public var labelIds: [String]?
    /*The parsed email structure in the message parts. */
    public var payload:  GoogleCloudGmailMessagePart?
    /*The entire email message in an RFC 2822 formatted and base64url encoded string. Returned in messages.get and drafts.get responses when the format=RAW parameter is supplied. */
-   public var raw: String?
+   @CodingUses<Coder> public var raw: Data?
    /*Estimated size in bytes of the message. */
-   public var sizeEstimate: Int?
+   @CodingUses<Coder> public var sizeEstimate: Int?
    /*A short part of the message text. */
    public var snippet: String?
    /*The ID of the thread the message belongs to. To add a message or draft to a thread, the following criteria must be met: 
@@ -1811,9 +1812,9 @@ public struct GoogleCloudGmailMessagePartBody : GoogleCloudModel {
    /*When present, contains the ID of an external attachment that can be retrieved in a separate messages.attachments.get request. When not present, the entire content of the message part body is contained in the data field. */
    public var attachmentId: String?
    /*The body data of a MIME message part as a base64url encoded string. May be empty for MIME container types that have no message body or when the body data is sent as a separate attachment. An attachment ID is present if the body data is contained in a separate attachment. */
-   public var data: String?
+   @CodingUses<Coder> public var data: Data?
    /*Number of bytes for the message part data (encoding notwithstanding). */
-   public var size: Int?
+   @CodingUses<Coder> public var size: Int?
 }
 public struct GoogleCloudGmailMessagePartHeader : GoogleCloudModel {
    /*The name of the header before the : separator. For example, To. */
@@ -1843,11 +1844,11 @@ public struct GoogleCloudGmailProfile : GoogleCloudModel {
    /*The user's email address. */
    public var emailAddress: String?
    /*The ID of the mailbox's current history record. */
-   public var historyId: String?
+   @CodingUses<Coder> public var historyId: UInt?
    /*The total number of messages in the mailbox. */
-   public var messagesTotal: Int?
+   @CodingUses<Coder> public var messagesTotal: Int?
    /*The total number of threads in the mailbox. */
-   public var threadsTotal: Int?
+   @CodingUses<Coder> public var threadsTotal: Int?
 }
 public struct GoogleCloudGmailSendAs : GoogleCloudModel {
    /*A name that appears in the "From:" header for mail sent using this alias. For custom "from" addresses, when this is empty, Gmail will populate the "From:" header with the name that is used for the primary address associated with the account. If the admin has disabled the ability for users to update their name format, requests to update this field for the primary login will silently fail. */
@@ -1873,7 +1874,7 @@ public struct GoogleCloudGmailSmimeInfo : GoogleCloudModel {
    /*Encrypted key password, when key is encrypted. */
    public var encryptedKeyPassword: String?
    /*When the certificate expires (in milliseconds since epoch). */
-   public var expiration: String?
+   @CodingUses<Coder> public var expiration: Int?
    /*The immutable ID for the SmimeInfo. */
    public var id: String?
    /*Whether this SmimeInfo is the default one for this user's send-as address. */
@@ -1883,7 +1884,7 @@ public struct GoogleCloudGmailSmimeInfo : GoogleCloudModel {
    /*PEM formatted X509 concatenated certificate string (standard base64 encoding). Format used for returning key, which includes public key as well as certificate chain (not private key). */
    public var pem: String?
    /*PKCS#12 format containing a single private/public key pair and certificate chain. This format is only accepted from client for creating a new SmimeInfo and is never returned, because the private key is not intended to be exported. PKCS#12 may be encrypted, in which case encryptedKeyPassword should be set appropriately. */
-   public var pkcs12: String?
+   @CodingUses<Coder> public var pkcs12: Data?
 }
 public struct GoogleCloudGmailSmtpMsa : GoogleCloudModel {
    /*The hostname of the SMTP service. Required. */
@@ -1891,7 +1892,7 @@ public struct GoogleCloudGmailSmtpMsa : GoogleCloudModel {
    /*The password that will be used for authentication with the SMTP service. This is a write-only field that can be specified in requests to create or update SendAs settings; it is never populated in responses. */
    public var password: String?
    /*The port of the SMTP service. Required. */
-   public var port: Int?
+   @CodingUses<Coder> public var port: Int?
    /*The protocol that will be used to secure communication with the SMTP service. Required. */
    public var securityMode: String?
    /*The username that will be used for authentication with the SMTP service. This is a write-only field that can be specified in requests to create or update SendAs settings; it is never populated in responses. */
@@ -1899,7 +1900,7 @@ public struct GoogleCloudGmailSmtpMsa : GoogleCloudModel {
 }
 public struct GoogleCloudGmailThread : GoogleCloudModel {
    /*The ID of the last history record that modified this thread. */
-   public var historyId: String?
+   @CodingUses<Coder> public var historyId: UInt?
    /*The unique ID of the thread. */
    public var id: String?
    /*The list of messages in the thread. */
@@ -1911,7 +1912,7 @@ public struct GoogleCloudGmailVacationSettings : GoogleCloudModel {
    /*Flag that controls whether Gmail automatically replies to messages. */
    public var enableAutoReply: Bool?
    /*An optional end time for sending auto-replies (epoch ms). When this is specified, Gmail will automatically reply only to messages that it receives before the end time. If both startTime and endTime are specified, startTime must precede endTime. */
-   public var endTime: String?
+   @CodingUses<Coder> public var endTime: Int?
    /*Response body in HTML format. Gmail will sanitize the HTML before storing it. */
    public var responseBodyHtml: String?
    /*Response body in plain text format. */
@@ -1923,7 +1924,7 @@ public struct GoogleCloudGmailVacationSettings : GoogleCloudModel {
    /*Flag that determines whether responses are sent to recipients who are outside of the user's domain. This feature is only available for G Suite users. */
    public var restrictToDomain: Bool?
    /*An optional start time for sending auto-replies (epoch ms). When this is specified, Gmail will automatically reply only to messages that it receives after the start time. If both startTime and endTime are specified, startTime must precede endTime. */
-   public var startTime: String?
+   @CodingUses<Coder> public var startTime: Int?
 }
 public struct GoogleCloudGmailWatchRequest : GoogleCloudModel {
    /*Filtering behavior of labelIds list specified. */
@@ -1937,9 +1938,9 @@ Note that the "my-project-identifier" portion must exactly match your Google dev
 }
 public struct GoogleCloudGmailWatchResponse : GoogleCloudModel {
    /*When Gmail will stop sending notifications for mailbox updates (epoch millis). Call watch again before this time to renew the watch. */
-   public var expiration: String?
+   @CodingUses<Coder> public var expiration: Int?
    /*The ID of the mailbox's current history record. */
-   public var historyId: String?
+   @CodingUses<Coder> public var historyId: UInt?
 }
 public final class GoogleCloudGmailClient {
    public var users : GmailUsersAPIProtocol

@@ -14,8 +14,8 @@ testing.append(( "gmail.json", "Core/Sources/TestCodeGen.swift"))
 testing.append(( "storage.json", "Core/Sources/StorageCodeGen.swift"))
 testing.append((  "drive.json", "Core/Sources/DriveTestGen.swift"))
 testing.append((  "calendar.json", "Core/Sources/CalTestGen.swift"))
-
-
+testing.append((  "youtube.json", "Core/Sources/YTTestGen.swift"))
+testing.append((  "discovery.json", "Core/Sources/DiscoveryTestGen.swift"))
 
 for (i, o) in testing {
 
@@ -33,6 +33,7 @@ let data = try Data(contentsOf: URL(fileURLWithPath: i))
         fileManager.createFile(atPath: o, contents: nil, attributes: nil)
     }
     if let fileHandle = FileHandle(forWritingAtPath: o) {
+        print("Starting \(service.name)")
         fileHandle.write(service.GenerateCode().data(using: .utf8) ?? Data())
         fileHandle.closeFile()
     }

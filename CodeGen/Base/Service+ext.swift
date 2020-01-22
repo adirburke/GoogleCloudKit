@@ -17,7 +17,7 @@ extension DiscoveryService {
     }
     func addImports() -> String {
         var returnString = ""
-        let listofImports = [ "Foundation" , "AsyncHTTPClient", "NIO", "Core", "NIOFoundationCompat", "NIOHTTP1"]
+        let listofImports = [ "Foundation" , "AsyncHTTPClient", "NIO", "Core", "NIOFoundationCompat", "NIOHTTP1", "CodableWrappers"]
         for i in listofImports {
             returnString += "import \(i)\n"
         }
@@ -50,7 +50,7 @@ extension DiscoveryService {
         returnString.addLine("switch self {", with: 2)
         
         var laterString = ""
-        for (scope, description) in self.auth.oauth2.scopes {
+        for (scope, description) in self.auth?.oauth2.scopes ?? [:] {
             let substring = cleanUpScopeName(scope)
             returnString.addLine("case .\(substring): return \"\(scope)\"", with: 2)
             laterString.addLine("case \(substring) // \(description["description"]!)", with: 1)
@@ -317,7 +317,12 @@ extension DiscoveryService {
                 let addProp = createSmallModelFromAdditionalProperties(modelName: modelName, name: propertyNameSafe, props: addtional)
                 gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [String :\(addProp)]", 1, p.value.required, p: p.value)
         } else {
-                gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(p.value.toType(capName))", 1, p.value.required, p: p.value)
+                let (className, format) = p.value.toType(capName)
+                if format {
+                    gc += checkRequiredAndAddComment("@CodingUses<Coder> public var \(propertyNameSafe): \(className)", 1, p.value.required, p: p.value)
+                } else {
+                    gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(className)", 1, p.value.required, p: p.value)
+                }
             }
         }
         gc.addLine("}", with: 0)
@@ -349,17 +354,18 @@ extension DiscoveryService {
     func createSmallModelFromAdditionalProperties(modelName : String, name : String,  props : GoogleCloudDiscoveryParametersProperties?) -> String {
         var gc = ""
         guard let p = props else { return gc }
-        
+        let (type, format) = p.toType(capName)
         switch p.type {
         case .array:
             if let items = p.items {
+                
                 switch items.type {
                 case .object:
                     fatalError("Needs to be coded")
                 case .array:
                     fatalError("Needs to be coded")
                 case .string:
-                    gc = "\(p.toType(capName))"
+                    gc = "\(type)"
                 default:
                     fatalError("Needs to be coded")
                 }
@@ -367,9 +373,9 @@ extension DiscoveryService {
         case .object:
             fatalError("Needs to be coded")
         default:
-            gc =  "\(p.toType(capName))"
+            gc =  "\(type)"
         }
-
+        
         return gc
     }
     
@@ -382,7 +388,7 @@ extension DiscoveryService {
             for p in schema.value.properties?.sorted(by: {$0.key < $1.key}) ?? [] {
                 let propertyNameSafe = p.key.makeSwiftSafe()
                 let propertyNameSafeCap = p.key.capitalized().makeSwiftSafe()
-                if propertyNameSafe == "extendedProperties" {
+                if propertyNameSafe == "conferenceProperties" {
                     
                 }
                 switch p.value.type {
@@ -399,21 +405,23 @@ extension DiscoveryService {
                     
                 case .array:
                     if let items = p.value.items {
+                        let (type, format) = p.value.toType(capName)
                         switch items.type {
                         case .object:
                             
                             later += createSmallModel(modelName: modelName, name: propertyNameSafeCap, props: items.properties?.sorted(by: {$0.key < $1.key}) ?? [])
                             gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", 1, p.value.required, p: p.value)
                         case .array:
-                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [GoogleCloud\(capName)\(p.value.toType(capName).dropFirst())", 1, p.value.required, p: p.value)
+//                            let (type, format) = p.value.toType(capName)
+                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [GoogleCloud\(capName)\(type.dropFirst())", 1, p.value.required, p: p.value)
                         default:
-                            let type = p.value.toType(capName)
+//                            let (type, format) = p.value.toType(capName)
                             
                             if let _ = GoogleCloudDiscoveryJSONTypeEnum(rawValue: type.lowercased().replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")) {
-                                gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(p.value.toType(capName))",  1, p.value.required, p: p.value)
+                                gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(type)",  1, p.value.required, p: p.value)
                                 
                             } else {
-                                gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [\(p.value.toType(capName).dropFirst())", 1, p.value.required, p: p.value)
+                                gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [\(type.dropFirst())", 1, p.value.required, p: p.value)
                             }
                         }
                     }
@@ -423,7 +431,12 @@ extension DiscoveryService {
                             gc += checkRequiredAndAddComment("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference)",  1, p.value.required, p: p.value)
                         }
                     } else {
-                        gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(p.value.toType(capName))",  1, p.value.required, p: p.value)
+                        let (type, format) = p.value.toType(capName)
+                        if format {
+                             gc += checkRequiredAndAddComment("@CodingUses<Coder> public var \(propertyNameSafe): \(type)",  1, p.value.required, p: p.value)
+                        } else {
+                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(type)",  1, p.value.required, p: p.value)
+                        }
                     }
                 }
             }

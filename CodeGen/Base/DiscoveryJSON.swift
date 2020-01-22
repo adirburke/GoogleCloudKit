@@ -30,7 +30,7 @@ public enum GoogleCloudDiscoveryJSONTypeEnum : String, Codable {
     case array
     case null
     case any
-    
+    case usignedinteger
     case data
     
     func toSwiftParameterName(_ itemType : String? = nil) -> String {
@@ -45,6 +45,7 @@ public enum GoogleCloudDiscoveryJSONTypeEnum : String, Codable {
         case .null: return "String?"
         case .any: return "Any"
         case .data: return "Data"
+        case .usignedinteger: return "UInt"
         @unknown default: return "Any"
         }
     }
@@ -55,19 +56,18 @@ public enum GoogleCloudDiscoveryJSONTypeEnum : String, Codable {
         switch format {
         case "int32", "int64": return .integer
         case "float", "double": return .number
-        case "date-time": return .string
-            
+        case "date-time", "date": return .string
+        case "uint64", "uint32": return .usignedinteger
         case "byte": return .data
             
         default:
-            fatalError("undefined format")
+            fatalError("undefined format \(format)")
             
         }
     }
     
     //MARK:- Need to do some type converstions and stuff
 }
-
 
 
 
@@ -119,19 +119,19 @@ public class GoogleCloudDiscoveryParameters : Codable {
         }
     }
     
-    public func toType(_ capName : String = "") -> String {
+    public func toType(_ capName : String = "") -> (String, Bool) {
         if let ref = items?.ref {
-            return self.type?.toSwiftParameterName("GoogleCloud" + capName + ref) ?? ""
+            return( self.type?.toSwiftParameterName("GoogleCloud" + capName + ref) ?? "", false)
         } else if let ref = ref {
-            return "GoogleCloud\(capName)\(ref.makeSwiftSafe())"
+            return ("GoogleCloud\(capName)\(ref.makeSwiftSafe())", false)
         }
-//        else if let format = format {
-//            return GoogleCloudDiscoveryJSONTypeEnum.formatConverter(format: format).toSwiftParameterName()
-////            return self.type?.toSwiftParameterName(format) ?? ""
-//        }
+        else if let format = format {
+            return (GoogleCloudDiscoveryJSONTypeEnum.formatConverter(format: format).toSwiftParameterName(), true)
+//            return self.type?.toSwiftParameterName(format) ?? ""
+        }
  
         else {
-            return self.type?.toSwiftParameterName(items?.type?.toSwiftParameterName()) ?? ""
+            return( self.type?.toSwiftParameterName(items?.type?.toSwiftParameterName()) ?? "", false)
         }
         
     }
@@ -172,7 +172,7 @@ public class DiscoveryService : Codable, APIable {
     public var `protocol`: String
     public var rootUrl: String
     public var parameters: [String : GoogleCloudDiscoveryParameters]
-    public var auth: GoogleCloudDiscoveryAuth
+    public var auth: GoogleCloudDiscoveryAuth?
     public var features: [String]?
     public var schemas: [String : GoogleCloudDiscoverySchemas]
     public var methods: [String : GoogleCloudDiscoveryMethods]?
