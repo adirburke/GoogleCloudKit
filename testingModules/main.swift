@@ -21,34 +21,17 @@ do {
         try? httpClient.syncShutdown()
     }
     let cred = try GoogleCloudCredentialsConfiguration(projectId: projectId, credentialsFile: "cred.json")
-//    let config = GoogleCloudGmailConfiguration(scope: [.FullAccess], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
-    let driveConfig = GoogleCloudDriveConfiguration(scope: [.Drive], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
-//    let gcClient = try GoogleCloudGmailClient(credentials: cred, gmailConfig: config, httpClient: httpClient, eventLoop: ev.next())
-    let gdClient = try GoogleCloudDriveClient(credentials: cred, driveConfig: driveConfig, httpClient: httpClient, eventLoop: ev.next())
-    
-    let tubeConfig = GoogleCloudYoutubeConfiguration(scope: [.Youtube], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
-    let ytClient = try GoogleCloudYoutubeClient(credentials: cred, youtubeConfig: tubeConfig, httpClient: httpClient, eventLoop: ev.next())
-    let s = try ytClient.comments.list(part: "*", queryParameters: nil).wait()
+    let config = GoogleCloudGmailConfiguration(scope: [.FullAccess], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
+//    let driveConfig = GoogleCloudDriveConfiguration(scope: [.Drive], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
+    let gcClient = try GoogleCloudGmailClient(credentials: cred, gmailConfig: config, httpClient: httpClient, eventLoop: ev.next())
 
-//    let config = GoogleCloudCalendarConfiguration(scope: [.Calendar], serviceAccount: "AdirServer", project: projectId, subscription: "adir@hanave.com")
-//    let calClient = try GoogleCloudCalendarClient(credentials: cred, calendarConfig: config, httpClient: httpClient, eventLoop: ev.next())
-//    let s = try calClient.calendarList.list().wait()
-//    for cal in s.items ?? [] {
-//        print(cal.id)
-//    }
-//    let t = try calClient.calendars.get(calendarId: "hanave.com_87j3qa2c4h2005a1qbmqinakss@group.calendar.google.com", queryParameters: nil).wait()
-//    print(t.id)
-//    let e = try calClient.events.list(calendarId: "hanave.com_87j3qa2c4h2005a1qbmqinakss@group.calendar.google.com", queryParameters: nil).wait()
-//    for ev in e.items ?? []{
-//        print(ev.id)
-//    }
-//    let s = try gdClient.files.list(queryParameters: nil).wait()
-//    for f in s.files ?? [] {
-//    }
-//
-    
-    
+    let label = GoogleCloudGmailLabel(color: nil, id: nil, labelListVisibility: "labelShow", messageListVisibility: "show", messagesTotal: nil, messagesUnread: nil, name: "Test", threadsTotal: nil, threadsUnread: nil, type: nil)
 
+    
+    let response = try gcClient.labels.create(userId: "me", body: label, queryParameters: nil).wait()
+
+    print(response)
+    
 } catch {
     print(error)
 }

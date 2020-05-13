@@ -13,20 +13,20 @@ import CodableWrappers
 public enum GoogleCloudYoutubeScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
+      case .YoutubeReadonly: return "https://www.googleapis.com/auth/youtube.readonly"
       case .YoutubepartnerChannelAudit: return "https://www.googleapis.com/auth/youtubepartner-channel-audit"
       case .YoutubeUpload: return "https://www.googleapis.com/auth/youtube.upload"
-      case .YoutubeReadonly: return "https://www.googleapis.com/auth/youtube.readonly"
-      case .Youtube: return "https://www.googleapis.com/auth/youtube"
       case .Youtubepartner: return "https://www.googleapis.com/auth/youtubepartner"
+      case .Youtube: return "https://www.googleapis.com/auth/youtube"
       case .YoutubeForceSsl: return "https://www.googleapis.com/auth/youtube.force-ssl"
       }
    }
 
+   case YoutubeReadonly // View your YouTube account
    case YoutubepartnerChannelAudit // View private information of your YouTube channel relevant during the audit process with a YouTube partner
    case YoutubeUpload // Manage your YouTube videos
-   case YoutubeReadonly // View your YouTube account
-   case Youtube // Manage your YouTube account
    case Youtubepartner // View and manage your assets and associated content on YouTube
+   case Youtube // Manage your YouTube account
    case YoutubeForceSsl // See, edit, and permanently delete your YouTube videos, ratings, comments and captions
 }
 
@@ -1824,10 +1824,14 @@ public struct GoogleCloudYoutubeAccessPolicy : GoogleCloudModel {
    public var allowed: Bool?
    /*A list of region codes that identify countries where the default policy do not apply. */
    public var exception: [String]?
+   public init(allowed:Bool?, exception:[String]?) {
+      self.allowed = allowed
+      self.exception = exception
+   }
 }
 public struct GoogleCloudYoutubeActivity : GoogleCloudModel {
    /*The contentDetails object contains information about the content associated with the activity. For example, if the snippet.type value is videoRated, then the contentDetails object's content identifies the rated video. */
-   public var contentDetails:  GoogleCloudYoutubeActivityContentDetails?
+   public var contentDetails: GoogleCloudYoutubeActivityContentDetails?
    /*Etag of this resource. */
    public var etag: String?
    /*The ID that YouTube uses to uniquely identify the activity. */
@@ -1835,51 +1839,86 @@ public struct GoogleCloudYoutubeActivity : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#activity". */
    public var kind: String?
    /*The snippet object contains basic details about the activity, including the activity's type and group ID. */
-   public var snippet:  GoogleCloudYoutubeActivitySnippet?
+   public var snippet: GoogleCloudYoutubeActivitySnippet?
+   public init(contentDetails:GoogleCloudYoutubeActivityContentDetails?, etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeActivitySnippet?) {
+      self.contentDetails = contentDetails
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetails : GoogleCloudModel {
    /*The bulletin object contains details about a channel bulletin post. This object is only present if the snippet.type is bulletin. */
-   public var bulletin:  GoogleCloudYoutubeActivityContentDetailsBulletin?
+   public var bulletin: GoogleCloudYoutubeActivityContentDetailsBulletin?
    /*The channelItem object contains details about a resource which was added to a channel. This property is only present if the snippet.type is channelItem. */
-   public var channelItem:  GoogleCloudYoutubeActivityContentDetailsChannelItem?
+   public var channelItem: GoogleCloudYoutubeActivityContentDetailsChannelItem?
    /*The comment object contains information about a resource that received a comment. This property is only present if the snippet.type is comment. */
-   public var comment:  GoogleCloudYoutubeActivityContentDetailsComment?
+   public var comment: GoogleCloudYoutubeActivityContentDetailsComment?
    /*The favorite object contains information about a video that was marked as a favorite video. This property is only present if the snippet.type is favorite. */
-   public var favorite:  GoogleCloudYoutubeActivityContentDetailsFavorite?
+   public var favorite: GoogleCloudYoutubeActivityContentDetailsFavorite?
    /*The like object contains information about a resource that received a positive (like) rating. This property is only present if the snippet.type is like. */
-   public var like:  GoogleCloudYoutubeActivityContentDetailsLike?
+   public var like: GoogleCloudYoutubeActivityContentDetailsLike?
    /*The playlistItem object contains information about a new playlist item. This property is only present if the snippet.type is playlistItem. */
-   public var playlistItem:  GoogleCloudYoutubeActivityContentDetailsPlaylistItem?
+   public var playlistItem: GoogleCloudYoutubeActivityContentDetailsPlaylistItem?
    /*The promotedItem object contains details about a resource which is being promoted. This property is only present if the snippet.type is promotedItem. */
-   public var promotedItem:  GoogleCloudYoutubeActivityContentDetailsPromotedItem?
+   public var promotedItem: GoogleCloudYoutubeActivityContentDetailsPromotedItem?
    /*The recommendation object contains information about a recommended resource. This property is only present if the snippet.type is recommendation. */
-   public var recommendation:  GoogleCloudYoutubeActivityContentDetailsRecommendation?
+   public var recommendation: GoogleCloudYoutubeActivityContentDetailsRecommendation?
    /*The social object contains details about a social network post. This property is only present if the snippet.type is social. */
-   public var social:  GoogleCloudYoutubeActivityContentDetailsSocial?
+   public var social: GoogleCloudYoutubeActivityContentDetailsSocial?
    /*The subscription object contains information about a channel that a user subscribed to. This property is only present if the snippet.type is subscription. */
-   public var subscription:  GoogleCloudYoutubeActivityContentDetailsSubscription?
+   public var subscription: GoogleCloudYoutubeActivityContentDetailsSubscription?
    /*The upload object contains information about the uploaded video. This property is only present if the snippet.type is upload. */
-   public var upload:  GoogleCloudYoutubeActivityContentDetailsUpload?
+   public var upload: GoogleCloudYoutubeActivityContentDetailsUpload?
+   public init(bulletin:GoogleCloudYoutubeActivityContentDetailsBulletin?, channelItem:GoogleCloudYoutubeActivityContentDetailsChannelItem?, comment:GoogleCloudYoutubeActivityContentDetailsComment?, favorite:GoogleCloudYoutubeActivityContentDetailsFavorite?, like:GoogleCloudYoutubeActivityContentDetailsLike?, playlistItem:GoogleCloudYoutubeActivityContentDetailsPlaylistItem?, promotedItem:GoogleCloudYoutubeActivityContentDetailsPromotedItem?, recommendation:GoogleCloudYoutubeActivityContentDetailsRecommendation?, social:GoogleCloudYoutubeActivityContentDetailsSocial?, subscription:GoogleCloudYoutubeActivityContentDetailsSubscription?, upload:GoogleCloudYoutubeActivityContentDetailsUpload?) {
+      self.bulletin = bulletin
+      self.channelItem = channelItem
+      self.comment = comment
+      self.favorite = favorite
+      self.like = like
+      self.playlistItem = playlistItem
+      self.promotedItem = promotedItem
+      self.recommendation = recommendation
+      self.social = social
+      self.subscription = subscription
+      self.upload = upload
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsBulletin : GoogleCloudModel {
    /*The resourceId object contains information that identifies the resource associated with a bulletin post. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
+   public init(resourceId:GoogleCloudYoutubeResourceId?) {
+      self.resourceId = resourceId
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsChannelItem : GoogleCloudModel {
    /*The resourceId object contains information that identifies the resource that was added to the channel. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
+   public init(resourceId:GoogleCloudYoutubeResourceId?) {
+      self.resourceId = resourceId
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsComment : GoogleCloudModel {
    /*The resourceId object contains information that identifies the resource associated with the comment. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
+   public init(resourceId:GoogleCloudYoutubeResourceId?) {
+      self.resourceId = resourceId
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsFavorite : GoogleCloudModel {
    /*The resourceId object contains information that identifies the resource that was marked as a favorite. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
+   public init(resourceId:GoogleCloudYoutubeResourceId?) {
+      self.resourceId = resourceId
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsLike : GoogleCloudModel {
    /*The resourceId object contains information that identifies the rated resource. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
+   public init(resourceId:GoogleCloudYoutubeResourceId?) {
+      self.resourceId = resourceId
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsPlaylistItem : GoogleCloudModel {
    /*The value that YouTube uses to uniquely identify the playlist. */
@@ -1887,7 +1926,12 @@ public struct GoogleCloudYoutubeActivityContentDetailsPlaylistItem : GoogleCloud
    /*ID of the item within the playlist. */
    public var playlistItemId: String?
    /*The resourceId object contains information about the resource that was added to the playlist. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
+   public init(playlistId:String?, playlistItemId:String?, resourceId:GoogleCloudYoutubeResourceId?) {
+      self.playlistId = playlistId
+      self.playlistItemId = playlistItemId
+      self.resourceId = resourceId
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsPromotedItem : GoogleCloudModel {
    /*The URL the client should fetch to request a promoted item. */
@@ -1910,14 +1954,31 @@ public struct GoogleCloudYoutubeActivityContentDetailsPromotedItem : GoogleCloud
    public var impressionUrl: [String]?
    /*The ID that YouTube uses to uniquely identify the promoted video. */
    public var videoId: String?
+   public init(adTag:String?, clickTrackingUrl:String?, creativeViewUrl:String?, ctaType:String?, customCtaButtonText:String?, descriptionText:String?, destinationUrl:String?, forecastingUrl:[String]?, impressionUrl:[String]?, videoId:String?) {
+      self.adTag = adTag
+      self.clickTrackingUrl = clickTrackingUrl
+      self.creativeViewUrl = creativeViewUrl
+      self.ctaType = ctaType
+      self.customCtaButtonText = customCtaButtonText
+      self.descriptionText = descriptionText
+      self.destinationUrl = destinationUrl
+      self.forecastingUrl = forecastingUrl
+      self.impressionUrl = impressionUrl
+      self.videoId = videoId
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsRecommendation : GoogleCloudModel {
    /*The reason that the resource is recommended to the user. */
    public var reason: String?
    /*The resourceId object contains information that identifies the recommended resource. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
    /*The seedResourceId object contains information about the resource that caused the recommendation. */
-   public var seedResourceId:  GoogleCloudYoutubeResourceId?
+   public var seedResourceId: GoogleCloudYoutubeResourceId?
+   public init(reason:String?, resourceId:GoogleCloudYoutubeResourceId?, seedResourceId:GoogleCloudYoutubeResourceId?) {
+      self.reason = reason
+      self.resourceId = resourceId
+      self.seedResourceId = seedResourceId
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsSocial : GoogleCloudModel {
    /*The author of the social network post. */
@@ -1927,17 +1988,30 @@ public struct GoogleCloudYoutubeActivityContentDetailsSocial : GoogleCloudModel 
    /*The URL of the social network post. */
    public var referenceUrl: String?
    /*The resourceId object encapsulates information that identifies the resource associated with a social network post. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
    /*The name of the social network. */
    public var type: String?
+   public init(author:String?, imageUrl:String?, referenceUrl:String?, resourceId:GoogleCloudYoutubeResourceId?, type:String?) {
+      self.author = author
+      self.imageUrl = imageUrl
+      self.referenceUrl = referenceUrl
+      self.resourceId = resourceId
+      self.type = type
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsSubscription : GoogleCloudModel {
    /*The resourceId object contains information that identifies the resource that the user subscribed to. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
+   public init(resourceId:GoogleCloudYoutubeResourceId?) {
+      self.resourceId = resourceId
+   }
 }
 public struct GoogleCloudYoutubeActivityContentDetailsUpload : GoogleCloudModel {
    /*The ID that YouTube uses to uniquely identify the uploaded video. */
    public var videoId: String?
+   public init(videoId:String?) {
+      self.videoId = videoId
+   }
 }
 public struct GoogleCloudYoutubeActivityListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -1950,12 +2024,23 @@ public struct GoogleCloudYoutubeActivityListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeActivity]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeActivitySnippet : GoogleCloudModel {
    /*The ID that YouTube uses to uniquely identify the channel associated with the activity. */
@@ -1969,11 +2054,21 @@ public struct GoogleCloudYoutubeActivitySnippet : GoogleCloudModel {
    /*The date and time that the video was uploaded. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var publishedAt: String?
    /*A map of thumbnail images associated with the resource that is primarily associated with the activity. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail. */
-   public var thumbnails:  GoogleCloudYoutubeThumbnailDetails?
+   public var thumbnails: GoogleCloudYoutubeThumbnailDetails?
    /*The title of the resource primarily associated with the activity. */
    public var title: String?
    /*The type of activity that the resource describes. */
    public var type: String?
+   public init(channelId:String?, channelTitle:String?, description:String?, groupId:String?, publishedAt:String?, thumbnails:GoogleCloudYoutubeThumbnailDetails?, title:String?, type:String?) {
+      self.channelId = channelId
+      self.channelTitle = channelTitle
+      self.description = description
+      self.groupId = groupId
+      self.publishedAt = publishedAt
+      self.thumbnails = thumbnails
+      self.title = title
+      self.type = type
+   }
 }
 public struct GoogleCloudYoutubeCaption : GoogleCloudModel {
    /*Etag of this resource. */
@@ -1983,7 +2078,13 @@ public struct GoogleCloudYoutubeCaption : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#caption". */
    public var kind: String?
    /*The snippet object contains basic details about the caption. */
-   public var snippet:  GoogleCloudYoutubeCaptionSnippet?
+   public var snippet: GoogleCloudYoutubeCaptionSnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeCaptionSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeCaptionListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -1996,6 +2097,13 @@ public struct GoogleCloudYoutubeCaptionListResponse : GoogleCloudModel {
    public var kind: String?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeCaption]?, kind:String?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeCaptionSnippet : GoogleCloudModel {
    /*The type of audio track associated with the caption track. */
@@ -2024,6 +2132,21 @@ public struct GoogleCloudYoutubeCaptionSnippet : GoogleCloudModel {
    public var trackKind: String?
    /*The ID that YouTube uses to uniquely identify the video associated with the caption track. */
    public var videoId: String?
+   public init(audioTrackType:String?, failureReason:String?, isAutoSynced:Bool?, isCC:Bool?, isDraft:Bool?, isEasyReader:Bool?, isLarge:Bool?, language:String?, lastUpdated:String?, name:String?, status:String?, trackKind:String?, videoId:String?) {
+      self.audioTrackType = audioTrackType
+      self.failureReason = failureReason
+      self.isAutoSynced = isAutoSynced
+      self.isCC = isCC
+      self.isDraft = isDraft
+      self.isEasyReader = isEasyReader
+      self.isLarge = isLarge
+      self.language = language
+      self.lastUpdated = lastUpdated
+      self.name = name
+      self.status = status
+      self.trackKind = trackKind
+      self.videoId = videoId
+   }
 }
 public struct GoogleCloudYoutubeCdnSettings : GoogleCloudModel {
    /*The format of the video stream that you are sending to Youtube. */
@@ -2031,41 +2154,64 @@ public struct GoogleCloudYoutubeCdnSettings : GoogleCloudModel {
    /*The frame rate of the inbound video data. */
    public var frameRate: String?
    /*The ingestionInfo object contains information that YouTube provides that you need to transmit your RTMP or HTTP stream to YouTube. */
-   public var ingestionInfo:  GoogleCloudYoutubeIngestionInfo?
+   public var ingestionInfo: GoogleCloudYoutubeIngestionInfo?
    /*The method or protocol used to transmit the video stream. */
    public var ingestionType: String?
    /*The resolution of the inbound video data. */
    public var resolution: String?
+   public init(format:String?, frameRate:String?, ingestionInfo:GoogleCloudYoutubeIngestionInfo?, ingestionType:String?, resolution:String?) {
+      self.format = format
+      self.frameRate = frameRate
+      self.ingestionInfo = ingestionInfo
+      self.ingestionType = ingestionType
+      self.resolution = resolution
+   }
 }
 public struct GoogleCloudYoutubeChannel : GoogleCloudModel {
    /*The auditionDetails object encapsulates channel data that is relevant for YouTube Partners during the audition process. */
-   public var auditDetails:  GoogleCloudYoutubeChannelAuditDetails?
+   public var auditDetails: GoogleCloudYoutubeChannelAuditDetails?
    /*The brandingSettings object encapsulates information about the branding of the channel. */
-   public var brandingSettings:  GoogleCloudYoutubeChannelBrandingSettings?
+   public var brandingSettings: GoogleCloudYoutubeChannelBrandingSettings?
    /*The contentDetails object encapsulates information about the channel's content. */
-   public var contentDetails:  GoogleCloudYoutubeChannelContentDetails?
+   public var contentDetails: GoogleCloudYoutubeChannelContentDetails?
    /*The contentOwnerDetails object encapsulates channel data that is relevant for YouTube Partners linked with the channel. */
-   public var contentOwnerDetails:  GoogleCloudYoutubeChannelContentOwnerDetails?
+   public var contentOwnerDetails: GoogleCloudYoutubeChannelContentOwnerDetails?
    /*The conversionPings object encapsulates information about conversion pings that need to be respected by the channel. */
-   public var conversionPings:  GoogleCloudYoutubeChannelConversionPings?
+   public var conversionPings: GoogleCloudYoutubeChannelConversionPings?
    /*Etag of this resource. */
    public var etag: String?
    /*The ID that YouTube uses to uniquely identify the channel. */
    public var id: String?
    /*The invideoPromotion object encapsulates information about promotion campaign associated with the channel. */
-   public var invideoPromotion:  GoogleCloudYoutubeInvideoPromotion?
+   public var invideoPromotion: GoogleCloudYoutubeInvideoPromotion?
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#channel". */
    public var kind: String?
    /*Localizations for different languages */
    public var localizations: [String : GoogleCloudYoutubeChannelLocalization]?
    /*The snippet object contains basic details about the channel, such as its title, description, and thumbnail images. */
-   public var snippet:  GoogleCloudYoutubeChannelSnippet?
+   public var snippet: GoogleCloudYoutubeChannelSnippet?
    /*The statistics object encapsulates statistics for the channel. */
-   public var statistics:  GoogleCloudYoutubeChannelStatistics?
+   public var statistics: GoogleCloudYoutubeChannelStatistics?
    /*The status object encapsulates information about the privacy status of the channel. */
-   public var status:  GoogleCloudYoutubeChannelStatus?
+   public var status: GoogleCloudYoutubeChannelStatus?
    /*The topicDetails object encapsulates information about Freebase topics associated with the channel. */
-   public var topicDetails:  GoogleCloudYoutubeChannelTopicDetails?
+   public var topicDetails: GoogleCloudYoutubeChannelTopicDetails?
+   public init(auditDetails:GoogleCloudYoutubeChannelAuditDetails?, brandingSettings:GoogleCloudYoutubeChannelBrandingSettings?, contentDetails:GoogleCloudYoutubeChannelContentDetails?, contentOwnerDetails:GoogleCloudYoutubeChannelContentOwnerDetails?, conversionPings:GoogleCloudYoutubeChannelConversionPings?, etag:String?, id:String?, invideoPromotion:GoogleCloudYoutubeInvideoPromotion?, kind:String?, localizations:[String : GoogleCloudYoutubeChannelLocalization]?, snippet:GoogleCloudYoutubeChannelSnippet?, statistics:GoogleCloudYoutubeChannelStatistics?, status:GoogleCloudYoutubeChannelStatus?, topicDetails:GoogleCloudYoutubeChannelTopicDetails?) {
+      self.auditDetails = auditDetails
+      self.brandingSettings = brandingSettings
+      self.contentDetails = contentDetails
+      self.contentOwnerDetails = contentOwnerDetails
+      self.conversionPings = conversionPings
+      self.etag = etag
+      self.id = id
+      self.invideoPromotion = invideoPromotion
+      self.kind = kind
+      self.localizations = localizations
+      self.snippet = snippet
+      self.statistics = statistics
+      self.status = status
+      self.topicDetails = topicDetails
+   }
 }
 public struct GoogleCloudYoutubeChannelAuditDetails : GoogleCloudModel {
    /*Whether or not the channel respects the community guidelines. */
@@ -2074,6 +2220,11 @@ public struct GoogleCloudYoutubeChannelAuditDetails : GoogleCloudModel {
    public var contentIdClaimsGoodStanding: Bool?
    /*Whether or not the channel has any copyright strikes. */
    public var copyrightStrikesGoodStanding: Bool?
+   public init(communityGuidelinesGoodStanding:Bool?, contentIdClaimsGoodStanding:Bool?, copyrightStrikesGoodStanding:Bool?) {
+      self.communityGuidelinesGoodStanding = communityGuidelinesGoodStanding
+      self.contentIdClaimsGoodStanding = contentIdClaimsGoodStanding
+      self.copyrightStrikesGoodStanding = copyrightStrikesGoodStanding
+   }
 }
 public struct GoogleCloudYoutubeChannelBannerResource : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2082,35 +2233,60 @@ public struct GoogleCloudYoutubeChannelBannerResource : GoogleCloudModel {
    public var kind: String?
    /*The URL of this banner image. */
    public var url: String?
+   public init(etag:String?, kind:String?, url:String?) {
+      self.etag = etag
+      self.kind = kind
+      self.url = url
+   }
 }
 public struct GoogleCloudYoutubeChannelBrandingSettings : GoogleCloudModel {
    /*Branding properties for the channel view. */
-   public var `channel`:  GoogleCloudYoutubeChannelSettings?
+   public var `channel`: GoogleCloudYoutubeChannelSettings?
    /*Additional experimental branding properties. */
    public var hints: [GoogleCloudYoutubePropertyValue]?
    /*Branding properties for branding images. */
-   public var image:  GoogleCloudYoutubeImageSettings?
+   public var image: GoogleCloudYoutubeImageSettings?
    /*Branding properties for the watch page. */
-   public var watch:  GoogleCloudYoutubeWatchSettings?
+   public var watch: GoogleCloudYoutubeWatchSettings?
+   public init(`channel`:GoogleCloudYoutubeChannelSettings?, hints:[GoogleCloudYoutubePropertyValue]?, image:GoogleCloudYoutubeImageSettings?, watch:GoogleCloudYoutubeWatchSettings?) {
+      self.`channel` = `channel`
+      self.hints = hints
+      self.image = image
+      self.watch = watch
+   }
 }
 public struct GoogleCloudYoutubeChannelContentDetails : GoogleCloudModel {
    public var relatedPlaylists: GoogleCloudYoutubeChannelContentDetailsRelatedPlaylists?
+   public init(relatedPlaylists:GoogleCloudYoutubeChannelContentDetailsRelatedPlaylists?) {
+      self.relatedPlaylists = relatedPlaylists
+   }
 }
 public struct GoogleCloudYoutubeChannelContentOwnerDetails : GoogleCloudModel {
    /*The ID of the content owner linked to the channel. */
    public var contentOwner: String?
    /*The date and time of when the channel was linked to the content owner. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var timeLinked: String?
+   public init(contentOwner:String?, timeLinked:String?) {
+      self.contentOwner = contentOwner
+      self.timeLinked = timeLinked
+   }
 }
 public struct GoogleCloudYoutubeChannelConversionPing : GoogleCloudModel {
    /*Defines the context of the ping. */
    public var context: String?
    /*The url (without the schema) that the player shall send the ping to. It's at caller's descretion to decide which schema to use (http vs https) Example of a returned url: //googleads.g.doubleclick.net/pagead/ viewthroughconversion/962985656/?data=path%3DtHe_path%3Btype%3D cview%3Butuid%3DGISQtTNGYqaYl4sKxoVvKA&labe=default The caller must append biscotti authentication (ms param in case of mobile, for example) to this ping. */
    public var conversionUrl: String?
+   public init(context:String?, conversionUrl:String?) {
+      self.context = context
+      self.conversionUrl = conversionUrl
+   }
 }
 public struct GoogleCloudYoutubeChannelConversionPings : GoogleCloudModel {
    /*Pings that the app shall fire (authenticated by biscotti cookie). Each ping has a context, in which the app must fire the ping, and a url identifying the ping. */
    public var pings: [GoogleCloudYoutubeChannelConversionPing]?
+   public init(pings:[GoogleCloudYoutubeChannelConversionPing]?) {
+      self.pings = pings
+   }
 }
 public struct GoogleCloudYoutubeChannelListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2123,18 +2299,33 @@ public struct GoogleCloudYoutubeChannelListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeChannel]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeChannelLocalization : GoogleCloudModel {
    /*The localized strings for channel's description. */
    public var description: String?
    /*The localized strings for channel's title. */
    public var title: String?
+   public init(description:String?, title:String?) {
+      self.description = description
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeChannelProfileDetails : GoogleCloudModel {
    /*The YouTube channel ID. */
@@ -2145,10 +2336,16 @@ public struct GoogleCloudYoutubeChannelProfileDetails : GoogleCloudModel {
    public var displayName: String?
    /*The channels's avatar URL. */
    public var profileImageUrl: String?
+   public init(channelId:String?, channelUrl:String?, displayName:String?, profileImageUrl:String?) {
+      self.channelId = channelId
+      self.channelUrl = channelUrl
+      self.displayName = displayName
+      self.profileImageUrl = profileImageUrl
+   }
 }
 public struct GoogleCloudYoutubeChannelSection : GoogleCloudModel {
    /*The contentDetails object contains details about the channel section content, such as a list of playlists or channels featured in the section. */
-   public var contentDetails:  GoogleCloudYoutubeChannelSectionContentDetails?
+   public var contentDetails: GoogleCloudYoutubeChannelSectionContentDetails?
    /*Etag of this resource. */
    public var etag: String?
    /*The ID that YouTube uses to uniquely identify the channel section. */
@@ -2158,15 +2355,28 @@ public struct GoogleCloudYoutubeChannelSection : GoogleCloudModel {
    /*Localizations for different languages */
    public var localizations: [String : GoogleCloudYoutubeChannelSectionLocalization]?
    /*The snippet object contains basic details about the channel section, such as its type, style and title. */
-   public var snippet:  GoogleCloudYoutubeChannelSectionSnippet?
+   public var snippet: GoogleCloudYoutubeChannelSectionSnippet?
    /*The targeting object contains basic targeting settings about the channel section. */
-   public var targeting:  GoogleCloudYoutubeChannelSectionTargeting?
+   public var targeting: GoogleCloudYoutubeChannelSectionTargeting?
+   public init(contentDetails:GoogleCloudYoutubeChannelSectionContentDetails?, etag:String?, id:String?, kind:String?, localizations:[String : GoogleCloudYoutubeChannelSectionLocalization]?, snippet:GoogleCloudYoutubeChannelSectionSnippet?, targeting:GoogleCloudYoutubeChannelSectionTargeting?) {
+      self.contentDetails = contentDetails
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.localizations = localizations
+      self.snippet = snippet
+      self.targeting = targeting
+   }
 }
 public struct GoogleCloudYoutubeChannelSectionContentDetails : GoogleCloudModel {
    /*The channel ids for type multiple_channels. */
    public var channels: [String]?
    /*The playlist ids for type single_playlist and multiple_playlists. For singlePlaylist, only one playlistId is allowed. */
    public var playlists: [String]?
+   public init(channels:[String]?, playlists:[String]?) {
+      self.channels = channels
+      self.playlists = playlists
+   }
 }
 public struct GoogleCloudYoutubeChannelSectionListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2179,10 +2389,20 @@ public struct GoogleCloudYoutubeChannelSectionListResponse : GoogleCloudModel {
    public var kind: String?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeChannelSection]?, kind:String?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeChannelSectionLocalization : GoogleCloudModel {
    /*The localized strings for channel section's title. */
    public var title: String?
+   public init(title:String?) {
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeChannelSectionSnippet : GoogleCloudModel {
    /*The ID that YouTube uses to uniquely identify the channel that published the channel section. */
@@ -2190,7 +2410,7 @@ public struct GoogleCloudYoutubeChannelSectionSnippet : GoogleCloudModel {
    /*The language of the channel section's default title and description. */
    public var defaultLanguage: String?
    /*Localized title, read-only. */
-   public var localized:  GoogleCloudYoutubeChannelSectionLocalization?
+   public var localized: GoogleCloudYoutubeChannelSectionLocalization?
    /*The position of the channel section in the channel. */
    @CodingUses<Coder> public var position: UInt?
    /*The style of the channel section. */
@@ -2199,6 +2419,15 @@ public struct GoogleCloudYoutubeChannelSectionSnippet : GoogleCloudModel {
    public var title: String?
    /*The type of the channel section. */
    public var type: String?
+   public init(channelId:String?, defaultLanguage:String?, localized:GoogleCloudYoutubeChannelSectionLocalization?, position:UInt?, style:String?, title:String?, type:String?) {
+      self.channelId = channelId
+      self.defaultLanguage = defaultLanguage
+      self.localized = localized
+      self.position = position
+      self.style = style
+      self.title = title
+      self.type = type
+   }
 }
 public struct GoogleCloudYoutubeChannelSectionTargeting : GoogleCloudModel {
    /*The country the channel section is targeting. */
@@ -2207,6 +2436,11 @@ public struct GoogleCloudYoutubeChannelSectionTargeting : GoogleCloudModel {
    public var languages: [String]?
    /*The region the channel section is targeting. */
    public var regions: [String]?
+   public init(countries:[String]?, languages:[String]?, regions:[String]?) {
+      self.countries = countries
+      self.languages = languages
+      self.regions = regions
+   }
 }
 public struct GoogleCloudYoutubeChannelSettings : GoogleCloudModel {
    /*The country of the channel. */
@@ -2236,6 +2470,22 @@ public struct GoogleCloudYoutubeChannelSettings : GoogleCloudModel {
    public var trackingAnalyticsAccountId: String?
    /*The trailer of the channel, for users that are not subscribers. */
    public var unsubscribedTrailer: String?
+   public init(country:String?, defaultLanguage:String?, defaultTab:String?, description:String?, featuredChannelsTitle:String?, featuredChannelsUrls:[String]?, keywords:String?, moderateComments:Bool?, profileColor:String?, showBrowseView:Bool?, showRelatedChannels:Bool?, title:String?, trackingAnalyticsAccountId:String?, unsubscribedTrailer:String?) {
+      self.country = country
+      self.defaultLanguage = defaultLanguage
+      self.defaultTab = defaultTab
+      self.description = description
+      self.featuredChannelsTitle = featuredChannelsTitle
+      self.featuredChannelsUrls = featuredChannelsUrls
+      self.keywords = keywords
+      self.moderateComments = moderateComments
+      self.profileColor = profileColor
+      self.showBrowseView = showBrowseView
+      self.showRelatedChannels = showRelatedChannels
+      self.title = title
+      self.trackingAnalyticsAccountId = trackingAnalyticsAccountId
+      self.unsubscribedTrailer = unsubscribedTrailer
+   }
 }
 public struct GoogleCloudYoutubeChannelSnippet : GoogleCloudModel {
    /*The country of the channel. */
@@ -2247,7 +2497,7 @@ public struct GoogleCloudYoutubeChannelSnippet : GoogleCloudModel {
    /*The description of the channel. */
    public var description: String?
    /*Localized title and description, read-only. */
-   public var localized:  GoogleCloudYoutubeChannelLocalization?
+   public var localized: GoogleCloudYoutubeChannelLocalization?
    /*The date and time that the channel was created. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var publishedAt: String?
    /*A map of thumbnail images associated with the channel. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail.
@@ -2255,9 +2505,19 @@ public struct GoogleCloudYoutubeChannelSnippet : GoogleCloudModel {
 When displaying thumbnails in your application, make sure that your code uses the image URLs exactly as they are returned in API responses. For example, your application should not use the http domain instead of the https domain in a URL returned in an API response.
 
 Beginning in July 2018, channel thumbnail URLs will only be available in the https domain, which is how the URLs appear in API responses. After that time, you might see broken images in your application if it tries to load YouTube images from the http domain. */
-   public var thumbnails:  GoogleCloudYoutubeThumbnailDetails?
+   public var thumbnails: GoogleCloudYoutubeThumbnailDetails?
    /*The channel's title. */
    public var title: String?
+   public init(country:String?, customUrl:String?, defaultLanguage:String?, description:String?, localized:GoogleCloudYoutubeChannelLocalization?, publishedAt:String?, thumbnails:GoogleCloudYoutubeThumbnailDetails?, title:String?) {
+      self.country = country
+      self.customUrl = customUrl
+      self.defaultLanguage = defaultLanguage
+      self.description = description
+      self.localized = localized
+      self.publishedAt = publishedAt
+      self.thumbnails = thumbnails
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeChannelStatistics : GoogleCloudModel {
    /*The number of comments for the channel. */
@@ -2270,6 +2530,13 @@ public struct GoogleCloudYoutubeChannelStatistics : GoogleCloudModel {
    @CodingUses<Coder> public var videoCount: UInt?
    /*The number of times the channel has been viewed. */
    @CodingUses<Coder> public var viewCount: UInt?
+   public init(commentCount:UInt?, hiddenSubscriberCount:Bool?, subscriberCount:UInt?, videoCount:UInt?, viewCount:UInt?) {
+      self.commentCount = commentCount
+      self.hiddenSubscriberCount = hiddenSubscriberCount
+      self.subscriberCount = subscriberCount
+      self.videoCount = videoCount
+      self.viewCount = viewCount
+   }
 }
 public struct GoogleCloudYoutubeChannelStatus : GoogleCloudModel {
    /*If true, then the user is linked to either a YouTube username or G+ account. Otherwise, the user doesn't have a public YouTube identity. */
@@ -2280,12 +2547,23 @@ public struct GoogleCloudYoutubeChannelStatus : GoogleCloudModel {
    /*Privacy status of the channel. */
    public var privacyStatus: String?
    public var selfDeclaredMadeForKids: Bool?
+   public init(isLinked:Bool?, longUploadsStatus:String?, madeForKids:Bool?, privacyStatus:String?, selfDeclaredMadeForKids:Bool?) {
+      self.isLinked = isLinked
+      self.longUploadsStatus = longUploadsStatus
+      self.madeForKids = madeForKids
+      self.privacyStatus = privacyStatus
+      self.selfDeclaredMadeForKids = selfDeclaredMadeForKids
+   }
 }
 public struct GoogleCloudYoutubeChannelTopicDetails : GoogleCloudModel {
    /*A list of Wikipedia URLs that describe the channel's content. */
    public var topicCategories: [String]?
    /*A list of Freebase topic IDs associated with the channel. You can retrieve information about each topic using the Freebase Topic API. */
    public var topicIds: [String]?
+   public init(topicCategories:[String]?, topicIds:[String]?) {
+      self.topicCategories = topicCategories
+      self.topicIds = topicIds
+   }
 }
 public struct GoogleCloudYoutubeComment : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2295,7 +2573,13 @@ public struct GoogleCloudYoutubeComment : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#comment". */
    public var kind: String?
    /*The snippet object contains basic details about the comment. */
-   public var snippet:  GoogleCloudYoutubeCommentSnippet?
+   public var snippet: GoogleCloudYoutubeCommentSnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeCommentSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeCommentListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2308,10 +2592,20 @@ public struct GoogleCloudYoutubeCommentListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeComment]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeCommentSnippet : GoogleCloudModel {
    /*The id of the author's YouTube channel, if any. */
@@ -2344,6 +2638,23 @@ public struct GoogleCloudYoutubeCommentSnippet : GoogleCloudModel {
    public var videoId: String?
    /*The rating the viewer has given to this comment. For the time being this will never return RATE_TYPE_DISLIKE and instead return RATE_TYPE_NONE. This may change in the future. */
    public var viewerRating: String?
+   public init(authorChannelId:[String: String]?, authorChannelUrl:String?, authorDisplayName:String?, authorProfileImageUrl:String?, canRate:Bool?, channelId:String?, likeCount:UInt?, moderationStatus:String?, parentId:String?, publishedAt:String?, textDisplay:String?, textOriginal:String?, updatedAt:String?, videoId:String?, viewerRating:String?) {
+      self.authorChannelId = authorChannelId
+      self.authorChannelUrl = authorChannelUrl
+      self.authorDisplayName = authorDisplayName
+      self.authorProfileImageUrl = authorProfileImageUrl
+      self.canRate = canRate
+      self.channelId = channelId
+      self.likeCount = likeCount
+      self.moderationStatus = moderationStatus
+      self.parentId = parentId
+      self.publishedAt = publishedAt
+      self.textDisplay = textDisplay
+      self.textOriginal = textOriginal
+      self.updatedAt = updatedAt
+      self.videoId = videoId
+      self.viewerRating = viewerRating
+   }
 }
 public struct GoogleCloudYoutubeCommentThread : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2353,9 +2664,16 @@ public struct GoogleCloudYoutubeCommentThread : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#commentThread". */
    public var kind: String?
    /*The replies object contains a limited number of replies (if any) to the top level comment found in the snippet. */
-   public var replies:  GoogleCloudYoutubeCommentThreadReplies?
+   public var replies: GoogleCloudYoutubeCommentThreadReplies?
    /*The snippet object contains basic details about the comment thread and also the top level comment. */
-   public var snippet:  GoogleCloudYoutubeCommentThreadSnippet?
+   public var snippet: GoogleCloudYoutubeCommentThreadSnippet?
+   public init(etag:String?, id:String?, kind:String?, replies:GoogleCloudYoutubeCommentThreadReplies?, snippet:GoogleCloudYoutubeCommentThreadSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.replies = replies
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeCommentThreadListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2368,14 +2686,27 @@ public struct GoogleCloudYoutubeCommentThreadListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeCommentThread]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeCommentThreadReplies : GoogleCloudModel {
    /*A limited number of replies. Unless the number of replies returned equals total_reply_count in the snippet the returned replies are only a subset of the total number of replies. */
    public var comments: [GoogleCloudYoutubeComment]?
+   public init(comments:[GoogleCloudYoutubeComment]?) {
+      self.comments = comments
+   }
 }
 public struct GoogleCloudYoutubeCommentThreadSnippet : GoogleCloudModel {
    /*Whether the current viewer of the thread can reply to it. This is viewer specific - other viewers may see a different value for this field. */
@@ -2385,11 +2716,19 @@ public struct GoogleCloudYoutubeCommentThreadSnippet : GoogleCloudModel {
    /*Whether the thread (and therefore all its comments) is visible to all YouTube users. */
    public var isPublic: Bool?
    /*The top level comment of this thread. */
-   public var topLevelComment:  GoogleCloudYoutubeComment?
+   public var topLevelComment: GoogleCloudYoutubeComment?
    /*The total number of replies (not including the top level comment). */
    @CodingUses<Coder> public var totalReplyCount: UInt?
    /*The ID of the video the comments refer to, if any. No video_id implies a channel discussion comment. */
    public var videoId: String?
+   public init(canReply:Bool?, channelId:String?, isPublic:Bool?, topLevelComment:GoogleCloudYoutubeComment?, totalReplyCount:UInt?, videoId:String?) {
+      self.canReply = canReply
+      self.channelId = channelId
+      self.isPublic = isPublic
+      self.topLevelComment = topLevelComment
+      self.totalReplyCount = totalReplyCount
+      self.videoId = videoId
+   }
 }
 public struct GoogleCloudYoutubeContentRating : GoogleCloudModel {
    /*The video's Australian Classification Board (ACB) or Australian Communications and Media Authority (ACMA) rating. ACMA ratings are used to classify children's television programming. */
@@ -2533,6 +2872,79 @@ public struct GoogleCloudYoutubeContentRating : GoogleCloudModel {
    public var tvpgRating: String?
    /*A rating that YouTube uses to identify age-restricted content. */
    public var ytRating: String?
+   public init(acbRating:String?, agcomRating:String?, anatelRating:String?, bbfcRating:String?, bfvcRating:String?, bmukkRating:String?, catvRating:String?, catvfrRating:String?, cbfcRating:String?, cccRating:String?, cceRating:String?, chfilmRating:String?, chvrsRating:String?, cicfRating:String?, cnaRating:String?, cncRating:String?, csaRating:String?, cscfRating:String?, czfilmRating:String?, djctqRating:String?, djctqRatingReasons:[String]?, ecbmctRating:String?, eefilmRating:String?, egfilmRating:String?, eirinRating:String?, fcbmRating:String?, fcoRating:String?, fmocRating:String?, fpbRating:String?, fpbRatingReasons:[String]?, fskRating:String?, grfilmRating:String?, icaaRating:String?, ifcoRating:String?, ilfilmRating:String?, incaaRating:String?, kfcbRating:String?, kijkwijzerRating:String?, kmrbRating:String?, lsfRating:String?, mccaaRating:String?, mccypRating:String?, mcstRating:String?, mdaRating:String?, medietilsynetRating:String?, mekuRating:String?, menaMpaaRating:String?, mibacRating:String?, mocRating:String?, moctwRating:String?, mpaaRating:String?, mpaatRating:String?, mtrcbRating:String?, nbcRating:String?, nbcplRating:String?, nfrcRating:String?, nfvcbRating:String?, nkclvRating:String?, nmcRating:String?, oflcRating:String?, pefilmRating:String?, rcnofRating:String?, resorteviolenciaRating:String?, rtcRating:String?, rteRating:String?, russiaRating:String?, skfilmRating:String?, smaisRating:String?, smsaRating:String?, tvpgRating:String?, ytRating:String?) {
+      self.acbRating = acbRating
+      self.agcomRating = agcomRating
+      self.anatelRating = anatelRating
+      self.bbfcRating = bbfcRating
+      self.bfvcRating = bfvcRating
+      self.bmukkRating = bmukkRating
+      self.catvRating = catvRating
+      self.catvfrRating = catvfrRating
+      self.cbfcRating = cbfcRating
+      self.cccRating = cccRating
+      self.cceRating = cceRating
+      self.chfilmRating = chfilmRating
+      self.chvrsRating = chvrsRating
+      self.cicfRating = cicfRating
+      self.cnaRating = cnaRating
+      self.cncRating = cncRating
+      self.csaRating = csaRating
+      self.cscfRating = cscfRating
+      self.czfilmRating = czfilmRating
+      self.djctqRating = djctqRating
+      self.djctqRatingReasons = djctqRatingReasons
+      self.ecbmctRating = ecbmctRating
+      self.eefilmRating = eefilmRating
+      self.egfilmRating = egfilmRating
+      self.eirinRating = eirinRating
+      self.fcbmRating = fcbmRating
+      self.fcoRating = fcoRating
+      self.fmocRating = fmocRating
+      self.fpbRating = fpbRating
+      self.fpbRatingReasons = fpbRatingReasons
+      self.fskRating = fskRating
+      self.grfilmRating = grfilmRating
+      self.icaaRating = icaaRating
+      self.ifcoRating = ifcoRating
+      self.ilfilmRating = ilfilmRating
+      self.incaaRating = incaaRating
+      self.kfcbRating = kfcbRating
+      self.kijkwijzerRating = kijkwijzerRating
+      self.kmrbRating = kmrbRating
+      self.lsfRating = lsfRating
+      self.mccaaRating = mccaaRating
+      self.mccypRating = mccypRating
+      self.mcstRating = mcstRating
+      self.mdaRating = mdaRating
+      self.medietilsynetRating = medietilsynetRating
+      self.mekuRating = mekuRating
+      self.menaMpaaRating = menaMpaaRating
+      self.mibacRating = mibacRating
+      self.mocRating = mocRating
+      self.moctwRating = moctwRating
+      self.mpaaRating = mpaaRating
+      self.mpaatRating = mpaatRating
+      self.mtrcbRating = mtrcbRating
+      self.nbcRating = nbcRating
+      self.nbcplRating = nbcplRating
+      self.nfrcRating = nfrcRating
+      self.nfvcbRating = nfvcbRating
+      self.nkclvRating = nkclvRating
+      self.nmcRating = nmcRating
+      self.oflcRating = oflcRating
+      self.pefilmRating = pefilmRating
+      self.rcnofRating = rcnofRating
+      self.resorteviolenciaRating = resorteviolenciaRating
+      self.rtcRating = rtcRating
+      self.rteRating = rteRating
+      self.russiaRating = russiaRating
+      self.skfilmRating = skfilmRating
+      self.smaisRating = smaisRating
+      self.smsaRating = smsaRating
+      self.tvpgRating = tvpgRating
+      self.ytRating = ytRating
+   }
 }
 public struct GoogleCloudYoutubeGeoPoint : GoogleCloudModel {
    /*Altitude above the reference ellipsoid, in meters. */
@@ -2541,6 +2953,11 @@ public struct GoogleCloudYoutubeGeoPoint : GoogleCloudModel {
    @CodingUses<Coder> public var latitude: Double?
    /*Longitude in degrees. */
    @CodingUses<Coder> public var longitude: Double?
+   public init(altitude:Double?, latitude:Double?, longitude:Double?) {
+      self.altitude = altitude
+      self.latitude = latitude
+      self.longitude = longitude
+   }
 }
 public struct GoogleCloudYoutubeGuideCategory : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2550,7 +2967,13 @@ public struct GoogleCloudYoutubeGuideCategory : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#guideCategory". */
    public var kind: String?
    /*The snippet object contains basic details about the category, such as its title. */
-   public var snippet:  GoogleCloudYoutubeGuideCategorySnippet?
+   public var snippet: GoogleCloudYoutubeGuideCategorySnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeGuideCategorySnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeGuideCategoryListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2563,17 +2986,32 @@ public struct GoogleCloudYoutubeGuideCategoryListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeGuideCategory]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeGuideCategorySnippet : GoogleCloudModel {
    public var channelId: String?
    /*Description of the guide category. */
    public var title: String?
+   public init(channelId:String?, title:String?) {
+      self.channelId = channelId
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeI18nLanguage : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2583,7 +3021,13 @@ public struct GoogleCloudYoutubeI18nLanguage : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#i18nLanguage". */
    public var kind: String?
    /*The snippet object contains basic details about the i18n language, such as language code and human-readable name. */
-   public var snippet:  GoogleCloudYoutubeI18nLanguageSnippet?
+   public var snippet: GoogleCloudYoutubeI18nLanguageSnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeI18nLanguageSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeI18nLanguageListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2596,12 +3040,23 @@ public struct GoogleCloudYoutubeI18nLanguageListResponse : GoogleCloudModel {
    public var kind: String?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeI18nLanguage]?, kind:String?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeI18nLanguageSnippet : GoogleCloudModel {
    /*A short BCP-47 code that uniquely identifies a language. */
    public var hl: String?
    /*The human-readable name of the language in the language itself. */
    public var name: String?
+   public init(hl:String?, name:String?) {
+      self.hl = hl
+      self.name = name
+   }
 }
 public struct GoogleCloudYoutubeI18nRegion : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2611,7 +3066,13 @@ public struct GoogleCloudYoutubeI18nRegion : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#i18nRegion". */
    public var kind: String?
    /*The snippet object contains basic details about the i18n region, such as region code and human-readable name. */
-   public var snippet:  GoogleCloudYoutubeI18nRegionSnippet?
+   public var snippet: GoogleCloudYoutubeI18nRegionSnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeI18nRegionSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeI18nRegionListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2624,16 +3085,27 @@ public struct GoogleCloudYoutubeI18nRegionListResponse : GoogleCloudModel {
    public var kind: String?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeI18nRegion]?, kind:String?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeI18nRegionSnippet : GoogleCloudModel {
    /*The region code as a 2-letter ISO country code. */
    public var gl: String?
    /*The human-readable name of the region. */
    public var name: String?
+   public init(gl:String?, name:String?) {
+      self.gl = gl
+      self.name = name
+   }
 }
 public struct GoogleCloudYoutubeImageSettings : GoogleCloudModel {
    /*The URL for the background image shown on the video watch page. The image should be 1200px by 615px, with a maximum file size of 128k. */
-   public var backgroundImageUrl:  GoogleCloudYoutubeLocalizedProperty?
+   public var backgroundImageUrl: GoogleCloudYoutubeLocalizedProperty?
    /*This is used only in update requests; if it's set, we use this URL to generate all of the above banner URLs. */
    public var bannerExternalUrl: String?
    /*Banner image. Desktop size (1060x175). */
@@ -2665,17 +3137,41 @@ public struct GoogleCloudYoutubeImageSettings : GoogleCloudModel {
    /*Banner image. TV size medium resolution (1280x720). */
    public var bannerTvMediumImageUrl: String?
    /*The image map script for the large banner image. */
-   public var largeBrandedBannerImageImapScript:  GoogleCloudYoutubeLocalizedProperty?
+   public var largeBrandedBannerImageImapScript: GoogleCloudYoutubeLocalizedProperty?
    /*The URL for the 854px by 70px image that appears below the video player in the expanded video view of the video watch page. */
-   public var largeBrandedBannerImageUrl:  GoogleCloudYoutubeLocalizedProperty?
+   public var largeBrandedBannerImageUrl: GoogleCloudYoutubeLocalizedProperty?
    /*The image map script for the small banner image. */
-   public var smallBrandedBannerImageImapScript:  GoogleCloudYoutubeLocalizedProperty?
+   public var smallBrandedBannerImageImapScript: GoogleCloudYoutubeLocalizedProperty?
    /*The URL for the 640px by 70px banner image that appears below the video player in the default view of the video watch page. */
-   public var smallBrandedBannerImageUrl:  GoogleCloudYoutubeLocalizedProperty?
+   public var smallBrandedBannerImageUrl: GoogleCloudYoutubeLocalizedProperty?
    /*The URL for a 1px by 1px tracking pixel that can be used to collect statistics for views of the channel or video pages. */
    public var trackingImageUrl: String?
    /*The URL for the image that appears above the top-left corner of the video player. This is a 25-pixel-high image with a flexible width that cannot exceed 170 pixels. */
    public var watchIconImageUrl: String?
+   public init(backgroundImageUrl:GoogleCloudYoutubeLocalizedProperty?, bannerExternalUrl:String?, bannerImageUrl:String?, bannerMobileExtraHdImageUrl:String?, bannerMobileHdImageUrl:String?, bannerMobileImageUrl:String?, bannerMobileLowImageUrl:String?, bannerMobileMediumHdImageUrl:String?, bannerTabletExtraHdImageUrl:String?, bannerTabletHdImageUrl:String?, bannerTabletImageUrl:String?, bannerTabletLowImageUrl:String?, bannerTvHighImageUrl:String?, bannerTvImageUrl:String?, bannerTvLowImageUrl:String?, bannerTvMediumImageUrl:String?, largeBrandedBannerImageImapScript:GoogleCloudYoutubeLocalizedProperty?, largeBrandedBannerImageUrl:GoogleCloudYoutubeLocalizedProperty?, smallBrandedBannerImageImapScript:GoogleCloudYoutubeLocalizedProperty?, smallBrandedBannerImageUrl:GoogleCloudYoutubeLocalizedProperty?, trackingImageUrl:String?, watchIconImageUrl:String?) {
+      self.backgroundImageUrl = backgroundImageUrl
+      self.bannerExternalUrl = bannerExternalUrl
+      self.bannerImageUrl = bannerImageUrl
+      self.bannerMobileExtraHdImageUrl = bannerMobileExtraHdImageUrl
+      self.bannerMobileHdImageUrl = bannerMobileHdImageUrl
+      self.bannerMobileImageUrl = bannerMobileImageUrl
+      self.bannerMobileLowImageUrl = bannerMobileLowImageUrl
+      self.bannerMobileMediumHdImageUrl = bannerMobileMediumHdImageUrl
+      self.bannerTabletExtraHdImageUrl = bannerTabletExtraHdImageUrl
+      self.bannerTabletHdImageUrl = bannerTabletHdImageUrl
+      self.bannerTabletImageUrl = bannerTabletImageUrl
+      self.bannerTabletLowImageUrl = bannerTabletLowImageUrl
+      self.bannerTvHighImageUrl = bannerTvHighImageUrl
+      self.bannerTvImageUrl = bannerTvImageUrl
+      self.bannerTvLowImageUrl = bannerTvLowImageUrl
+      self.bannerTvMediumImageUrl = bannerTvMediumImageUrl
+      self.largeBrandedBannerImageImapScript = largeBrandedBannerImageImapScript
+      self.largeBrandedBannerImageUrl = largeBrandedBannerImageUrl
+      self.smallBrandedBannerImageImapScript = smallBrandedBannerImageImapScript
+      self.smallBrandedBannerImageUrl = smallBrandedBannerImageUrl
+      self.trackingImageUrl = trackingImageUrl
+      self.watchIconImageUrl = watchIconImageUrl
+   }
 }
 public struct GoogleCloudYoutubeIngestionInfo : GoogleCloudModel {
    /*The backup ingestion URL that you should use to stream video to YouTube. You have the option of simultaneously streaming the content that you are sending to the ingestionAddress to this URL. */
@@ -2688,29 +3184,51 @@ STREAM_URL/STREAM_NAME */
    public var ingestionAddress: String?
    /*The HTTP or RTMP stream name that YouTube assigns to the video stream. */
    public var streamName: String?
+   public init(backupIngestionAddress:String?, ingestionAddress:String?, streamName:String?) {
+      self.backupIngestionAddress = backupIngestionAddress
+      self.ingestionAddress = ingestionAddress
+      self.streamName = streamName
+   }
 }
 public struct GoogleCloudYoutubeInvideoBranding : GoogleCloudModel {
    @CodingUses<Coder> public var imageBytes: Data?
    public var imageUrl: String?
-   public var position:  GoogleCloudYoutubeInvideoPosition?
+   public var position: GoogleCloudYoutubeInvideoPosition?
    public var targetChannelId: String?
-   public var timing:  GoogleCloudYoutubeInvideoTiming?
+   public var timing: GoogleCloudYoutubeInvideoTiming?
+   public init(imageBytes:Data?, imageUrl:String?, position:GoogleCloudYoutubeInvideoPosition?, targetChannelId:String?, timing:GoogleCloudYoutubeInvideoTiming?) {
+      self.imageBytes = imageBytes
+      self.imageUrl = imageUrl
+      self.position = position
+      self.targetChannelId = targetChannelId
+      self.timing = timing
+   }
 }
 public struct GoogleCloudYoutubeInvideoPosition : GoogleCloudModel {
    /*Describes in which corner of the video the visual widget will appear. */
    public var cornerPosition: String?
    /*Defines the position type. */
    public var type: String?
+   public init(cornerPosition:String?, type:String?) {
+      self.cornerPosition = cornerPosition
+      self.type = type
+   }
 }
 public struct GoogleCloudYoutubeInvideoPromotion : GoogleCloudModel {
    /*The default temporal position within the video where the promoted item will be displayed. Can be overriden by more specific timing in the item. */
-   public var defaultTiming:  GoogleCloudYoutubeInvideoTiming?
+   public var defaultTiming: GoogleCloudYoutubeInvideoTiming?
    /*List of promoted items in decreasing priority. */
    public var items: [GoogleCloudYoutubePromotedItem]?
    /*The spatial position within the video where the promoted item will be displayed. */
-   public var position:  GoogleCloudYoutubeInvideoPosition?
+   public var position: GoogleCloudYoutubeInvideoPosition?
    /*Indicates whether the channel's promotional campaign uses "smart timing." This feature attempts to show promotions at a point in the video when they are more likely to be clicked and less likely to disrupt the viewing experience. This feature also picks up a single promotion to show on each video. */
    public var useSmartTiming: Bool?
+   public init(defaultTiming:GoogleCloudYoutubeInvideoTiming?, items:[GoogleCloudYoutubePromotedItem]?, position:GoogleCloudYoutubeInvideoPosition?, useSmartTiming:Bool?) {
+      self.defaultTiming = defaultTiming
+      self.items = items
+      self.position = position
+      self.useSmartTiming = useSmartTiming
+   }
 }
 public struct GoogleCloudYoutubeInvideoTiming : GoogleCloudModel {
    /*Defines the duration in milliseconds for which the promotion should be displayed. If missing, the client should use the default. */
@@ -2719,16 +3237,27 @@ public struct GoogleCloudYoutubeInvideoTiming : GoogleCloudModel {
    @CodingUses<Coder> public var offsetMs: UInt?
    /*Describes a timing type. If the value is offsetFromStart, then the offsetMs field represents an offset from the start of the video. If the value is offsetFromEnd, then the offsetMs field represents an offset from the end of the video. */
    public var type: String?
+   public init(durationMs:UInt?, offsetMs:UInt?, type:String?) {
+      self.durationMs = durationMs
+      self.offsetMs = offsetMs
+      self.type = type
+   }
 }
 public struct GoogleCloudYoutubeLanguageTag : GoogleCloudModel {
    public var value: String?
+   public init(value:String?) {
+      self.value = value
+   }
 }
 public struct GoogleCloudYoutubeLevelDetails : GoogleCloudModel {
    public var displayName: String?
+   public init(displayName:String?) {
+      self.displayName = displayName
+   }
 }
 public struct GoogleCloudYoutubeLiveBroadcast : GoogleCloudModel {
    /*The contentDetails object contains information about the event's video content, such as whether the content can be shown in an embedded video player or if it will be archived and therefore available for viewing after the event has concluded. */
-   public var contentDetails:  GoogleCloudYoutubeLiveBroadcastContentDetails?
+   public var contentDetails: GoogleCloudYoutubeLiveBroadcastContentDetails?
    /*Etag of this resource. */
    public var etag: String?
    /*The ID that YouTube assigns to uniquely identify the broadcast. */
@@ -2736,11 +3265,20 @@ public struct GoogleCloudYoutubeLiveBroadcast : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#liveBroadcast". */
    public var kind: String?
    /*The snippet object contains basic details about the event, including its title, description, start time, and end time. */
-   public var snippet:  GoogleCloudYoutubeLiveBroadcastSnippet?
+   public var snippet: GoogleCloudYoutubeLiveBroadcastSnippet?
    /*The statistics object contains info about the event's current stats. These include concurrent viewers and total chat count. Statistics can change (in either direction) during the lifetime of an event. Statistics are only returned while the event is live. */
-   public var statistics:  GoogleCloudYoutubeLiveBroadcastStatistics?
+   public var statistics: GoogleCloudYoutubeLiveBroadcastStatistics?
    /*The status object contains information about the event's status. */
-   public var status:  GoogleCloudYoutubeLiveBroadcastStatus?
+   public var status: GoogleCloudYoutubeLiveBroadcastStatus?
+   public init(contentDetails:GoogleCloudYoutubeLiveBroadcastContentDetails?, etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeLiveBroadcastSnippet?, statistics:GoogleCloudYoutubeLiveBroadcastStatistics?, status:GoogleCloudYoutubeLiveBroadcastStatus?) {
+      self.contentDetails = contentDetails
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+      self.statistics = statistics
+      self.status = status
+   }
 }
 public struct GoogleCloudYoutubeLiveBroadcastContentDetails : GoogleCloudModel {
    /*This value uniquely identifies the live stream bound to the broadcast. */
@@ -2768,7 +3306,7 @@ Important: You must set the value to true and also set the enableArchive propert
    public var latencyPreference: String?
    @CodingUses<Coder> public var mesh: Data?
    /*The monitorStream object contains information about the monitor stream, which the broadcaster can use to review the event content before the broadcast stream is shown publicly. */
-   public var monitorStream:  GoogleCloudYoutubeMonitorStreamInfo?
+   public var monitorStream: GoogleCloudYoutubeMonitorStreamInfo?
    /*The projection format of this broadcast. This defaults to rectangular. */
    public var projection: String?
    /*Automatically start recording after the event goes live. The default value for this property is true.
@@ -2780,6 +3318,24 @@ Important: You must also set the enableDvr property's value to true if you want 
    /*This setting indicates whether the broadcast should automatically begin with an in-stream slate when you update the broadcast's status to live. After updating the status, you then need to send a liveCuepoints.insert request that sets the cuepoint's eventState to end to remove the in-stream slate and make your broadcast stream visible to viewers. */
    public var startWithSlate: Bool?
    public var stereoLayout: String?
+   public init(boundStreamId:String?, boundStreamLastUpdateTimeMs:String?, closedCaptionsType:String?, enableAutoStart:Bool?, enableClosedCaptions:Bool?, enableContentEncryption:Bool?, enableDvr:Bool?, enableEmbed:Bool?, enableLowLatency:Bool?, latencyPreference:String?, mesh:Data?, monitorStream:GoogleCloudYoutubeMonitorStreamInfo?, projection:String?, recordFromStart:Bool?, startWithSlate:Bool?, stereoLayout:String?) {
+      self.boundStreamId = boundStreamId
+      self.boundStreamLastUpdateTimeMs = boundStreamLastUpdateTimeMs
+      self.closedCaptionsType = closedCaptionsType
+      self.enableAutoStart = enableAutoStart
+      self.enableClosedCaptions = enableClosedCaptions
+      self.enableContentEncryption = enableContentEncryption
+      self.enableDvr = enableDvr
+      self.enableEmbed = enableEmbed
+      self.enableLowLatency = enableLowLatency
+      self.latencyPreference = latencyPreference
+      self.mesh = mesh
+      self.monitorStream = monitorStream
+      self.projection = projection
+      self.recordFromStart = recordFromStart
+      self.startWithSlate = startWithSlate
+      self.stereoLayout = stereoLayout
+   }
 }
 public struct GoogleCloudYoutubeLiveBroadcastListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2792,12 +3348,23 @@ public struct GoogleCloudYoutubeLiveBroadcastListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeLiveBroadcast]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeLiveBroadcastSnippet : GoogleCloudModel {
    /*The date and time that the broadcast actually ended. This information is only available once the broadcast's state is complete. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
@@ -2819,15 +3386,33 @@ public struct GoogleCloudYoutubeLiveBroadcastSnippet : GoogleCloudModel {
    /*The date and time that the broadcast is scheduled to start. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var scheduledStartTime: String?
    /*A map of thumbnail images associated with the broadcast. For each nested object in this object, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail. */
-   public var thumbnails:  GoogleCloudYoutubeThumbnailDetails?
+   public var thumbnails: GoogleCloudYoutubeThumbnailDetails?
    /*The broadcast's title. Note that the broadcast represents exactly one YouTube video. You can set this field by modifying the broadcast resource or by setting the title field of the corresponding video resource. */
    public var title: String?
+   public init(actualEndTime:String?, actualStartTime:String?, broadcastType:String?, channelId:String?, description:String?, isDefaultBroadcast:Bool?, liveChatId:String?, publishedAt:String?, scheduledEndTime:String?, scheduledStartTime:String?, thumbnails:GoogleCloudYoutubeThumbnailDetails?, title:String?) {
+      self.actualEndTime = actualEndTime
+      self.actualStartTime = actualStartTime
+      self.broadcastType = broadcastType
+      self.channelId = channelId
+      self.description = description
+      self.isDefaultBroadcast = isDefaultBroadcast
+      self.liveChatId = liveChatId
+      self.publishedAt = publishedAt
+      self.scheduledEndTime = scheduledEndTime
+      self.scheduledStartTime = scheduledStartTime
+      self.thumbnails = thumbnails
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeLiveBroadcastStatistics : GoogleCloudModel {
    /*The number of viewers currently watching the broadcast. The property and its value will be present if the broadcast has current viewers and the broadcast owner has not hidden the viewcount for the video. Note that YouTube stops tracking the number of concurrent viewers for a broadcast when the broadcast ends. So, this property would not identify the number of viewers watching an archived video of a live broadcast that already ended. */
    @CodingUses<Coder> public var concurrentViewers: UInt?
    /*The total number of live chat messages currently on the broadcast. The property and its value will be present if the broadcast is public, has the live chat feature enabled, and has at least one message. Note that this field will not be filled after the broadcast ends. So this property would not identify the number of chat messages for an archived video of a completed live broadcast. */
    @CodingUses<Coder> public var totalChatCount: UInt?
+   public init(concurrentViewers:UInt?, totalChatCount:UInt?) {
+      self.concurrentViewers = concurrentViewers
+      self.totalChatCount = totalChatCount
+   }
 }
 public struct GoogleCloudYoutubeLiveBroadcastStatus : GoogleCloudModel {
    /*The broadcast's status. The status can be updated using the API's liveBroadcasts.transition method. */
@@ -2840,6 +3425,14 @@ public struct GoogleCloudYoutubeLiveBroadcastStatus : GoogleCloudModel {
    /*The broadcast's recording status. */
    public var recordingStatus: String?
    public var selfDeclaredMadeForKids: Bool?
+   public init(lifeCycleStatus:String?, liveBroadcastPriority:String?, madeForKids:Bool?, privacyStatus:String?, recordingStatus:String?, selfDeclaredMadeForKids:Bool?) {
+      self.lifeCycleStatus = lifeCycleStatus
+      self.liveBroadcastPriority = liveBroadcastPriority
+      self.madeForKids = madeForKids
+      self.privacyStatus = privacyStatus
+      self.recordingStatus = recordingStatus
+      self.selfDeclaredMadeForKids = selfDeclaredMadeForKids
+   }
 }
 public struct GoogleCloudYoutubeLiveChatBan : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2849,16 +3442,28 @@ public struct GoogleCloudYoutubeLiveChatBan : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatBan". */
    public var kind: String?
    /*The snippet object contains basic details about the ban. */
-   public var snippet:  GoogleCloudYoutubeLiveChatBanSnippet?
+   public var snippet: GoogleCloudYoutubeLiveChatBanSnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeLiveChatBanSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeLiveChatBanSnippet : GoogleCloudModel {
    /*The duration of a ban, only filled if the ban has type TEMPORARY. */
    @CodingUses<Coder> public var banDurationSeconds: UInt?
-   public var bannedUserDetails:  GoogleCloudYoutubeChannelProfileDetails?
+   public var bannedUserDetails: GoogleCloudYoutubeChannelProfileDetails?
    /*The chat this ban is pertinent to. */
    public var liveChatId: String?
    /*The type of ban. */
    public var type: String?
+   public init(banDurationSeconds:UInt?, bannedUserDetails:GoogleCloudYoutubeChannelProfileDetails?, liveChatId:String?, type:String?) {
+      self.banDurationSeconds = banDurationSeconds
+      self.bannedUserDetails = bannedUserDetails
+      self.liveChatId = liveChatId
+      self.type = type
+   }
 }
 public struct GoogleCloudYoutubeLiveChatFanFundingEventDetails : GoogleCloudModel {
    /*A rendered string that displays the fund amount and currency to the user. */
@@ -2869,10 +3474,16 @@ public struct GoogleCloudYoutubeLiveChatFanFundingEventDetails : GoogleCloudMode
    public var currency: String?
    /*The comment added by the user to this fan funding event. */
    public var userComment: String?
+   public init(amountDisplayString:String?, amountMicros:UInt?, currency:String?, userComment:String?) {
+      self.amountDisplayString = amountDisplayString
+      self.amountMicros = amountMicros
+      self.currency = currency
+      self.userComment = userComment
+   }
 }
 public struct GoogleCloudYoutubeLiveChatMessage : GoogleCloudModel {
    /*The authorDetails object contains basic details about the user that posted this message. */
-   public var authorDetails:  GoogleCloudYoutubeLiveChatMessageAuthorDetails?
+   public var authorDetails: GoogleCloudYoutubeLiveChatMessageAuthorDetails?
    /*Etag of this resource. */
    public var etag: String?
    /*The ID that YouTube assigns to uniquely identify the message. */
@@ -2880,7 +3491,14 @@ public struct GoogleCloudYoutubeLiveChatMessage : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatMessage". */
    public var kind: String?
    /*The snippet object contains basic details about the message. */
-   public var snippet:  GoogleCloudYoutubeLiveChatMessageSnippet?
+   public var snippet: GoogleCloudYoutubeLiveChatMessageSnippet?
+   public init(authorDetails:GoogleCloudYoutubeLiveChatMessageAuthorDetails?, etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeLiveChatMessageSnippet?) {
+      self.authorDetails = authorDetails
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeLiveChatMessageAuthorDetails : GoogleCloudModel {
    /*The YouTube channel ID. */
@@ -2899,9 +3517,22 @@ public struct GoogleCloudYoutubeLiveChatMessageAuthorDetails : GoogleCloudModel 
    public var isVerified: Bool?
    /*The channels's avatar URL. */
    public var profileImageUrl: String?
+   public init(channelId:String?, channelUrl:String?, displayName:String?, isChatModerator:Bool?, isChatOwner:Bool?, isChatSponsor:Bool?, isVerified:Bool?, profileImageUrl:String?) {
+      self.channelId = channelId
+      self.channelUrl = channelUrl
+      self.displayName = displayName
+      self.isChatModerator = isChatModerator
+      self.isChatOwner = isChatOwner
+      self.isChatSponsor = isChatSponsor
+      self.isVerified = isVerified
+      self.profileImageUrl = profileImageUrl
+   }
 }
 public struct GoogleCloudYoutubeLiveChatMessageDeletedDetails : GoogleCloudModel {
    public var deletedMessageId: String?
+   public init(deletedMessageId:String?) {
+      self.deletedMessageId = deletedMessageId
+   }
 }
 public struct GoogleCloudYoutubeLiveChatMessageListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2916,15 +3547,30 @@ public struct GoogleCloudYoutubeLiveChatMessageListResponse : GoogleCloudModel {
    public var nextPageToken: String?
    /*The date and time when the underlying stream went offline. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var offlineAt: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The amount of time the client should wait before polling again. */
    @CodingUses<Coder> public var pollingIntervalMillis: UInt?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeLiveChatMessage]?, kind:String?, nextPageToken:String?, offlineAt:String?, pageInfo:GoogleCloudYoutubePageInfo?, pollingIntervalMillis:UInt?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.offlineAt = offlineAt
+      self.pageInfo = pageInfo
+      self.pollingIntervalMillis = pollingIntervalMillis
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeLiveChatMessageRetractedDetails : GoogleCloudModel {
    public var retractedMessageId: String?
+   public init(retractedMessageId:String?) {
+      self.retractedMessageId = retractedMessageId
+   }
 }
 public struct GoogleCloudYoutubeLiveChatMessageSnippet : GoogleCloudModel {
    /*The ID of the user that authored this message, this field is not always filled. textMessageEvent - the user that wrote the message fanFundingEvent - the user that funded the broadcast newSponsorEvent - the user that just became a sponsor messageDeletedEvent - the moderator that took the action messageRetractedEvent - the author that retracted their message userBannedEvent - the moderator that took the action superChatEvent - the user that made the purchase */
@@ -2932,27 +3578,46 @@ public struct GoogleCloudYoutubeLiveChatMessageSnippet : GoogleCloudModel {
    /*Contains a string that can be displayed to the user. If this field is not present the message is silent, at the moment only messages of type TOMBSTONE and CHAT_ENDED_EVENT are silent. */
    public var displayMessage: String?
    /*Details about the funding event, this is only set if the type is 'fanFundingEvent'. */
-   public var fanFundingEventDetails:  GoogleCloudYoutubeLiveChatFanFundingEventDetails?
+   public var fanFundingEventDetails: GoogleCloudYoutubeLiveChatFanFundingEventDetails?
    /*Whether the message has display content that should be displayed to users. */
    public var hasDisplayContent: Bool?
    public var liveChatId: String?
-   public var messageDeletedDetails:  GoogleCloudYoutubeLiveChatMessageDeletedDetails?
-   public var messageRetractedDetails:  GoogleCloudYoutubeLiveChatMessageRetractedDetails?
-   public var pollClosedDetails:  GoogleCloudYoutubeLiveChatPollClosedDetails?
-   public var pollEditedDetails:  GoogleCloudYoutubeLiveChatPollEditedDetails?
-   public var pollOpenedDetails:  GoogleCloudYoutubeLiveChatPollOpenedDetails?
-   public var pollVotedDetails:  GoogleCloudYoutubeLiveChatPollVotedDetails?
+   public var messageDeletedDetails: GoogleCloudYoutubeLiveChatMessageDeletedDetails?
+   public var messageRetractedDetails: GoogleCloudYoutubeLiveChatMessageRetractedDetails?
+   public var pollClosedDetails: GoogleCloudYoutubeLiveChatPollClosedDetails?
+   public var pollEditedDetails: GoogleCloudYoutubeLiveChatPollEditedDetails?
+   public var pollOpenedDetails: GoogleCloudYoutubeLiveChatPollOpenedDetails?
+   public var pollVotedDetails: GoogleCloudYoutubeLiveChatPollVotedDetails?
    /*The date and time when the message was orignally published. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var publishedAt: String?
    /*Details about the Super Chat event, this is only set if the type is 'superChatEvent'. */
-   public var superChatDetails:  GoogleCloudYoutubeLiveChatSuperChatDetails?
+   public var superChatDetails: GoogleCloudYoutubeLiveChatSuperChatDetails?
    /*Details about the Super Sticker event, this is only set if the type is 'superStickerEvent'. */
-   public var superStickerDetails:  GoogleCloudYoutubeLiveChatSuperStickerDetails?
+   public var superStickerDetails: GoogleCloudYoutubeLiveChatSuperStickerDetails?
    /*Details about the text message, this is only set if the type is 'textMessageEvent'. */
-   public var textMessageDetails:  GoogleCloudYoutubeLiveChatTextMessageDetails?
+   public var textMessageDetails: GoogleCloudYoutubeLiveChatTextMessageDetails?
    /*The type of message, this will always be present, it determines the contents of the message as well as which fields will be present. */
    public var type: String?
-   public var userBannedDetails:  GoogleCloudYoutubeLiveChatUserBannedMessageDetails?
+   public var userBannedDetails: GoogleCloudYoutubeLiveChatUserBannedMessageDetails?
+   public init(authorChannelId:String?, displayMessage:String?, fanFundingEventDetails:GoogleCloudYoutubeLiveChatFanFundingEventDetails?, hasDisplayContent:Bool?, liveChatId:String?, messageDeletedDetails:GoogleCloudYoutubeLiveChatMessageDeletedDetails?, messageRetractedDetails:GoogleCloudYoutubeLiveChatMessageRetractedDetails?, pollClosedDetails:GoogleCloudYoutubeLiveChatPollClosedDetails?, pollEditedDetails:GoogleCloudYoutubeLiveChatPollEditedDetails?, pollOpenedDetails:GoogleCloudYoutubeLiveChatPollOpenedDetails?, pollVotedDetails:GoogleCloudYoutubeLiveChatPollVotedDetails?, publishedAt:String?, superChatDetails:GoogleCloudYoutubeLiveChatSuperChatDetails?, superStickerDetails:GoogleCloudYoutubeLiveChatSuperStickerDetails?, textMessageDetails:GoogleCloudYoutubeLiveChatTextMessageDetails?, type:String?, userBannedDetails:GoogleCloudYoutubeLiveChatUserBannedMessageDetails?) {
+      self.authorChannelId = authorChannelId
+      self.displayMessage = displayMessage
+      self.fanFundingEventDetails = fanFundingEventDetails
+      self.hasDisplayContent = hasDisplayContent
+      self.liveChatId = liveChatId
+      self.messageDeletedDetails = messageDeletedDetails
+      self.messageRetractedDetails = messageRetractedDetails
+      self.pollClosedDetails = pollClosedDetails
+      self.pollEditedDetails = pollEditedDetails
+      self.pollOpenedDetails = pollOpenedDetails
+      self.pollVotedDetails = pollVotedDetails
+      self.publishedAt = publishedAt
+      self.superChatDetails = superChatDetails
+      self.superStickerDetails = superStickerDetails
+      self.textMessageDetails = textMessageDetails
+      self.type = type
+      self.userBannedDetails = userBannedDetails
+   }
 }
 public struct GoogleCloudYoutubeLiveChatModerator : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2962,7 +3627,13 @@ public struct GoogleCloudYoutubeLiveChatModerator : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#liveChatModerator". */
    public var kind: String?
    /*The snippet object contains basic details about the moderator. */
-   public var snippet:  GoogleCloudYoutubeLiveChatModeratorSnippet?
+   public var snippet: GoogleCloudYoutubeLiveChatModeratorSnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeLiveChatModeratorSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeLiveChatModeratorListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -2975,43 +3646,79 @@ public struct GoogleCloudYoutubeLiveChatModeratorListResponse : GoogleCloudModel
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeLiveChatModerator]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeLiveChatModeratorSnippet : GoogleCloudModel {
    /*The ID of the live chat this moderator can act on. */
    public var liveChatId: String?
    /*Details about the moderator. */
-   public var moderatorDetails:  GoogleCloudYoutubeChannelProfileDetails?
+   public var moderatorDetails: GoogleCloudYoutubeChannelProfileDetails?
+   public init(liveChatId:String?, moderatorDetails:GoogleCloudYoutubeChannelProfileDetails?) {
+      self.liveChatId = liveChatId
+      self.moderatorDetails = moderatorDetails
+   }
 }
 public struct GoogleCloudYoutubeLiveChatPollClosedDetails : GoogleCloudModel {
    /*The id of the poll that was closed. */
    public var pollId: String?
+   public init(pollId:String?) {
+      self.pollId = pollId
+   }
 }
 public struct GoogleCloudYoutubeLiveChatPollEditedDetails : GoogleCloudModel {
    public var id: String?
    public var items: [GoogleCloudYoutubeLiveChatPollItem]?
    public var prompt: String?
+   public init(id:String?, items:[GoogleCloudYoutubeLiveChatPollItem]?, prompt:String?) {
+      self.id = id
+      self.items = items
+      self.prompt = prompt
+   }
 }
 public struct GoogleCloudYoutubeLiveChatPollItem : GoogleCloudModel {
    /*Plain text description of the item. */
    public var description: String?
    public var itemId: String?
+   public init(description:String?, itemId:String?) {
+      self.description = description
+      self.itemId = itemId
+   }
 }
 public struct GoogleCloudYoutubeLiveChatPollOpenedDetails : GoogleCloudModel {
    public var id: String?
    public var items: [GoogleCloudYoutubeLiveChatPollItem]?
    public var prompt: String?
+   public init(id:String?, items:[GoogleCloudYoutubeLiveChatPollItem]?, prompt:String?) {
+      self.id = id
+      self.items = items
+      self.prompt = prompt
+   }
 }
 public struct GoogleCloudYoutubeLiveChatPollVotedDetails : GoogleCloudModel {
    /*The poll item the user chose. */
    public var itemId: String?
    /*The poll the user voted on. */
    public var pollId: String?
+   public init(itemId:String?, pollId:String?) {
+      self.itemId = itemId
+      self.pollId = pollId
+   }
 }
 public struct GoogleCloudYoutubeLiveChatSuperChatDetails : GoogleCloudModel {
    /*A rendered string that displays the fund amount and currency to the user. */
@@ -3024,6 +3731,13 @@ public struct GoogleCloudYoutubeLiveChatSuperChatDetails : GoogleCloudModel {
    @CodingUses<Coder> public var tier: UInt?
    /*The comment added by the user to this Super Chat event. */
    public var userComment: String?
+   public init(amountDisplayString:String?, amountMicros:UInt?, currency:String?, tier:UInt?, userComment:String?) {
+      self.amountDisplayString = amountDisplayString
+      self.amountMicros = amountMicros
+      self.currency = currency
+      self.tier = tier
+      self.userComment = userComment
+   }
 }
 public struct GoogleCloudYoutubeLiveChatSuperStickerDetails : GoogleCloudModel {
    /*A rendered string that displays the fund amount and currency to the user. */
@@ -3033,13 +3747,23 @@ public struct GoogleCloudYoutubeLiveChatSuperStickerDetails : GoogleCloudModel {
    /*The currency in which the purchase was made. */
    public var currency: String?
    /*Information about the Super Sticker. */
-   public var superStickerMetadata:  GoogleCloudYoutubeSuperStickerMetadata?
+   public var superStickerMetadata: GoogleCloudYoutubeSuperStickerMetadata?
    /*The tier in which the amount belongs. Lower amounts belong to lower tiers. The lowest tier is 1. */
    @CodingUses<Coder> public var tier: UInt?
+   public init(amountDisplayString:String?, amountMicros:UInt?, currency:String?, superStickerMetadata:GoogleCloudYoutubeSuperStickerMetadata?, tier:UInt?) {
+      self.amountDisplayString = amountDisplayString
+      self.amountMicros = amountMicros
+      self.currency = currency
+      self.superStickerMetadata = superStickerMetadata
+      self.tier = tier
+   }
 }
 public struct GoogleCloudYoutubeLiveChatTextMessageDetails : GoogleCloudModel {
    /*The user's message. */
    public var messageText: String?
+   public init(messageText:String?) {
+      self.messageText = messageText
+   }
 }
 public struct GoogleCloudYoutubeLiveChatUserBannedMessageDetails : GoogleCloudModel {
    /*The duration of the ban. This property is only present if the banType is temporary. */
@@ -3047,13 +3771,18 @@ public struct GoogleCloudYoutubeLiveChatUserBannedMessageDetails : GoogleCloudMo
    /*The type of ban. */
    public var banType: String?
    /*The details of the user that was banned. */
-   public var bannedUserDetails:  GoogleCloudYoutubeChannelProfileDetails?
+   public var bannedUserDetails: GoogleCloudYoutubeChannelProfileDetails?
+   public init(banDurationSeconds:UInt?, banType:String?, bannedUserDetails:GoogleCloudYoutubeChannelProfileDetails?) {
+      self.banDurationSeconds = banDurationSeconds
+      self.banType = banType
+      self.bannedUserDetails = bannedUserDetails
+   }
 }
 public struct GoogleCloudYoutubeLiveStream : GoogleCloudModel {
    /*The cdn object defines the live stream's content delivery network (CDN) settings. These settings provide details about the manner in which you stream your content to YouTube. */
-   public var cdn:  GoogleCloudYoutubeCdnSettings?
+   public var cdn: GoogleCloudYoutubeCdnSettings?
    /*The content_details object contains information about the stream, including the closed captions ingestion URL. */
-   public var contentDetails:  GoogleCloudYoutubeLiveStreamContentDetails?
+   public var contentDetails: GoogleCloudYoutubeLiveStreamContentDetails?
    /*Etag of this resource. */
    public var etag: String?
    /*The ID that YouTube assigns to uniquely identify the stream. */
@@ -3061,9 +3790,18 @@ public struct GoogleCloudYoutubeLiveStream : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#liveStream". */
    public var kind: String?
    /*The snippet object contains basic details about the stream, including its channel, title, and description. */
-   public var snippet:  GoogleCloudYoutubeLiveStreamSnippet?
+   public var snippet: GoogleCloudYoutubeLiveStreamSnippet?
    /*The status object contains information about live stream's status. */
-   public var status:  GoogleCloudYoutubeLiveStreamStatus?
+   public var status: GoogleCloudYoutubeLiveStreamStatus?
+   public init(cdn:GoogleCloudYoutubeCdnSettings?, contentDetails:GoogleCloudYoutubeLiveStreamContentDetails?, etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeLiveStreamSnippet?, status:GoogleCloudYoutubeLiveStreamStatus?) {
+      self.cdn = cdn
+      self.contentDetails = contentDetails
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+      self.status = status
+   }
 }
 public struct GoogleCloudYoutubeLiveStreamConfigurationIssue : GoogleCloudModel {
    /*The long-form description of the issue and how to resolve it. */
@@ -3074,6 +3812,12 @@ public struct GoogleCloudYoutubeLiveStreamConfigurationIssue : GoogleCloudModel 
    public var severity: String?
    /*The kind of error happening. */
    public var type: String?
+   public init(description:String?, reason:String?, severity:String?, type:String?) {
+      self.description = description
+      self.reason = reason
+      self.severity = severity
+      self.type = type
+   }
 }
 public struct GoogleCloudYoutubeLiveStreamContentDetails : GoogleCloudModel {
    /*The ingestion URL where the closed captions of this stream are sent. */
@@ -3085,6 +3829,10 @@ If you set this value to false, then the stream will not be reusable, which mean
 - A non-reusable stream might be deleted by an automated process after the broadcast ends. 
 - The  liveStreams.list method does not list non-reusable streams if you call the method and set the mine parameter to true. The only way to use that method to retrieve the resource for a non-reusable stream is to use the id parameter to identify the stream. */
    public var isReusable: Bool?
+   public init(closedCaptionsIngestionUrl:String?, isReusable:Bool?) {
+      self.closedCaptionsIngestionUrl = closedCaptionsIngestionUrl
+      self.isReusable = isReusable
+   }
 }
 public struct GoogleCloudYoutubeLiveStreamHealthStatus : GoogleCloudModel {
    /*The configurations issues on this stream */
@@ -3093,6 +3841,11 @@ public struct GoogleCloudYoutubeLiveStreamHealthStatus : GoogleCloudModel {
    @CodingUses<Coder> public var lastUpdateTimeSeconds: UInt?
    /*The status code of this stream */
    public var status: String?
+   public init(configurationIssues:[GoogleCloudYoutubeLiveStreamConfigurationIssue]?, lastUpdateTimeSeconds:UInt?, status:String?) {
+      self.configurationIssues = configurationIssues
+      self.lastUpdateTimeSeconds = lastUpdateTimeSeconds
+      self.status = status
+   }
 }
 public struct GoogleCloudYoutubeLiveStreamListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3105,12 +3858,23 @@ public struct GoogleCloudYoutubeLiveStreamListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeLiveStream]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeLiveStreamSnippet : GoogleCloudModel {
    /*The ID that YouTube uses to uniquely identify the channel that is transmitting the stream. */
@@ -3122,21 +3886,41 @@ public struct GoogleCloudYoutubeLiveStreamSnippet : GoogleCloudModel {
    @CodingUses<Coder> public var publishedAt: String?
    /*The stream's title. The value must be between 1 and 128 characters long. */
    public var title: String?
+   public init(channelId:String?, description:String?, isDefaultStream:Bool?, publishedAt:String?, title:String?) {
+      self.channelId = channelId
+      self.description = description
+      self.isDefaultStream = isDefaultStream
+      self.publishedAt = publishedAt
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeLiveStreamStatus : GoogleCloudModel {
    /*The health status of the stream. */
-   public var healthStatus:  GoogleCloudYoutubeLiveStreamHealthStatus?
+   public var healthStatus: GoogleCloudYoutubeLiveStreamHealthStatus?
    public var streamStatus: String?
+   public init(healthStatus:GoogleCloudYoutubeLiveStreamHealthStatus?, streamStatus:String?) {
+      self.healthStatus = healthStatus
+      self.streamStatus = streamStatus
+   }
 }
 public struct GoogleCloudYoutubeLocalizedProperty : GoogleCloudModel {
    public var `default`: String?
    /*The language of the default property. */
-   public var defaultLanguage:  GoogleCloudYoutubeLanguageTag?
+   public var defaultLanguage: GoogleCloudYoutubeLanguageTag?
    public var localized: [GoogleCloudYoutubeLocalizedString]?
+   public init(`default`:String?, defaultLanguage:GoogleCloudYoutubeLanguageTag?, localized:[GoogleCloudYoutubeLocalizedString]?) {
+      self.`default` = `default`
+      self.defaultLanguage = defaultLanguage
+      self.localized = localized
+   }
 }
 public struct GoogleCloudYoutubeLocalizedString : GoogleCloudModel {
    public var language: String?
    public var value: String?
+   public init(language:String?, value:String?) {
+      self.language = language
+      self.value = value
+   }
 }
 public struct GoogleCloudYoutubeMember : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3144,7 +3928,12 @@ public struct GoogleCloudYoutubeMember : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#member". */
    public var kind: String?
    /*The snippet object contains basic details about the member. */
-   public var snippet:  GoogleCloudYoutubeMemberSnippet?
+   public var snippet: GoogleCloudYoutubeMemberSnippet?
+   public init(etag:String?, kind:String?, snippet:GoogleCloudYoutubeMemberSnippet?) {
+      self.etag = etag
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeMemberListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3157,18 +3946,33 @@ public struct GoogleCloudYoutubeMemberListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeMember]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeMemberSnippet : GoogleCloudModel {
    /*The id of the channel that's offering memberships. */
    public var creatorChannelId: String?
    /*Details about the member. */
-   public var memberDetails:  GoogleCloudYoutubeChannelProfileDetails?
+   public var memberDetails: GoogleCloudYoutubeChannelProfileDetails?
    /*Details about the user's membership. */
-   public var membershipsDetails:  GoogleCloudYoutubeMembershipsDetails?
+   public var membershipsDetails: GoogleCloudYoutubeMembershipsDetails?
+   public init(creatorChannelId:String?, memberDetails:GoogleCloudYoutubeChannelProfileDetails?, membershipsDetails:GoogleCloudYoutubeMembershipsDetails?) {
+      self.creatorChannelId = creatorChannelId
+      self.memberDetails = memberDetails
+      self.membershipsDetails = membershipsDetails
+   }
 }
 public struct GoogleCloudYoutubeMembershipsDetails : GoogleCloudModel {
    /*All levels that the user has access to. This includes the currently active level and all other levels that are included because of a higher purchase. */
@@ -3187,6 +3991,16 @@ public struct GoogleCloudYoutubeMembershipsDetails : GoogleCloudModel {
    @CodingUses<Coder> public var memberTotalDurationCurrentLevel: Int?
    /*The highest level that the user has access to at the moment. DEPRECATED - highest_accessible_level should be used instead. This will be removed after we make sure there are no 3rd parties relying on it. */
    public var purchasedLevel: String?
+   public init(accessibleLevels:[String]?, highestAccessibleLevel:String?, highestAccessibleLevelDisplayName:String?, memberSince:String?, memberSinceCurrentLevel:String?, memberTotalDuration:Int?, memberTotalDurationCurrentLevel:Int?, purchasedLevel:String?) {
+      self.accessibleLevels = accessibleLevels
+      self.highestAccessibleLevel = highestAccessibleLevel
+      self.highestAccessibleLevelDisplayName = highestAccessibleLevelDisplayName
+      self.memberSince = memberSince
+      self.memberSinceCurrentLevel = memberSinceCurrentLevel
+      self.memberTotalDuration = memberTotalDuration
+      self.memberTotalDurationCurrentLevel = memberTotalDurationCurrentLevel
+      self.purchasedLevel = purchasedLevel
+   }
 }
 public struct GoogleCloudYoutubeMembershipsLevel : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3196,7 +4010,13 @@ public struct GoogleCloudYoutubeMembershipsLevel : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#membershipsLevel". */
    public var kind: String?
    /*The snippet object contains basic details about the level. */
-   public var snippet:  GoogleCloudYoutubeMembershipsLevelSnippet?
+   public var snippet: GoogleCloudYoutubeMembershipsLevelSnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeMembershipsLevelSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeMembershipsLevelListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3209,11 +4029,22 @@ public struct GoogleCloudYoutubeMembershipsLevelListResponse : GoogleCloudModel 
    public var kind: String?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeMembershipsLevel]?, kind:String?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeMembershipsLevelSnippet : GoogleCloudModel {
    /*The id of the channel that's offering channel memberships. */
    public var creatorChannelId: String?
-   public var levelDetails:  GoogleCloudYoutubeLevelDetails?
+   public var levelDetails: GoogleCloudYoutubeLevelDetails?
+   public init(creatorChannelId:String?, levelDetails:GoogleCloudYoutubeLevelDetails?) {
+      self.creatorChannelId = creatorChannelId
+      self.levelDetails = levelDetails
+   }
 }
 public struct GoogleCloudYoutubeMonitorStreamInfo : GoogleCloudModel {
    /*If you have set the enableMonitorStream property to true, then this property determines the length of the live broadcast delay. */
@@ -3226,25 +4057,41 @@ You need to set this value to true if you intend to have a broadcast delay for y
 
 Note: This property cannot be updated once the broadcast is in the testing or live state. */
    public var enableMonitorStream: Bool?
+   public init(broadcastStreamDelayMs:UInt?, embedHtml:String?, enableMonitorStream:Bool?) {
+      self.broadcastStreamDelayMs = broadcastStreamDelayMs
+      self.embedHtml = embedHtml
+      self.enableMonitorStream = enableMonitorStream
+   }
 }
 public struct GoogleCloudYoutubeNonprofit : GoogleCloudModel {
    /*Id of the nonprofit. */
-   public var nonprofitId:  GoogleCloudYoutubeNonprofitId?
+   public var nonprofitId: GoogleCloudYoutubeNonprofitId?
    /*Legal name of the nonprofit. */
    public var nonprofitLegalName: String?
+   public init(nonprofitId:GoogleCloudYoutubeNonprofitId?, nonprofitLegalName:String?) {
+      self.nonprofitId = nonprofitId
+      self.nonprofitLegalName = nonprofitLegalName
+   }
 }
 public struct GoogleCloudYoutubeNonprofitId : GoogleCloudModel {
    public var value: String?
+   public init(value:String?) {
+      self.value = value
+   }
 }
 public struct GoogleCloudYoutubePageInfo : GoogleCloudModel {
    /*The number of results included in the API response. */
    @CodingUses<Coder> public var resultsPerPage: Int?
    /*The total number of results in the result set. */
    @CodingUses<Coder> public var totalResults: Int?
+   public init(resultsPerPage:Int?, totalResults:Int?) {
+      self.resultsPerPage = resultsPerPage
+      self.totalResults = totalResults
+   }
 }
 public struct GoogleCloudYoutubePlaylist : GoogleCloudModel {
    /*The contentDetails object contains information like video count. */
-   public var contentDetails:  GoogleCloudYoutubePlaylistContentDetails?
+   public var contentDetails: GoogleCloudYoutubePlaylistContentDetails?
    /*Etag of this resource. */
    public var etag: String?
    /*The ID that YouTube uses to uniquely identify the playlist. */
@@ -3254,19 +4101,32 @@ public struct GoogleCloudYoutubePlaylist : GoogleCloudModel {
    /*Localizations for different languages */
    public var localizations: [String : GoogleCloudYoutubePlaylistLocalization]?
    /*The player object contains information that you would use to play the playlist in an embedded player. */
-   public var player:  GoogleCloudYoutubePlaylistPlayer?
+   public var player: GoogleCloudYoutubePlaylistPlayer?
    /*The snippet object contains basic details about the playlist, such as its title and description. */
-   public var snippet:  GoogleCloudYoutubePlaylistSnippet?
+   public var snippet: GoogleCloudYoutubePlaylistSnippet?
    /*The status object contains status information for the playlist. */
-   public var status:  GoogleCloudYoutubePlaylistStatus?
+   public var status: GoogleCloudYoutubePlaylistStatus?
+   public init(contentDetails:GoogleCloudYoutubePlaylistContentDetails?, etag:String?, id:String?, kind:String?, localizations:[String : GoogleCloudYoutubePlaylistLocalization]?, player:GoogleCloudYoutubePlaylistPlayer?, snippet:GoogleCloudYoutubePlaylistSnippet?, status:GoogleCloudYoutubePlaylistStatus?) {
+      self.contentDetails = contentDetails
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.localizations = localizations
+      self.player = player
+      self.snippet = snippet
+      self.status = status
+   }
 }
 public struct GoogleCloudYoutubePlaylistContentDetails : GoogleCloudModel {
    /*The number of videos in the playlist. */
    @CodingUses<Coder> public var itemCount: UInt?
+   public init(itemCount:UInt?) {
+      self.itemCount = itemCount
+   }
 }
 public struct GoogleCloudYoutubePlaylistItem : GoogleCloudModel {
    /*The contentDetails object is included in the resource if the included item is a YouTube video. The object contains additional information about the video. */
-   public var contentDetails:  GoogleCloudYoutubePlaylistItemContentDetails?
+   public var contentDetails: GoogleCloudYoutubePlaylistItemContentDetails?
    /*Etag of this resource. */
    public var etag: String?
    /*The ID that YouTube uses to uniquely identify the playlist item. */
@@ -3274,9 +4134,17 @@ public struct GoogleCloudYoutubePlaylistItem : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#playlistItem". */
    public var kind: String?
    /*The snippet object contains basic details about the playlist item, such as its title and position in the playlist. */
-   public var snippet:  GoogleCloudYoutubePlaylistItemSnippet?
+   public var snippet: GoogleCloudYoutubePlaylistItemSnippet?
    /*The status object contains information about the playlist item's privacy status. */
-   public var status:  GoogleCloudYoutubePlaylistItemStatus?
+   public var status: GoogleCloudYoutubePlaylistItemStatus?
+   public init(contentDetails:GoogleCloudYoutubePlaylistItemContentDetails?, etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubePlaylistItemSnippet?, status:GoogleCloudYoutubePlaylistItemStatus?) {
+      self.contentDetails = contentDetails
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+      self.status = status
+   }
 }
 public struct GoogleCloudYoutubePlaylistItemContentDetails : GoogleCloudModel {
    /*The time, measured in seconds from the start of the video, when the video should stop playing. (The playlist owner can specify the times when the video should start and stop playing when the video is played in the context of the playlist.) By default, assume that the video.endTime is the end of the video. */
@@ -3289,6 +4157,13 @@ public struct GoogleCloudYoutubePlaylistItemContentDetails : GoogleCloudModel {
    public var videoId: String?
    /*The date and time that the video was published to YouTube. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var videoPublishedAt: String?
+   public init(endAt:String?, note:String?, startAt:String?, videoId:String?, videoPublishedAt:String?) {
+      self.endAt = endAt
+      self.note = note
+      self.startAt = startAt
+      self.videoId = videoId
+      self.videoPublishedAt = videoPublishedAt
+   }
 }
 public struct GoogleCloudYoutubePlaylistItemListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3301,12 +4176,23 @@ public struct GoogleCloudYoutubePlaylistItemListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubePlaylistItem]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubePlaylistItemSnippet : GoogleCloudModel {
    /*The ID that YouTube uses to uniquely identify the user that added the item to the playlist. */
@@ -3322,15 +4208,29 @@ public struct GoogleCloudYoutubePlaylistItemSnippet : GoogleCloudModel {
    /*The date and time that the item was added to the playlist. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var publishedAt: String?
    /*The id object contains information that can be used to uniquely identify the resource that is included in the playlist as the playlist item. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
    /*A map of thumbnail images associated with the playlist item. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail. */
-   public var thumbnails:  GoogleCloudYoutubeThumbnailDetails?
+   public var thumbnails: GoogleCloudYoutubeThumbnailDetails?
    /*The item's title. */
    public var title: String?
+   public init(channelId:String?, channelTitle:String?, description:String?, playlistId:String?, position:UInt?, publishedAt:String?, resourceId:GoogleCloudYoutubeResourceId?, thumbnails:GoogleCloudYoutubeThumbnailDetails?, title:String?) {
+      self.channelId = channelId
+      self.channelTitle = channelTitle
+      self.description = description
+      self.playlistId = playlistId
+      self.position = position
+      self.publishedAt = publishedAt
+      self.resourceId = resourceId
+      self.thumbnails = thumbnails
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubePlaylistItemStatus : GoogleCloudModel {
    /*This resource's privacy status. */
    public var privacyStatus: String?
+   public init(privacyStatus:String?) {
+      self.privacyStatus = privacyStatus
+   }
 }
 public struct GoogleCloudYoutubePlaylistListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3343,22 +4243,40 @@ public struct GoogleCloudYoutubePlaylistListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubePlaylist]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubePlaylistLocalization : GoogleCloudModel {
    /*The localized strings for playlist's description. */
    public var description: String?
    /*The localized strings for playlist's title. */
    public var title: String?
+   public init(description:String?, title:String?) {
+      self.description = description
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubePlaylistPlayer : GoogleCloudModel {
    /*An <iframe> tag that embeds a player that will play the playlist. */
    public var embedHtml: String?
+   public init(embedHtml:String?) {
+      self.embedHtml = embedHtml
+   }
 }
 public struct GoogleCloudYoutubePlaylistSnippet : GoogleCloudModel {
    /*The ID that YouTube uses to uniquely identify the channel that published the playlist. */
@@ -3370,29 +4288,49 @@ public struct GoogleCloudYoutubePlaylistSnippet : GoogleCloudModel {
    /*The playlist's description. */
    public var description: String?
    /*Localized title and description, read-only. */
-   public var localized:  GoogleCloudYoutubePlaylistLocalization?
+   public var localized: GoogleCloudYoutubePlaylistLocalization?
    /*The date and time that the playlist was created. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var publishedAt: String?
    /*Keyword tags associated with the playlist. */
    public var tags: [String]?
    /*A map of thumbnail images associated with the playlist. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail. */
-   public var thumbnails:  GoogleCloudYoutubeThumbnailDetails?
+   public var thumbnails: GoogleCloudYoutubeThumbnailDetails?
    /*The playlist's title. */
    public var title: String?
+   public init(channelId:String?, channelTitle:String?, defaultLanguage:String?, description:String?, localized:GoogleCloudYoutubePlaylistLocalization?, publishedAt:String?, tags:[String]?, thumbnails:GoogleCloudYoutubeThumbnailDetails?, title:String?) {
+      self.channelId = channelId
+      self.channelTitle = channelTitle
+      self.defaultLanguage = defaultLanguage
+      self.description = description
+      self.localized = localized
+      self.publishedAt = publishedAt
+      self.tags = tags
+      self.thumbnails = thumbnails
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubePlaylistStatus : GoogleCloudModel {
    /*The playlist's privacy status. */
    public var privacyStatus: String?
+   public init(privacyStatus:String?) {
+      self.privacyStatus = privacyStatus
+   }
 }
 public struct GoogleCloudYoutubePromotedItem : GoogleCloudModel {
    /*A custom message to display for this promotion. This field is currently ignored unless the promoted item is a website. */
    public var customMessage: String?
    /*Identifies the promoted item. */
-   public var id:  GoogleCloudYoutubePromotedItemId?
+   public var id: GoogleCloudYoutubePromotedItemId?
    /*If true, the content owner's name will be used when displaying the promotion. This field can only be set when the update is made on behalf of the content owner. */
    public var promotedByContentOwner: Bool?
    /*The temporal position within the video where the promoted item will be displayed. If present, it overrides the default timing. */
-   public var timing:  GoogleCloudYoutubeInvideoTiming?
+   public var timing: GoogleCloudYoutubeInvideoTiming?
+   public init(customMessage:String?, id:GoogleCloudYoutubePromotedItemId?, promotedByContentOwner:Bool?, timing:GoogleCloudYoutubeInvideoTiming?) {
+      self.customMessage = customMessage
+      self.id = id
+      self.promotedByContentOwner = promotedByContentOwner
+      self.timing = timing
+   }
 }
 public struct GoogleCloudYoutubePromotedItemId : GoogleCloudModel {
    /*If type is recentUpload, this field identifies the channel from which to take the recent upload. If missing, the channel is assumed to be the same channel for which the invideoPromotion is set. */
@@ -3403,12 +4341,22 @@ public struct GoogleCloudYoutubePromotedItemId : GoogleCloudModel {
    public var videoId: String?
    /*If the promoted item represents a website, this field represents the url pointing to the website. This field will be present only if type has the value website. */
    public var websiteUrl: String?
+   public init(recentlyUploadedBy:String?, type:String?, videoId:String?, websiteUrl:String?) {
+      self.recentlyUploadedBy = recentlyUploadedBy
+      self.type = type
+      self.videoId = videoId
+      self.websiteUrl = websiteUrl
+   }
 }
 public struct GoogleCloudYoutubePropertyValue : GoogleCloudModel {
    /*A property. */
    public var property: String?
    /*The property's value. */
    public var value: String?
+   public init(property:String?, value:String?) {
+      self.property = property
+      self.value = value
+   }
 }
 public struct GoogleCloudYoutubeResourceId : GoogleCloudModel {
    /*The ID that YouTube uses to uniquely identify the referred resource, if that resource is a channel. This property is only present if the resourceId.kind value is youtube#channel. */
@@ -3419,6 +4367,12 @@ public struct GoogleCloudYoutubeResourceId : GoogleCloudModel {
    public var playlistId: String?
    /*The ID that YouTube uses to uniquely identify the referred resource, if that resource is a video. This property is only present if the resourceId.kind value is youtube#video. */
    public var videoId: String?
+   public init(channelId:String?, kind:String?, playlistId:String?, videoId:String?) {
+      self.channelId = channelId
+      self.kind = kind
+      self.playlistId = playlistId
+      self.videoId = videoId
+   }
 }
 public struct GoogleCloudYoutubeSearchListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3431,23 +4385,41 @@ public struct GoogleCloudYoutubeSearchListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
    public var regionCode: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeSearchResult]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, regionCode:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.regionCode = regionCode
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeSearchResult : GoogleCloudModel {
    /*Etag of this resource. */
    public var etag: String?
    /*The id object contains information that can be used to uniquely identify the resource that matches the search request. */
-   public var id:  GoogleCloudYoutubeResourceId?
+   public var id: GoogleCloudYoutubeResourceId?
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#searchResult". */
    public var kind: String?
    /*The snippet object contains basic details about a search result, such as its title or description. For example, if the search result is a video, then the title will be the video's title and the description will be the video's description. */
-   public var snippet:  GoogleCloudYoutubeSearchResultSnippet?
+   public var snippet: GoogleCloudYoutubeSearchResultSnippet?
+   public init(etag:String?, id:GoogleCloudYoutubeResourceId?, kind:String?, snippet:GoogleCloudYoutubeSearchResultSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeSearchResultSnippet : GoogleCloudModel {
    /*The value that YouTube uses to uniquely identify the channel that published the resource that the search result identifies. */
@@ -3461,9 +4433,18 @@ public struct GoogleCloudYoutubeSearchResultSnippet : GoogleCloudModel {
    /*The creation date and time of the resource that the search result identifies. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var publishedAt: String?
    /*A map of thumbnail images associated with the search result. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail. */
-   public var thumbnails:  GoogleCloudYoutubeThumbnailDetails?
+   public var thumbnails: GoogleCloudYoutubeThumbnailDetails?
    /*The title of the search result. */
    public var title: String?
+   public init(channelId:String?, channelTitle:String?, description:String?, liveBroadcastContent:String?, publishedAt:String?, thumbnails:GoogleCloudYoutubeThumbnailDetails?, title:String?) {
+      self.channelId = channelId
+      self.channelTitle = channelTitle
+      self.description = description
+      self.liveBroadcastContent = liveBroadcastContent
+      self.publishedAt = publishedAt
+      self.thumbnails = thumbnails
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeSponsor : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3471,7 +4452,12 @@ public struct GoogleCloudYoutubeSponsor : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#sponsor". */
    public var kind: String?
    /*The snippet object contains basic details about the sponsor. */
-   public var snippet:  GoogleCloudYoutubeSponsorSnippet?
+   public var snippet: GoogleCloudYoutubeSponsorSnippet?
+   public init(etag:String?, kind:String?, snippet:GoogleCloudYoutubeSponsorSnippet?) {
+      self.etag = etag
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeSponsorListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3484,10 +4470,20 @@ public struct GoogleCloudYoutubeSponsorListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeSponsor]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeSponsorSnippet : GoogleCloudModel {
    /*The id of the channel being sponsored. */
@@ -3495,13 +4491,19 @@ public struct GoogleCloudYoutubeSponsorSnippet : GoogleCloudModel {
    /*The cumulative time a user has been a sponsor in months. */
    @CodingUses<Coder> public var cumulativeDurationMonths: Int?
    /*Details about the sponsor. */
-   public var sponsorDetails:  GoogleCloudYoutubeChannelProfileDetails?
+   public var sponsorDetails: GoogleCloudYoutubeChannelProfileDetails?
    /*The date and time when the user became a sponsor. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var sponsorSince: String?
+   public init(channelId:String?, cumulativeDurationMonths:Int?, sponsorDetails:GoogleCloudYoutubeChannelProfileDetails?, sponsorSince:String?) {
+      self.channelId = channelId
+      self.cumulativeDurationMonths = cumulativeDurationMonths
+      self.sponsorDetails = sponsorDetails
+      self.sponsorSince = sponsorSince
+   }
 }
 public struct GoogleCloudYoutubeSubscription : GoogleCloudModel {
    /*The contentDetails object contains basic statistics about the subscription. */
-   public var contentDetails:  GoogleCloudYoutubeSubscriptionContentDetails?
+   public var contentDetails: GoogleCloudYoutubeSubscriptionContentDetails?
    /*Etag of this resource. */
    public var etag: String?
    /*The ID that YouTube uses to uniquely identify the subscription. */
@@ -3509,9 +4511,17 @@ public struct GoogleCloudYoutubeSubscription : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#subscription". */
    public var kind: String?
    /*The snippet object contains basic details about the subscription, including its title and the channel that the user subscribed to. */
-   public var snippet:  GoogleCloudYoutubeSubscriptionSnippet?
+   public var snippet: GoogleCloudYoutubeSubscriptionSnippet?
    /*The subscriberSnippet object contains basic details about the sbuscriber. */
-   public var subscriberSnippet:  GoogleCloudYoutubeSubscriptionSubscriberSnippet?
+   public var subscriberSnippet: GoogleCloudYoutubeSubscriptionSubscriberSnippet?
+   public init(contentDetails:GoogleCloudYoutubeSubscriptionContentDetails?, etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeSubscriptionSnippet?, subscriberSnippet:GoogleCloudYoutubeSubscriptionSubscriberSnippet?) {
+      self.contentDetails = contentDetails
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+      self.subscriberSnippet = subscriberSnippet
+   }
 }
 public struct GoogleCloudYoutubeSubscriptionContentDetails : GoogleCloudModel {
    /*The type of activity this subscription is for (only uploads, everything). */
@@ -3520,6 +4530,11 @@ public struct GoogleCloudYoutubeSubscriptionContentDetails : GoogleCloudModel {
    @CodingUses<Coder> public var newItemCount: UInt?
    /*The approximate number of items that the subscription points to. */
    @CodingUses<Coder> public var totalItemCount: UInt?
+   public init(activityType:String?, newItemCount:UInt?, totalItemCount:UInt?) {
+      self.activityType = activityType
+      self.newItemCount = newItemCount
+      self.totalItemCount = totalItemCount
+   }
 }
 public struct GoogleCloudYoutubeSubscriptionListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3532,12 +4547,23 @@ public struct GoogleCloudYoutubeSubscriptionListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeSubscription]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeSubscriptionSnippet : GoogleCloudModel {
    /*The ID that YouTube uses to uniquely identify the subscriber's channel. */
@@ -3549,11 +4575,20 @@ public struct GoogleCloudYoutubeSubscriptionSnippet : GoogleCloudModel {
    /*The date and time that the subscription was created. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var publishedAt: String?
    /*The id object contains information about the channel that the user subscribed to. */
-   public var resourceId:  GoogleCloudYoutubeResourceId?
+   public var resourceId: GoogleCloudYoutubeResourceId?
    /*A map of thumbnail images associated with the video. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail. */
-   public var thumbnails:  GoogleCloudYoutubeThumbnailDetails?
+   public var thumbnails: GoogleCloudYoutubeThumbnailDetails?
    /*The subscription's title. */
    public var title: String?
+   public init(channelId:String?, channelTitle:String?, description:String?, publishedAt:String?, resourceId:GoogleCloudYoutubeResourceId?, thumbnails:GoogleCloudYoutubeThumbnailDetails?, title:String?) {
+      self.channelId = channelId
+      self.channelTitle = channelTitle
+      self.description = description
+      self.publishedAt = publishedAt
+      self.resourceId = resourceId
+      self.thumbnails = thumbnails
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeSubscriptionSubscriberSnippet : GoogleCloudModel {
    /*The channel ID of the subscriber. */
@@ -3561,9 +4596,15 @@ public struct GoogleCloudYoutubeSubscriptionSubscriberSnippet : GoogleCloudModel
    /*The description of the subscriber. */
    public var description: String?
    /*Thumbnails for this subscriber. */
-   public var thumbnails:  GoogleCloudYoutubeThumbnailDetails?
+   public var thumbnails: GoogleCloudYoutubeThumbnailDetails?
    /*The title of the subscriber. */
    public var title: String?
+   public init(channelId:String?, description:String?, thumbnails:GoogleCloudYoutubeThumbnailDetails?, title:String?) {
+      self.channelId = channelId
+      self.description = description
+      self.thumbnails = thumbnails
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeSuperChatEvent : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3573,7 +4614,13 @@ public struct GoogleCloudYoutubeSuperChatEvent : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#superChatEvent". */
    public var kind: String?
    /*The snippet object contains basic details about the Super Chat event. */
-   public var snippet:  GoogleCloudYoutubeSuperChatEventSnippet?
+   public var snippet: GoogleCloudYoutubeSuperChatEventSnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeSuperChatEventSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeSuperChatEventListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3586,10 +4633,20 @@ public struct GoogleCloudYoutubeSuperChatEventListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeSuperChatEvent]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeSuperChatEventSnippet : GoogleCloudModel {
    /*The purchase amount, in micros of the purchase currency. e.g., 1 is represented as 1000000. */
@@ -3611,11 +4668,25 @@ public struct GoogleCloudYoutubeSuperChatEventSnippet : GoogleCloudModel {
    /*The tier for the paid message, which is based on the amount of money spent to purchase the message. */
    @CodingUses<Coder> public var messageType: UInt?
    /*If this event is a Super Chat for Good purchase, this field will contain information about the charity the purchase is donated to. */
-   public var nonprofit:  GoogleCloudYoutubeNonprofit?
+   public var nonprofit: GoogleCloudYoutubeNonprofit?
    /*If this event is a Super Sticker event, this field will contain metadata about the Super Sticker. */
-   public var superStickerMetadata:  GoogleCloudYoutubeSuperStickerMetadata?
+   public var superStickerMetadata: GoogleCloudYoutubeSuperStickerMetadata?
    /*Details about the supporter. */
-   public var supporterDetails:  GoogleCloudYoutubeChannelProfileDetails?
+   public var supporterDetails: GoogleCloudYoutubeChannelProfileDetails?
+   public init(amountMicros:UInt?, channelId:String?, commentText:String?, createdAt:String?, currency:String?, displayString:String?, isSuperChatForGood:Bool?, isSuperStickerEvent:Bool?, messageType:UInt?, nonprofit:GoogleCloudYoutubeNonprofit?, superStickerMetadata:GoogleCloudYoutubeSuperStickerMetadata?, supporterDetails:GoogleCloudYoutubeChannelProfileDetails?) {
+      self.amountMicros = amountMicros
+      self.channelId = channelId
+      self.commentText = commentText
+      self.createdAt = createdAt
+      self.currency = currency
+      self.displayString = displayString
+      self.isSuperChatForGood = isSuperChatForGood
+      self.isSuperStickerEvent = isSuperStickerEvent
+      self.messageType = messageType
+      self.nonprofit = nonprofit
+      self.superStickerMetadata = superStickerMetadata
+      self.supporterDetails = supporterDetails
+   }
 }
 public struct GoogleCloudYoutubeSuperStickerMetadata : GoogleCloudModel {
    /*Internationalized alt text that describes the sticker image and any animation associated with it. */
@@ -3624,6 +4695,11 @@ public struct GoogleCloudYoutubeSuperStickerMetadata : GoogleCloudModel {
    public var altTextLanguage: String?
    /*Unique identifier of the Super Sticker. This is a shorter form of the alt_text that includes pack name and a recognizable characteristic of the sticker. */
    public var stickerId: String?
+   public init(altText:String?, altTextLanguage:String?, stickerId:String?) {
+      self.altText = altText
+      self.altTextLanguage = altTextLanguage
+      self.stickerId = stickerId
+   }
 }
 public struct GoogleCloudYoutubeThumbnail : GoogleCloudModel {
    /*(Optional) Height of the thumbnail image. */
@@ -3632,18 +4708,30 @@ public struct GoogleCloudYoutubeThumbnail : GoogleCloudModel {
    public var url: String?
    /*(Optional) Width of the thumbnail image. */
    @CodingUses<Coder> public var width: UInt?
+   public init(height:UInt?, url:String?, width:UInt?) {
+      self.height = height
+      self.url = url
+      self.width = width
+   }
 }
 public struct GoogleCloudYoutubeThumbnailDetails : GoogleCloudModel {
    /*The default image for this resource. */
-   public var `default`:  GoogleCloudYoutubeThumbnail?
+   public var `default`: GoogleCloudYoutubeThumbnail?
    /*The high quality image for this resource. */
-   public var high:  GoogleCloudYoutubeThumbnail?
+   public var high: GoogleCloudYoutubeThumbnail?
    /*The maximum resolution quality image for this resource. */
-   public var maxres:  GoogleCloudYoutubeThumbnail?
+   public var maxres: GoogleCloudYoutubeThumbnail?
    /*The medium quality image for this resource. */
-   public var medium:  GoogleCloudYoutubeThumbnail?
+   public var medium: GoogleCloudYoutubeThumbnail?
    /*The standard quality image for this resource. */
-   public var standard:  GoogleCloudYoutubeThumbnail?
+   public var standard: GoogleCloudYoutubeThumbnail?
+   public init(`default`:GoogleCloudYoutubeThumbnail?, high:GoogleCloudYoutubeThumbnail?, maxres:GoogleCloudYoutubeThumbnail?, medium:GoogleCloudYoutubeThumbnail?, standard:GoogleCloudYoutubeThumbnail?) {
+      self.`default` = `default`
+      self.high = high
+      self.maxres = maxres
+      self.medium = medium
+      self.standard = standard
+   }
 }
 public struct GoogleCloudYoutubeThumbnailSetResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3656,48 +4744,75 @@ public struct GoogleCloudYoutubeThumbnailSetResponse : GoogleCloudModel {
    public var kind: String?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeThumbnailDetails]?, kind:String?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeTokenPagination : GoogleCloudModel {
 }
 public struct GoogleCloudYoutubeVideo : GoogleCloudModel {
    /*Age restriction details related to a video. This data can only be retrieved by the video owner. */
-   public var ageGating:  GoogleCloudYoutubeVideoAgeGating?
+   public var ageGating: GoogleCloudYoutubeVideoAgeGating?
    /*The contentDetails object contains information about the video content, including the length of the video and its aspect ratio. */
-   public var contentDetails:  GoogleCloudYoutubeVideoContentDetails?
+   public var contentDetails: GoogleCloudYoutubeVideoContentDetails?
    /*Etag of this resource. */
    public var etag: String?
    /*The fileDetails object encapsulates information about the video file that was uploaded to YouTube, including the file's resolution, duration, audio and video codecs, stream bitrates, and more. This data can only be retrieved by the video owner. */
-   public var fileDetails:  GoogleCloudYoutubeVideoFileDetails?
+   public var fileDetails: GoogleCloudYoutubeVideoFileDetails?
    /*The ID that YouTube uses to uniquely identify the video. */
    public var id: String?
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#video". */
    public var kind: String?
    /*The liveStreamingDetails object contains metadata about a live video broadcast. The object will only be present in a video resource if the video is an upcoming, live, or completed live broadcast. */
-   public var liveStreamingDetails:  GoogleCloudYoutubeVideoLiveStreamingDetails?
+   public var liveStreamingDetails: GoogleCloudYoutubeVideoLiveStreamingDetails?
    /*List with all localizations. */
    public var localizations: [String : GoogleCloudYoutubeVideoLocalization]?
    /*The monetizationDetails object encapsulates information about the monetization status of the video. */
-   public var monetizationDetails:  GoogleCloudYoutubeVideoMonetizationDetails?
+   public var monetizationDetails: GoogleCloudYoutubeVideoMonetizationDetails?
    /*The player object contains information that you would use to play the video in an embedded player. */
-   public var player:  GoogleCloudYoutubeVideoPlayer?
+   public var player: GoogleCloudYoutubeVideoPlayer?
    /*The processingDetails object encapsulates information about YouTube's progress in processing the uploaded video file. The properties in the object identify the current processing status and an estimate of the time remaining until YouTube finishes processing the video. This part also indicates whether different types of data or content, such as file details or thumbnail images, are available for the video.
 
 The processingProgress object is designed to be polled so that the video uploaded can track the progress that YouTube has made in processing the uploaded video file. This data can only be retrieved by the video owner. */
-   public var processingDetails:  GoogleCloudYoutubeVideoProcessingDetails?
+   public var processingDetails: GoogleCloudYoutubeVideoProcessingDetails?
    /*The projectDetails object contains information about the project specific video metadata. */
-   public var projectDetails:  GoogleCloudYoutubeVideoProjectDetails?
+   public var projectDetails: GoogleCloudYoutubeVideoProjectDetails?
    /*The recordingDetails object encapsulates information about the location, date and address where the video was recorded. */
-   public var recordingDetails:  GoogleCloudYoutubeVideoRecordingDetails?
+   public var recordingDetails: GoogleCloudYoutubeVideoRecordingDetails?
    /*The snippet object contains basic details about the video, such as its title, description, and category. */
-   public var snippet:  GoogleCloudYoutubeVideoSnippet?
+   public var snippet: GoogleCloudYoutubeVideoSnippet?
    /*The statistics object contains statistics about the video. */
-   public var statistics:  GoogleCloudYoutubeVideoStatistics?
+   public var statistics: GoogleCloudYoutubeVideoStatistics?
    /*The status object contains information about the video's uploading, processing, and privacy statuses. */
-   public var status:  GoogleCloudYoutubeVideoStatus?
+   public var status: GoogleCloudYoutubeVideoStatus?
    /*The suggestions object encapsulates suggestions that identify opportunities to improve the video quality or the metadata for the uploaded video. This data can only be retrieved by the video owner. */
-   public var suggestions:  GoogleCloudYoutubeVideoSuggestions?
+   public var suggestions: GoogleCloudYoutubeVideoSuggestions?
    /*The topicDetails object encapsulates information about Freebase topics associated with the video. */
-   public var topicDetails:  GoogleCloudYoutubeVideoTopicDetails?
+   public var topicDetails: GoogleCloudYoutubeVideoTopicDetails?
+   public init(ageGating:GoogleCloudYoutubeVideoAgeGating?, contentDetails:GoogleCloudYoutubeVideoContentDetails?, etag:String?, fileDetails:GoogleCloudYoutubeVideoFileDetails?, id:String?, kind:String?, liveStreamingDetails:GoogleCloudYoutubeVideoLiveStreamingDetails?, localizations:[String : GoogleCloudYoutubeVideoLocalization]?, monetizationDetails:GoogleCloudYoutubeVideoMonetizationDetails?, player:GoogleCloudYoutubeVideoPlayer?, processingDetails:GoogleCloudYoutubeVideoProcessingDetails?, projectDetails:GoogleCloudYoutubeVideoProjectDetails?, recordingDetails:GoogleCloudYoutubeVideoRecordingDetails?, snippet:GoogleCloudYoutubeVideoSnippet?, statistics:GoogleCloudYoutubeVideoStatistics?, status:GoogleCloudYoutubeVideoStatus?, suggestions:GoogleCloudYoutubeVideoSuggestions?, topicDetails:GoogleCloudYoutubeVideoTopicDetails?) {
+      self.ageGating = ageGating
+      self.contentDetails = contentDetails
+      self.etag = etag
+      self.fileDetails = fileDetails
+      self.id = id
+      self.kind = kind
+      self.liveStreamingDetails = liveStreamingDetails
+      self.localizations = localizations
+      self.monetizationDetails = monetizationDetails
+      self.player = player
+      self.processingDetails = processingDetails
+      self.projectDetails = projectDetails
+      self.recordingDetails = recordingDetails
+      self.snippet = snippet
+      self.statistics = statistics
+      self.status = status
+      self.suggestions = suggestions
+      self.topicDetails = topicDetails
+   }
 }
 public struct GoogleCloudYoutubeVideoAbuseReport : GoogleCloudModel {
    /*Additional comments regarding the abuse report. */
@@ -3710,6 +4825,13 @@ public struct GoogleCloudYoutubeVideoAbuseReport : GoogleCloudModel {
    public var secondaryReasonId: String?
    /*The ID that YouTube uses to uniquely identify the video. */
    public var videoId: String?
+   public init(comments:String?, language:String?, reasonId:String?, secondaryReasonId:String?, videoId:String?) {
+      self.comments = comments
+      self.language = language
+      self.reasonId = reasonId
+      self.secondaryReasonId = secondaryReasonId
+      self.videoId = videoId
+   }
 }
 public struct GoogleCloudYoutubeVideoAbuseReportReason : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3719,7 +4841,13 @@ public struct GoogleCloudYoutubeVideoAbuseReportReason : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#videoAbuseReportReason". */
    public var kind: String?
    /*The snippet object contains basic details about the abuse report reason. */
-   public var snippet:  GoogleCloudYoutubeVideoAbuseReportReasonSnippet?
+   public var snippet: GoogleCloudYoutubeVideoAbuseReportReasonSnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeVideoAbuseReportReasonSnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeVideoAbuseReportReasonListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3732,18 +4860,33 @@ public struct GoogleCloudYoutubeVideoAbuseReportReasonListResponse : GoogleCloud
    public var kind: String?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeVideoAbuseReportReason]?, kind:String?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeVideoAbuseReportReasonSnippet : GoogleCloudModel {
    /*The localized label belonging to this abuse report reason. */
    public var label: String?
    /*The secondary reasons associated with this reason, if any are available. (There might be 0 or more.) */
    public var secondaryReasons: [GoogleCloudYoutubeVideoAbuseReportSecondaryReason]?
+   public init(label:String?, secondaryReasons:[GoogleCloudYoutubeVideoAbuseReportSecondaryReason]?) {
+      self.label = label
+      self.secondaryReasons = secondaryReasons
+   }
 }
 public struct GoogleCloudYoutubeVideoAbuseReportSecondaryReason : GoogleCloudModel {
    /*The ID of this abuse report secondary reason. */
    public var id: String?
    /*The localized label for this abuse report secondary reason. */
    public var label: String?
+   public init(id:String?, label:String?) {
+      self.id = id
+      self.label = label
+   }
 }
 public struct GoogleCloudYoutubeVideoAgeGating : GoogleCloudModel {
    /*Indicates whether or not the video has alcoholic beverage content. Only users of legal purchasing age in a particular country, as identified by ICAP, can view the content. */
@@ -3752,6 +4895,11 @@ public struct GoogleCloudYoutubeVideoAgeGating : GoogleCloudModel {
    public var restricted: Bool?
    /*Video game rating, if any. */
    public var videoGameRating: String?
+   public init(alcoholContent:Bool?, restricted:Bool?, videoGameRating:String?) {
+      self.alcoholContent = alcoholContent
+      self.restricted = restricted
+      self.videoGameRating = videoGameRating
+   }
 }
 public struct GoogleCloudYoutubeVideoCategory : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3761,7 +4909,13 @@ public struct GoogleCloudYoutubeVideoCategory : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "youtube#videoCategory". */
    public var kind: String?
    /*The snippet object contains basic details about the video category, including its title. */
-   public var snippet:  GoogleCloudYoutubeVideoCategorySnippet?
+   public var snippet: GoogleCloudYoutubeVideoCategorySnippet?
+   public init(etag:String?, id:String?, kind:String?, snippet:GoogleCloudYoutubeVideoCategorySnippet?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.snippet = snippet
+   }
 }
 public struct GoogleCloudYoutubeVideoCategoryListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3774,12 +4928,23 @@ public struct GoogleCloudYoutubeVideoCategoryListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeVideoCategory]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeVideoCategorySnippet : GoogleCloudModel {
    public var assignable: Bool?
@@ -3787,14 +4952,19 @@ public struct GoogleCloudYoutubeVideoCategorySnippet : GoogleCloudModel {
    public var channelId: String?
    /*The video category's title. */
    public var title: String?
+   public init(assignable:Bool?, channelId:String?, title:String?) {
+      self.assignable = assignable
+      self.channelId = channelId
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeVideoContentDetails : GoogleCloudModel {
    /*The value of captions indicates whether the video has captions or not. */
    public var caption: String?
    /*Specifies the ratings that the video received under various rating schemes. */
-   public var contentRating:  GoogleCloudYoutubeContentRating?
+   public var contentRating: GoogleCloudYoutubeContentRating?
    /*The countryRestriction object contains information about the countries where a video is (or is not) viewable. */
-   public var countryRestriction:  GoogleCloudYoutubeAccessPolicy?
+   public var countryRestriction: GoogleCloudYoutubeAccessPolicy?
    /*The value of definition indicates whether the video is available in high definition or only in standard definition. */
    public var definition: String?
    /*The value of dimension indicates whether the video is available in 3D or in 2D. */
@@ -3808,13 +4978,29 @@ public struct GoogleCloudYoutubeVideoContentDetails : GoogleCloudModel {
    /*Specifies the projection format of the video. */
    public var projection: String?
    /*The regionRestriction object contains information about the countries where a video is (or is not) viewable. The object will contain either the contentDetails.regionRestriction.allowed property or the contentDetails.regionRestriction.blocked property. */
-   public var regionRestriction:  GoogleCloudYoutubeVideoContentDetailsRegionRestriction?
+   public var regionRestriction: GoogleCloudYoutubeVideoContentDetailsRegionRestriction?
+   public init(caption:String?, contentRating:GoogleCloudYoutubeContentRating?, countryRestriction:GoogleCloudYoutubeAccessPolicy?, definition:String?, dimension:String?, duration:String?, hasCustomThumbnail:Bool?, licensedContent:Bool?, projection:String?, regionRestriction:GoogleCloudYoutubeVideoContentDetailsRegionRestriction?) {
+      self.caption = caption
+      self.contentRating = contentRating
+      self.countryRestriction = countryRestriction
+      self.definition = definition
+      self.dimension = dimension
+      self.duration = duration
+      self.hasCustomThumbnail = hasCustomThumbnail
+      self.licensedContent = licensedContent
+      self.projection = projection
+      self.regionRestriction = regionRestriction
+   }
 }
 public struct GoogleCloudYoutubeVideoContentDetailsRegionRestriction : GoogleCloudModel {
    /*A list of region codes that identify countries where the video is viewable. If this property is present and a country is not listed in its value, then the video is blocked from appearing in that country. If this property is present and contains an empty list, the video is blocked in all countries. */
    public var allowed: [String]?
    /*A list of region codes that identify countries where the video is blocked. If this property is present and a country is not listed in its value, then the video is viewable in that country. If this property is present and contains an empty list, the video is viewable in all countries. */
    public var blocked: [String]?
+   public init(allowed:[String]?, blocked:[String]?) {
+      self.allowed = allowed
+      self.blocked = blocked
+   }
 }
 public struct GoogleCloudYoutubeVideoFileDetails : GoogleCloudModel {
    /*A list of audio streams contained in the uploaded video file. Each item in the list contains detailed metadata about an audio stream. */
@@ -3838,6 +5024,17 @@ public struct GoogleCloudYoutubeVideoFileDetails : GoogleCloudModel {
    public var fileType: String?
    /*A list of video streams contained in the uploaded video file. Each item in the list contains detailed metadata about a video stream. */
    public var videoStreams: [GoogleCloudYoutubeVideoFileDetailsVideoStream]?
+   public init(audioStreams:[GoogleCloudYoutubeVideoFileDetailsAudioStream]?, bitrateBps:UInt?, container:String?, creationTime:String?, durationMs:UInt?, fileName:String?, fileSize:UInt?, fileType:String?, videoStreams:[GoogleCloudYoutubeVideoFileDetailsVideoStream]?) {
+      self.audioStreams = audioStreams
+      self.bitrateBps = bitrateBps
+      self.container = container
+      self.creationTime = creationTime
+      self.durationMs = durationMs
+      self.fileName = fileName
+      self.fileSize = fileSize
+      self.fileType = fileType
+      self.videoStreams = videoStreams
+   }
 }
 public struct GoogleCloudYoutubeVideoFileDetailsAudioStream : GoogleCloudModel {
    /*The audio stream's bitrate, in bits per second. */
@@ -3848,6 +5045,12 @@ public struct GoogleCloudYoutubeVideoFileDetailsAudioStream : GoogleCloudModel {
    public var codec: String?
    /*A value that uniquely identifies a video vendor. Typically, the value is a four-letter vendor code. */
    public var vendor: String?
+   public init(bitrateBps:UInt?, channelCount:UInt?, codec:String?, vendor:String?) {
+      self.bitrateBps = bitrateBps
+      self.channelCount = channelCount
+      self.codec = codec
+      self.vendor = vendor
+   }
 }
 public struct GoogleCloudYoutubeVideoFileDetailsVideoStream : GoogleCloudModel {
    /*The video content's display aspect ratio, which specifies the aspect ratio in which the video should be displayed. */
@@ -3866,6 +5069,16 @@ public struct GoogleCloudYoutubeVideoFileDetailsVideoStream : GoogleCloudModel {
    public var vendor: String?
    /*The encoded video content's width in pixels. You can calculate the video's encoding aspect ratio as width_pixels / height_pixels. */
    @CodingUses<Coder> public var widthPixels: UInt?
+   public init(aspectRatio:Double?, bitrateBps:UInt?, codec:String?, frameRateFps:Double?, heightPixels:UInt?, rotation:String?, vendor:String?, widthPixels:UInt?) {
+      self.aspectRatio = aspectRatio
+      self.bitrateBps = bitrateBps
+      self.codec = codec
+      self.frameRateFps = frameRateFps
+      self.heightPixels = heightPixels
+      self.rotation = rotation
+      self.vendor = vendor
+      self.widthPixels = widthPixels
+   }
 }
 public struct GoogleCloudYoutubeVideoGetRatingResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3878,6 +5091,13 @@ public struct GoogleCloudYoutubeVideoGetRatingResponse : GoogleCloudModel {
    public var kind: String?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeVideoRating]?, kind:String?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeVideoListResponse : GoogleCloudModel {
    /*Etag of this resource. */
@@ -3890,12 +5110,23 @@ public struct GoogleCloudYoutubeVideoListResponse : GoogleCloudModel {
    public var kind: String?
    /*The token that can be used as the value of the pageToken parameter to retrieve the next page in the result set. */
    public var nextPageToken: String?
-   public var pageInfo:  GoogleCloudYoutubePageInfo?
+   public var pageInfo: GoogleCloudYoutubePageInfo?
    /*The token that can be used as the value of the pageToken parameter to retrieve the previous page in the result set. */
    public var prevPageToken: String?
-   public var tokenPagination:  GoogleCloudYoutubeTokenPagination?
+   public var tokenPagination: GoogleCloudYoutubeTokenPagination?
    /*The visitorId identifies the visitor. */
    public var visitorId: String?
+   public init(etag:String?, eventId:String?, items:[GoogleCloudYoutubeVideo]?, kind:String?, nextPageToken:String?, pageInfo:GoogleCloudYoutubePageInfo?, prevPageToken:String?, tokenPagination:GoogleCloudYoutubeTokenPagination?, visitorId:String?) {
+      self.etag = etag
+      self.eventId = eventId
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.pageInfo = pageInfo
+      self.prevPageToken = prevPageToken
+      self.tokenPagination = tokenPagination
+      self.visitorId = visitorId
+   }
 }
 public struct GoogleCloudYoutubeVideoLiveStreamingDetails : GoogleCloudModel {
    /*The ID of the currently active live chat attached to this video. This field is filled only if the video is a currently live broadcast that has live chat. Once the broadcast transitions to complete this field will be removed and the live chat closed down. For persistent broadcasts that live chat id will no longer be tied to this video but rather to the new video being displayed at the persistent page. */
@@ -3910,16 +5141,31 @@ public struct GoogleCloudYoutubeVideoLiveStreamingDetails : GoogleCloudModel {
    @CodingUses<Coder> public var scheduledEndTime: String?
    /*The time that the broadcast is scheduled to begin. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var scheduledStartTime: String?
+   public init(activeLiveChatId:String?, actualEndTime:String?, actualStartTime:String?, concurrentViewers:UInt?, scheduledEndTime:String?, scheduledStartTime:String?) {
+      self.activeLiveChatId = activeLiveChatId
+      self.actualEndTime = actualEndTime
+      self.actualStartTime = actualStartTime
+      self.concurrentViewers = concurrentViewers
+      self.scheduledEndTime = scheduledEndTime
+      self.scheduledStartTime = scheduledStartTime
+   }
 }
 public struct GoogleCloudYoutubeVideoLocalization : GoogleCloudModel {
    /*Localized version of the video's description. */
    public var description: String?
    /*Localized version of the video's title. */
    public var title: String?
+   public init(description:String?, title:String?) {
+      self.description = description
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeVideoMonetizationDetails : GoogleCloudModel {
    /*The value of access indicates whether the video can be monetized or not. */
-   public var access:  GoogleCloudYoutubeAccessPolicy?
+   public var access: GoogleCloudYoutubeAccessPolicy?
+   public init(access:GoogleCloudYoutubeAccessPolicy?) {
+      self.access = access
+   }
 }
 public struct GoogleCloudYoutubeVideoPlayer : GoogleCloudModel {
    @CodingUses<Coder> public var embedHeight: Int?
@@ -3927,6 +5173,11 @@ public struct GoogleCloudYoutubeVideoPlayer : GoogleCloudModel {
    public var embedHtml: String?
    /*The embed width */
    @CodingUses<Coder> public var embedWidth: Int?
+   public init(embedHeight:Int?, embedHtml:String?, embedWidth:Int?) {
+      self.embedHeight = embedHeight
+      self.embedHtml = embedHtml
+      self.embedWidth = embedWidth
+   }
 }
 public struct GoogleCloudYoutubeVideoProcessingDetails : GoogleCloudModel {
    /*This value indicates whether video editing suggestions, which might improve video quality or the playback experience, are available for the video. You can retrieve these suggestions by requesting the suggestions part in your videos.list() request. */
@@ -3938,13 +5189,23 @@ public struct GoogleCloudYoutubeVideoProcessingDetails : GoogleCloudModel {
    /*This value indicates whether the video processing engine has generated suggestions that might improve YouTube's ability to process the the video, warnings that explain video processing problems, or errors that cause video processing problems. You can retrieve these suggestions by requesting the suggestions part in your videos.list() request. */
    public var processingIssuesAvailability: String?
    /*The processingProgress object contains information about the progress YouTube has made in processing the video. The values are really only relevant if the video's processing status is processing. */
-   public var processingProgress:  GoogleCloudYoutubeVideoProcessingDetailsProcessingProgress?
+   public var processingProgress: GoogleCloudYoutubeVideoProcessingDetailsProcessingProgress?
    /*The video's processing status. This value indicates whether YouTube was able to process the video or if the video is still being processed. */
    public var processingStatus: String?
    /*This value indicates whether keyword (tag) suggestions are available for the video. Tags can be added to a video's metadata to make it easier for other users to find the video. You can retrieve these suggestions by requesting the suggestions part in your videos.list() request. */
    public var tagSuggestionsAvailability: String?
    /*This value indicates whether thumbnail images have been generated for the video. */
    public var thumbnailsAvailability: String?
+   public init(editorSuggestionsAvailability:String?, fileDetailsAvailability:String?, processingFailureReason:String?, processingIssuesAvailability:String?, processingProgress:GoogleCloudYoutubeVideoProcessingDetailsProcessingProgress?, processingStatus:String?, tagSuggestionsAvailability:String?, thumbnailsAvailability:String?) {
+      self.editorSuggestionsAvailability = editorSuggestionsAvailability
+      self.fileDetailsAvailability = fileDetailsAvailability
+      self.processingFailureReason = processingFailureReason
+      self.processingIssuesAvailability = processingIssuesAvailability
+      self.processingProgress = processingProgress
+      self.processingStatus = processingStatus
+      self.tagSuggestionsAvailability = tagSuggestionsAvailability
+      self.thumbnailsAvailability = thumbnailsAvailability
+   }
 }
 public struct GoogleCloudYoutubeVideoProcessingDetailsProcessingProgress : GoogleCloudModel {
    /*The number of parts of the video that YouTube has already processed. You can estimate the percentage of the video that YouTube has already processed by calculating:
@@ -3956,22 +5217,39 @@ Note that since the estimated number of parts could increase without a correspon
    @CodingUses<Coder> public var partsTotal: UInt?
    /*An estimate of the amount of time, in millseconds, that YouTube needs to finish processing the video. */
    @CodingUses<Coder> public var timeLeftMs: UInt?
+   public init(partsProcessed:UInt?, partsTotal:UInt?, timeLeftMs:UInt?) {
+      self.partsProcessed = partsProcessed
+      self.partsTotal = partsTotal
+      self.timeLeftMs = timeLeftMs
+   }
 }
 public struct GoogleCloudYoutubeVideoProjectDetails : GoogleCloudModel {
    /*A list of project tags associated with the video during the upload. */
    public var tags: [String]?
+   public init(tags:[String]?) {
+      self.tags = tags
+   }
 }
 public struct GoogleCloudYoutubeVideoRating : GoogleCloudModel {
    public var rating: String?
    public var videoId: String?
+   public init(rating:String?, videoId:String?) {
+      self.rating = rating
+      self.videoId = videoId
+   }
 }
 public struct GoogleCloudYoutubeVideoRecordingDetails : GoogleCloudModel {
    /*The geolocation information associated with the video. */
-   public var location:  GoogleCloudYoutubeGeoPoint?
+   public var location: GoogleCloudYoutubeGeoPoint?
    /*The text description of the location where the video was recorded. */
    public var locationDescription: String?
    /*The date and time when the video was recorded. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sssZ) format. */
    @CodingUses<Coder> public var recordingDate: String?
+   public init(location:GoogleCloudYoutubeGeoPoint?, locationDescription:String?, recordingDate:String?) {
+      self.location = location
+      self.locationDescription = locationDescription
+      self.recordingDate = recordingDate
+   }
 }
 public struct GoogleCloudYoutubeVideoSnippet : GoogleCloudModel {
    /*The YouTube video category associated with the video. */
@@ -3989,15 +5267,29 @@ public struct GoogleCloudYoutubeVideoSnippet : GoogleCloudModel {
    /*Indicates if the video is an upcoming/active live broadcast. Or it's "none" if the video is not an upcoming/active live broadcast. */
    public var liveBroadcastContent: String?
    /*Localized snippet selected with the hl parameter. If no such localization exists, this field is populated with the default snippet. (Read-only) */
-   public var localized:  GoogleCloudYoutubeVideoLocalization?
+   public var localized: GoogleCloudYoutubeVideoLocalization?
    /*The date and time that the video was uploaded. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format. */
    @CodingUses<Coder> public var publishedAt: String?
    /*A list of keyword tags associated with the video. Tags may contain spaces. */
    public var tags: [String]?
    /*A map of thumbnail images associated with the video. For each object in the map, the key is the name of the thumbnail image, and the value is an object that contains other information about the thumbnail. */
-   public var thumbnails:  GoogleCloudYoutubeThumbnailDetails?
+   public var thumbnails: GoogleCloudYoutubeThumbnailDetails?
    /*The video's title. */
    public var title: String?
+   public init(categoryId:String?, channelId:String?, channelTitle:String?, defaultAudioLanguage:String?, defaultLanguage:String?, description:String?, liveBroadcastContent:String?, localized:GoogleCloudYoutubeVideoLocalization?, publishedAt:String?, tags:[String]?, thumbnails:GoogleCloudYoutubeThumbnailDetails?, title:String?) {
+      self.categoryId = categoryId
+      self.channelId = channelId
+      self.channelTitle = channelTitle
+      self.defaultAudioLanguage = defaultAudioLanguage
+      self.defaultLanguage = defaultLanguage
+      self.description = description
+      self.liveBroadcastContent = liveBroadcastContent
+      self.localized = localized
+      self.publishedAt = publishedAt
+      self.tags = tags
+      self.thumbnails = thumbnails
+      self.title = title
+   }
 }
 public struct GoogleCloudYoutubeVideoStatistics : GoogleCloudModel {
    /*The number of comments for the video. */
@@ -4010,6 +5302,13 @@ public struct GoogleCloudYoutubeVideoStatistics : GoogleCloudModel {
    @CodingUses<Coder> public var likeCount: UInt?
    /*The number of times the video has been viewed. */
    @CodingUses<Coder> public var viewCount: UInt?
+   public init(commentCount:UInt?, dislikeCount:UInt?, favoriteCount:UInt?, likeCount:UInt?, viewCount:UInt?) {
+      self.commentCount = commentCount
+      self.dislikeCount = dislikeCount
+      self.favoriteCount = favoriteCount
+      self.likeCount = likeCount
+      self.viewCount = viewCount
+   }
 }
 public struct GoogleCloudYoutubeVideoStatus : GoogleCloudModel {
    /*This value indicates if the video can be embedded on another website. */
@@ -4031,6 +5330,18 @@ public struct GoogleCloudYoutubeVideoStatus : GoogleCloudModel {
    public var selfDeclaredMadeForKids: Bool?
    /*The status of the uploaded video. */
    public var uploadStatus: String?
+   public init(embeddable:Bool?, failureReason:String?, license:String?, madeForKids:Bool?, privacyStatus:String?, publicStatsViewable:Bool?, publishAt:String?, rejectionReason:String?, selfDeclaredMadeForKids:Bool?, uploadStatus:String?) {
+      self.embeddable = embeddable
+      self.failureReason = failureReason
+      self.license = license
+      self.madeForKids = madeForKids
+      self.privacyStatus = privacyStatus
+      self.publicStatsViewable = publicStatsViewable
+      self.publishAt = publishAt
+      self.rejectionReason = rejectionReason
+      self.selfDeclaredMadeForKids = selfDeclaredMadeForKids
+      self.uploadStatus = uploadStatus
+   }
 }
 public struct GoogleCloudYoutubeVideoSuggestions : GoogleCloudModel {
    /*A list of video editing operations that might improve the video quality or playback experience of the uploaded video. */
@@ -4043,12 +5354,23 @@ public struct GoogleCloudYoutubeVideoSuggestions : GoogleCloudModel {
    public var processingWarnings: [String]?
    /*A list of keyword tags that could be added to the video's metadata to increase the likelihood that users will locate your video when searching or browsing on YouTube. */
    public var tagSuggestions: [GoogleCloudYoutubeVideoSuggestionsTagSuggestion]?
+   public init(editorSuggestions:[String]?, processingErrors:[String]?, processingHints:[String]?, processingWarnings:[String]?, tagSuggestions:[GoogleCloudYoutubeVideoSuggestionsTagSuggestion]?) {
+      self.editorSuggestions = editorSuggestions
+      self.processingErrors = processingErrors
+      self.processingHints = processingHints
+      self.processingWarnings = processingWarnings
+      self.tagSuggestions = tagSuggestions
+   }
 }
 public struct GoogleCloudYoutubeVideoSuggestionsTagSuggestion : GoogleCloudModel {
    /*A set of video categories for which the tag is relevant. You can use this information to display appropriate tag suggestions based on the video category that the video uploader associates with the video. By default, tag suggestions are relevant for all categories if there are no restricts defined for the keyword. */
    public var categoryRestricts: [String]?
    /*The keyword tag suggested for the video. */
    public var tag: String?
+   public init(categoryRestricts:[String]?, tag:String?) {
+      self.categoryRestricts = categoryRestricts
+      self.tag = tag
+   }
 }
 public struct GoogleCloudYoutubeVideoTopicDetails : GoogleCloudModel {
    /*Similar to topic_id, except that these topics are merely relevant to the video. These are topics that may be mentioned in, or appear in the video. You can retrieve information about each topic using Freebase Topic API. */
@@ -4057,6 +5379,11 @@ public struct GoogleCloudYoutubeVideoTopicDetails : GoogleCloudModel {
    public var topicCategories: [String]?
    /*A list of Freebase topic IDs that are centrally associated with the video. These are topics that are centrally featured in the video, and it can be said that the video is mainly about each of these. You can retrieve information about each topic using the Freebase Topic API. */
    public var topicIds: [String]?
+   public init(relevantTopicIds:[String]?, topicCategories:[String]?, topicIds:[String]?) {
+      self.relevantTopicIds = relevantTopicIds
+      self.topicCategories = topicCategories
+      self.topicIds = topicIds
+   }
 }
 public struct GoogleCloudYoutubeWatchSettings : GoogleCloudModel {
    /*The text color for the video watch page's branded area. */
@@ -4065,6 +5392,11 @@ public struct GoogleCloudYoutubeWatchSettings : GoogleCloudModel {
    public var featuredPlaylistId: String?
    /*The background color for the video watch page's branded area. */
    public var textColor: String?
+   public init(backgroundColor:String?, featuredPlaylistId:String?, textColor:String?) {
+      self.backgroundColor = backgroundColor
+      self.featuredPlaylistId = featuredPlaylistId
+      self.textColor = textColor
+   }
 }
 public struct GoogleCloudYoutubeChannelContentDetailsRelatedPlaylists : GoogleCloudModel {
    /*The ID of the playlist that contains the channel"s favorite videos. Use the  playlistItems.insert and  playlistItems.delete to add or remove items from that list. */

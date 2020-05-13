@@ -13,25 +13,25 @@ import CodableWrappers
 public enum GoogleCloudDriveScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
-      case .DriveMetadata: return "https://www.googleapis.com/auth/drive.metadata"
-      case .DriveReadonly: return "https://www.googleapis.com/auth/drive.readonly"
-      case .DriveScripts: return "https://www.googleapis.com/auth/drive.scripts"
       case .DrivePhotosReadonly: return "https://www.googleapis.com/auth/drive.photos.readonly"
-      case .DriveFile: return "https://www.googleapis.com/auth/drive.file"
-      case .DriveMetadataReadonly: return "https://www.googleapis.com/auth/drive.metadata.readonly"
-      case .DriveAppdata: return "https://www.googleapis.com/auth/drive.appdata"
       case .Drive: return "https://www.googleapis.com/auth/drive"
+      case .DriveFile: return "https://www.googleapis.com/auth/drive.file"
+      case .DriveAppdata: return "https://www.googleapis.com/auth/drive.appdata"
+      case .DriveMetadataReadonly: return "https://www.googleapis.com/auth/drive.metadata.readonly"
+      case .DriveScripts: return "https://www.googleapis.com/auth/drive.scripts"
+      case .DriveReadonly: return "https://www.googleapis.com/auth/drive.readonly"
+      case .DriveMetadata: return "https://www.googleapis.com/auth/drive.metadata"
       }
    }
 
-   case DriveMetadata // View and manage metadata of files in your Google Drive
-   case DriveReadonly // See and download all your Google Drive files
-   case DriveScripts // Modify your Google Apps Script scripts' behavior
    case DrivePhotosReadonly // View the photos, videos and albums in your Google Photos
-   case DriveFile // View and manage Google Drive files and folders that you have opened or created with this app
-   case DriveMetadataReadonly // View metadata for files in your Google Drive
-   case DriveAppdata // View and manage its own configuration data in your Google Drive
    case Drive // See, edit, create, and delete all of your Google Drive files
+   case DriveFile // View and manage Google Drive files and folders that you have opened or created with this app
+   case DriveAppdata // View and manage its own configuration data in your Google Drive
+   case DriveMetadataReadonly // View metadata for files in your Google Drive
+   case DriveScripts // Modify your Google Apps Script scripts' behavior
+   case DriveReadonly // See and download all your Google Drive files
+   case DriveMetadata // View and manage metadata of files in your Google Drive
 }
 
 
@@ -103,7 +103,6 @@ public final class GoogleCloudDriveRequest : GoogleCloudAPIRequest {
                fatalError("Response body from Google is missing! This should never happen.")
             }
             let responseData = byteBuffer.readData(length: byteBuffer.readableBytes)!
-            print(String(data:responseData, encoding: .utf8))
                guard (200...299).contains(response.status.code) else {
                let error: Error
                if let jsonError = try? self.responseDecoder.decode(GoogleCloudAPIErrorMain.self, from: responseData) {
@@ -1118,17 +1117,32 @@ public struct GoogleCloudDriveAbout : GoogleCloudModel {
    /*Deprecated - use driveThemes instead. */
    public var teamDriveThemes: [GoogleCloudDriveAboutTeamDriveThemes]?
    /*The authenticated user. */
-   public var user:  GoogleCloudDriveUser?
+   public var user: GoogleCloudDriveUser?
+   public init(appInstalled:Bool?, canCreateDrives:Bool?, canCreateTeamDrives:Bool?, driveThemes:[GoogleCloudDriveAboutDriveThemes]?, exportFormats:[String : [String]]?, folderColorPalette:[String]?, importFormats:[String : [String]]?, kind:String?, maxImportSizes:[String : Int]?, maxUploadSize:Int?, storageQuota:GoogleCloudDriveAboutStorageQuota?, teamDriveThemes:[GoogleCloudDriveAboutTeamDriveThemes]?, user:GoogleCloudDriveUser?) {
+      self.appInstalled = appInstalled
+      self.canCreateDrives = canCreateDrives
+      self.canCreateTeamDrives = canCreateTeamDrives
+      self.driveThemes = driveThemes
+      self.exportFormats = exportFormats
+      self.folderColorPalette = folderColorPalette
+      self.importFormats = importFormats
+      self.kind = kind
+      self.maxImportSizes = maxImportSizes
+      self.maxUploadSize = maxUploadSize
+      self.storageQuota = storageQuota
+      self.teamDriveThemes = teamDriveThemes
+      self.user = user
+   }
 }
 public struct GoogleCloudDriveChange : GoogleCloudModel {
    /*The type of the change. Possible values are file and drive. */
    public var changeType: String?
    /*The updated state of the shared drive. Present if the changeType is drive, the user is still a member of the shared drive, and the shared drive has not been deleted. */
-   public var drive:  GoogleCloudDriveDrive?
+   public var drive: GoogleCloudDriveDrive?
    /*The ID of the shared drive associated with this change. */
    public var driveId: String?
    /*The updated state of the file. Present if the type is file and the file has not been removed from this list of changes. */
-   public var file:  GoogleCloudDriveFile?
+   public var file: GoogleCloudDriveFile?
    /*The ID of the file which has changed. */
    public var fileId: String?
    /*Identifies what kind of resource this is. Value: the fixed string "drive#change". */
@@ -1136,13 +1150,26 @@ public struct GoogleCloudDriveChange : GoogleCloudModel {
    /*Whether the file or shared drive has been removed from this list of changes, for example by deletion or loss of access. */
    public var removed: Bool?
    /*Deprecated - use drive instead. */
-   public var teamDrive:  GoogleCloudDriveTeamDrive?
+   public var teamDrive: GoogleCloudDriveTeamDrive?
    /*Deprecated - use driveId instead. */
    public var teamDriveId: String?
    /*The time of this change (RFC 3339 date-time). */
    @CodingUses<Coder> public var time: String?
    /*Deprecated - use changeType instead. */
    public var type: String?
+   public init(changeType:String?, drive:GoogleCloudDriveDrive?, driveId:String?, file:GoogleCloudDriveFile?, fileId:String?, kind:String?, removed:Bool?, teamDrive:GoogleCloudDriveTeamDrive?, teamDriveId:String?, time:String?, type:String?) {
+      self.changeType = changeType
+      self.drive = drive
+      self.driveId = driveId
+      self.file = file
+      self.fileId = fileId
+      self.kind = kind
+      self.removed = removed
+      self.teamDrive = teamDrive
+      self.teamDriveId = teamDriveId
+      self.time = time
+      self.type = type
+   }
 }
 public struct GoogleCloudDriveChangeList : GoogleCloudModel {
    /*The list of changes. If nextPageToken is populated, then this list may be incomplete and an additional page of results should be fetched. */
@@ -1153,6 +1180,12 @@ public struct GoogleCloudDriveChangeList : GoogleCloudModel {
    public var newStartPageToken: String?
    /*The page token for the next page of changes. This will be absent if the end of the changes list has been reached. If the token is rejected for any reason, it should be discarded, and pagination should be restarted from the first page of results. */
    public var nextPageToken: String?
+   public init(changes:[GoogleCloudDriveChange]?, kind:String?, newStartPageToken:String?, nextPageToken:String?) {
+      self.changes = changes
+      self.kind = kind
+      self.newStartPageToken = newStartPageToken
+      self.nextPageToken = nextPageToken
+   }
 }
 public struct GoogleCloudDriveChannel : GoogleCloudModel {
    /*The address where notifications are delivered for this channel. */
@@ -1175,12 +1208,24 @@ public struct GoogleCloudDriveChannel : GoogleCloudModel {
    public var token: String?
    /*The type of delivery mechanism used for this channel. */
    public var type: String?
+   public init(address:String?, expiration:Int?, id:String?, kind:String?, params:[String : String]?, payload:Bool?, resourceId:String?, resourceUri:String?, token:String?, type:String?) {
+      self.address = address
+      self.expiration = expiration
+      self.id = id
+      self.kind = kind
+      self.params = params
+      self.payload = payload
+      self.resourceId = resourceId
+      self.resourceUri = resourceUri
+      self.token = token
+      self.type = type
+   }
 }
 public struct GoogleCloudDriveComment : GoogleCloudModel {
    /*A region of the document represented as a JSON string. See anchor documentation for details on how to define and interpret anchor properties. */
    public var anchor: String?
    /*The author of the comment. The author's email address and permission ID will not be populated. */
-   public var author:  GoogleCloudDriveUser?
+   public var author: GoogleCloudDriveUser?
    /*The plain text content of the comment. This field is used for setting the content, while htmlContent should be displayed. */
    public var content: String?
    /*The time at which the comment was created (RFC 3339 date-time). */
@@ -1201,6 +1246,20 @@ public struct GoogleCloudDriveComment : GoogleCloudModel {
    public var replies: [GoogleCloudDriveReply]?
    /*Whether the comment has been resolved by one of its replies. */
    public var resolved: Bool?
+   public init(anchor:String?, author:GoogleCloudDriveUser?, content:String?, createdTime:String?, deleted:Bool?, htmlContent:String?, id:String?, kind:String?, modifiedTime:String?, quotedFileContent:GoogleCloudDriveCommentQuotedFileContent?, replies:[GoogleCloudDriveReply]?, resolved:Bool?) {
+      self.anchor = anchor
+      self.author = author
+      self.content = content
+      self.createdTime = createdTime
+      self.deleted = deleted
+      self.htmlContent = htmlContent
+      self.id = id
+      self.kind = kind
+      self.modifiedTime = modifiedTime
+      self.quotedFileContent = quotedFileContent
+      self.replies = replies
+      self.resolved = resolved
+   }
 }
 public struct GoogleCloudDriveCommentList : GoogleCloudModel {
    /*The list of comments. If nextPageToken is populated, then this list may be incomplete and an additional page of results should be fetched. */
@@ -1209,6 +1268,11 @@ public struct GoogleCloudDriveCommentList : GoogleCloudModel {
    public var kind: String?
    /*The page token for the next page of comments. This will be absent if the end of the comments list has been reached. If the token is rejected for any reason, it should be discarded, and pagination should be restarted from the first page of results. */
    public var nextPageToken: String?
+   public init(comments:[GoogleCloudDriveComment]?, kind:String?, nextPageToken:String?) {
+      self.comments = comments
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+   }
 }
 public struct GoogleCloudDriveDrive : GoogleCloudModel {
    /*An image file and cropping parameters from which a background image for this shared drive is set. This is a write only field; it can only be set on drive.drives.update requests that don't set themeId. When specified, all fields of the backgroundImageFile must be set. */
@@ -1233,6 +1297,19 @@ public struct GoogleCloudDriveDrive : GoogleCloudModel {
    public var restrictions: GoogleCloudDriveDriveRestrictions?
    /*The ID of the theme from which the background image and color will be set. The set of possible driveThemes can be retrieved from a drive.about.get response. When not specified on a drive.drives.create request, a random theme is chosen from which the background image and color are set. This is a write-only field; it can only be set on requests that don't set colorRgb or backgroundImageFile. */
    public var themeId: String?
+   public init(backgroundImageFile:GoogleCloudDriveDriveBackgroundImageFile?, backgroundImageLink:String?, capabilities:GoogleCloudDriveDriveCapabilities?, colorRgb:String?, createdTime:String?, hidden:Bool?, id:String?, kind:String?, name:String?, restrictions:GoogleCloudDriveDriveRestrictions?, themeId:String?) {
+      self.backgroundImageFile = backgroundImageFile
+      self.backgroundImageLink = backgroundImageLink
+      self.capabilities = capabilities
+      self.colorRgb = colorRgb
+      self.createdTime = createdTime
+      self.hidden = hidden
+      self.id = id
+      self.kind = kind
+      self.name = name
+      self.restrictions = restrictions
+      self.themeId = themeId
+   }
 }
 public struct GoogleCloudDriveDriveList : GoogleCloudModel {
    /*The list of shared drives. If nextPageToken is populated, then this list may be incomplete and an additional page of results should be fetched. */
@@ -1241,6 +1318,11 @@ public struct GoogleCloudDriveDriveList : GoogleCloudModel {
    public var kind: String?
    /*The page token for the next page of shared drives. This will be absent if the end of the list has been reached. If the token is rejected for any reason, it should be discarded, and pagination should be restarted from the first page of results. */
    public var nextPageToken: String?
+   public init(drives:[GoogleCloudDriveDrive]?, kind:String?, nextPageToken:String?) {
+      self.drives = drives
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+   }
 }
 public struct GoogleCloudDriveFile : GoogleCloudModel {
    /*A collection of arbitrary key-value pairs which are private to the requesting app.
@@ -1287,7 +1369,7 @@ This is automatically updated when the name field changes, however it is not cle
    /*Identifies what kind of resource this is. Value: the fixed string "drive#file". */
    public var kind: String?
    /*The last user to modify the file. */
-   public var lastModifyingUser:  GoogleCloudDriveUser?
+   public var lastModifyingUser: GoogleCloudDriveUser?
    /*The MD5 checksum for the content of the file. This is only applicable to files with binary content in Google Drive. */
    public var md5Checksum: String?
    /*The MIME type of the file.
@@ -1326,7 +1408,7 @@ Entries with null values are cleared in update and copy requests. */
    /*The time at which the file was shared with the user, if applicable (RFC 3339 date-time). */
    @CodingUses<Coder> public var sharedWithMeTime: String?
    /*The user who shared the file with the requesting user, if applicable. */
-   public var sharingUser:  GoogleCloudDriveUser?
+   public var sharingUser: GoogleCloudDriveUser?
    /*The size of the file's content in bytes. This is only applicable to files with binary content in Google Drive. */
    @CodingUses<Coder> public var size: Int?
    /*The list of spaces which contain the file. The currently supported values are 'drive', 'appDataFolder' and 'photos'. */
@@ -1344,7 +1426,7 @@ Entries with null values are cleared in update and copy requests. */
    /*The time that the item was trashed (RFC 3339 date-time). Only populated for items in shared drives. */
    @CodingUses<Coder> public var trashedTime: String?
    /*If the file has been explicitly trashed, the user who trashed it. Only populated for items in shared drives. */
-   public var trashingUser:  GoogleCloudDriveUser?
+   public var trashingUser: GoogleCloudDriveUser?
    /*A monotonically increasing version number for the file. This reflects every change made to the file on the server, even those not visible to the user. */
    @CodingUses<Coder> public var version: Int?
    /*Additional metadata about video media. This may not be available immediately upon upload. */
@@ -1361,6 +1443,63 @@ Entries with null values are cleared in update and copy requests. */
    public var webViewLink: String?
    /*Whether users with only writer permission can modify the file's permissions. Not populated for items in shared drives. */
    public var writersCanShare: Bool?
+   public init(appProperties:[String : String]?, capabilities:GoogleCloudDriveFileCapabilities?, contentHints:GoogleCloudDriveFileContentHints?, copyRequiresWriterPermission:Bool?, createdTime:String?, description:String?, driveId:String?, explicitlyTrashed:Bool?, exportLinks:[String : String]?, fileExtension:String?, folderColorRgb:String?, fullFileExtension:String?, hasAugmentedPermissions:Bool?, hasThumbnail:Bool?, headRevisionId:String?, iconLink:String?, id:String?, imageMediaMetadata:GoogleCloudDriveFileImageMediaMetadata?, isAppAuthorized:Bool?, kind:String?, lastModifyingUser:GoogleCloudDriveUser?, md5Checksum:String?, mimeType:String?, modifiedByMe:Bool?, modifiedByMeTime:String?, modifiedTime:String?, name:String?, originalFilename:String?, ownedByMe:Bool?, owners:[GoogleCloudDriveUser]?, parents:[String]?, permissionIds:[String]?, permissions:[GoogleCloudDrivePermission]?, properties:[String : String]?, quotaBytesUsed:Int?, shared:Bool?, sharedWithMeTime:String?, sharingUser:GoogleCloudDriveUser?, size:Int?, spaces:[String]?, starred:Bool?, teamDriveId:String?, thumbnailLink:String?, thumbnailVersion:Int?, trashed:Bool?, trashedTime:String?, trashingUser:GoogleCloudDriveUser?, version:Int?, videoMediaMetadata:GoogleCloudDriveFileVideoMediaMetadata?, viewedByMe:Bool?, viewedByMeTime:String?, viewersCanCopyContent:Bool?, webContentLink:String?, webViewLink:String?, writersCanShare:Bool?) {
+      self.appProperties = appProperties
+      self.capabilities = capabilities
+      self.contentHints = contentHints
+      self.copyRequiresWriterPermission = copyRequiresWriterPermission
+      self.createdTime = createdTime
+      self.description = description
+      self.driveId = driveId
+      self.explicitlyTrashed = explicitlyTrashed
+      self.exportLinks = exportLinks
+      self.fileExtension = fileExtension
+      self.folderColorRgb = folderColorRgb
+      self.fullFileExtension = fullFileExtension
+      self.hasAugmentedPermissions = hasAugmentedPermissions
+      self.hasThumbnail = hasThumbnail
+      self.headRevisionId = headRevisionId
+      self.iconLink = iconLink
+      self.id = id
+      self.imageMediaMetadata = imageMediaMetadata
+      self.isAppAuthorized = isAppAuthorized
+      self.kind = kind
+      self.lastModifyingUser = lastModifyingUser
+      self.md5Checksum = md5Checksum
+      self.mimeType = mimeType
+      self.modifiedByMe = modifiedByMe
+      self.modifiedByMeTime = modifiedByMeTime
+      self.modifiedTime = modifiedTime
+      self.name = name
+      self.originalFilename = originalFilename
+      self.ownedByMe = ownedByMe
+      self.owners = owners
+      self.parents = parents
+      self.permissionIds = permissionIds
+      self.permissions = permissions
+      self.properties = properties
+      self.quotaBytesUsed = quotaBytesUsed
+      self.shared = shared
+      self.sharedWithMeTime = sharedWithMeTime
+      self.sharingUser = sharingUser
+      self.size = size
+      self.spaces = spaces
+      self.starred = starred
+      self.teamDriveId = teamDriveId
+      self.thumbnailLink = thumbnailLink
+      self.thumbnailVersion = thumbnailVersion
+      self.trashed = trashed
+      self.trashedTime = trashedTime
+      self.trashingUser = trashingUser
+      self.version = version
+      self.videoMediaMetadata = videoMediaMetadata
+      self.viewedByMe = viewedByMe
+      self.viewedByMeTime = viewedByMeTime
+      self.viewersCanCopyContent = viewersCanCopyContent
+      self.webContentLink = webContentLink
+      self.webViewLink = webViewLink
+      self.writersCanShare = writersCanShare
+   }
 }
 public struct GoogleCloudDriveFileList : GoogleCloudModel {
    /*The list of files. If nextPageToken is populated, then this list may be incomplete and an additional page of results should be fetched. */
@@ -1371,6 +1510,12 @@ public struct GoogleCloudDriveFileList : GoogleCloudModel {
    public var kind: String?
    /*The page token for the next page of files. This will be absent if the end of the files list has been reached. If the token is rejected for any reason, it should be discarded, and pagination should be restarted from the first page of results. */
    public var nextPageToken: String?
+   public init(files:[GoogleCloudDriveFile]?, incompleteSearch:Bool?, kind:String?, nextPageToken:String?) {
+      self.files = files
+      self.incompleteSearch = incompleteSearch
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+   }
 }
 public struct GoogleCloudDriveGeneratedIds : GoogleCloudModel {
    /*The IDs generated for the requesting user in the specified space. */
@@ -1379,6 +1524,11 @@ public struct GoogleCloudDriveGeneratedIds : GoogleCloudModel {
    public var kind: String?
    /*The type of file that can be created with these IDs. */
    public var space: String?
+   public init(ids:[String]?, kind:String?, space:String?) {
+      self.ids = ids
+      self.kind = kind
+      self.space = space
+   }
 }
 public struct GoogleCloudDrivePermission : GoogleCloudModel {
    /*Whether the permission allows the file to be discovered through search. This is only applicable for permissions of type domain or anyone. */
@@ -1424,6 +1574,21 @@ public struct GoogleCloudDrivePermission : GoogleCloudModel {
 - domain 
 - anyone  When creating a permission, if type is user or group, you must provide an emailAddress for the user or group. When type is domain, you must provide a domain. There isn't extra information required for a anyone type. */
    public var type: String?
+   public init(allowFileDiscovery:Bool?, deleted:Bool?, displayName:String?, domain:String?, emailAddress:String?, expirationTime:String?, id:String?, kind:String?, permissionDetails:[GoogleCloudDrivePermissionPermissionDetails]?, photoLink:String?, role:String?, teamDrivePermissionDetails:[GoogleCloudDrivePermissionTeamDrivePermissionDetails]?, type:String?) {
+      self.allowFileDiscovery = allowFileDiscovery
+      self.deleted = deleted
+      self.displayName = displayName
+      self.domain = domain
+      self.emailAddress = emailAddress
+      self.expirationTime = expirationTime
+      self.id = id
+      self.kind = kind
+      self.permissionDetails = permissionDetails
+      self.photoLink = photoLink
+      self.role = role
+      self.teamDrivePermissionDetails = teamDrivePermissionDetails
+      self.type = type
+   }
 }
 public struct GoogleCloudDrivePermissionList : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#permissionList". */
@@ -1432,6 +1597,11 @@ public struct GoogleCloudDrivePermissionList : GoogleCloudModel {
    public var nextPageToken: String?
    /*The list of permissions. If nextPageToken is populated, then this list may be incomplete and an additional page of results should be fetched. */
    public var permissions: [GoogleCloudDrivePermission]?
+   public init(kind:String?, nextPageToken:String?, permissions:[GoogleCloudDrivePermission]?) {
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.permissions = permissions
+   }
 }
 public struct GoogleCloudDriveReply : GoogleCloudModel {
    /*The action the reply performed to the parent comment. Valid values are:  
@@ -1439,7 +1609,7 @@ public struct GoogleCloudDriveReply : GoogleCloudModel {
 - reopen */
    public var action: String?
    /*The author of the reply. The author's email address and permission ID will not be populated. */
-   public var author:  GoogleCloudDriveUser?
+   public var author: GoogleCloudDriveUser?
    /*The plain text content of the reply. This field is used for setting the content, while htmlContent should be displayed. This is required on creates if no action is specified. */
    public var content: String?
    /*The time at which the reply was created (RFC 3339 date-time). */
@@ -1454,6 +1624,17 @@ public struct GoogleCloudDriveReply : GoogleCloudModel {
    public var kind: String?
    /*The last time the reply was modified (RFC 3339 date-time). */
    @CodingUses<Coder> public var modifiedTime: String?
+   public init(action:String?, author:GoogleCloudDriveUser?, content:String?, createdTime:String?, deleted:Bool?, htmlContent:String?, id:String?, kind:String?, modifiedTime:String?) {
+      self.action = action
+      self.author = author
+      self.content = content
+      self.createdTime = createdTime
+      self.deleted = deleted
+      self.htmlContent = htmlContent
+      self.id = id
+      self.kind = kind
+      self.modifiedTime = modifiedTime
+   }
 }
 public struct GoogleCloudDriveReplyList : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#replyList". */
@@ -1462,6 +1643,11 @@ public struct GoogleCloudDriveReplyList : GoogleCloudModel {
    public var nextPageToken: String?
    /*The list of replies. If nextPageToken is populated, then this list may be incomplete and an additional page of results should be fetched. */
    public var replies: [GoogleCloudDriveReply]?
+   public init(kind:String?, nextPageToken:String?, replies:[GoogleCloudDriveReply]?) {
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.replies = replies
+   }
 }
 public struct GoogleCloudDriveRevision : GoogleCloudModel {
    /*Links for exporting Google Docs to specific formats. */
@@ -1474,7 +1660,7 @@ This field is only applicable to files with binary content in Drive. */
    /*Identifies what kind of resource this is. Value: the fixed string "drive#revision". */
    public var kind: String?
    /*The last user to modify this revision. */
-   public var lastModifyingUser:  GoogleCloudDriveUser?
+   public var lastModifyingUser: GoogleCloudDriveUser?
    /*The MD5 checksum of the revision's content. This is only applicable to files with binary content in Drive. */
    public var md5Checksum: String?
    /*The MIME type of the revision. */
@@ -1491,6 +1677,21 @@ This field is only applicable to files with binary content in Drive. */
    public var publishedOutsideDomain: Bool?
    /*The size of the revision's content in bytes. This is only applicable to files with binary content in Drive. */
    @CodingUses<Coder> public var size: Int?
+   public init(exportLinks:[String : String]?, id:String?, keepForever:Bool?, kind:String?, lastModifyingUser:GoogleCloudDriveUser?, md5Checksum:String?, mimeType:String?, modifiedTime:String?, originalFilename:String?, publishAuto:Bool?, published:Bool?, publishedOutsideDomain:Bool?, size:Int?) {
+      self.exportLinks = exportLinks
+      self.id = id
+      self.keepForever = keepForever
+      self.kind = kind
+      self.lastModifyingUser = lastModifyingUser
+      self.md5Checksum = md5Checksum
+      self.mimeType = mimeType
+      self.modifiedTime = modifiedTime
+      self.originalFilename = originalFilename
+      self.publishAuto = publishAuto
+      self.published = published
+      self.publishedOutsideDomain = publishedOutsideDomain
+      self.size = size
+   }
 }
 public struct GoogleCloudDriveRevisionList : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#revisionList". */
@@ -1499,12 +1700,21 @@ public struct GoogleCloudDriveRevisionList : GoogleCloudModel {
    public var nextPageToken: String?
    /*The list of revisions. If nextPageToken is populated, then this list may be incomplete and an additional page of results should be fetched. */
    public var revisions: [GoogleCloudDriveRevision]?
+   public init(kind:String?, nextPageToken:String?, revisions:[GoogleCloudDriveRevision]?) {
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.revisions = revisions
+   }
 }
 public struct GoogleCloudDriveStartPageToken : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#startPageToken". */
    public var kind: String?
    /*The starting page token for listing changes. */
    public var startPageToken: String?
+   public init(kind:String?, startPageToken:String?) {
+      self.kind = kind
+      self.startPageToken = startPageToken
+   }
 }
 public struct GoogleCloudDriveTeamDrive : GoogleCloudModel {
    /*An image file and cropping parameters from which a background image for this Team Drive is set. This is a write only field; it can only be set on drive.teamdrives.update requests that don't set themeId. When specified, all fields of the backgroundImageFile must be set. */
@@ -1527,6 +1737,18 @@ public struct GoogleCloudDriveTeamDrive : GoogleCloudModel {
    public var restrictions: GoogleCloudDriveTeamDriveRestrictions?
    /*The ID of the theme from which the background image and color will be set. The set of possible teamDriveThemes can be retrieved from a drive.about.get response. When not specified on a drive.teamdrives.create request, a random theme is chosen from which the background image and color are set. This is a write-only field; it can only be set on requests that don't set colorRgb or backgroundImageFile. */
    public var themeId: String?
+   public init(backgroundImageFile:GoogleCloudDriveTeamDriveBackgroundImageFile?, backgroundImageLink:String?, capabilities:GoogleCloudDriveTeamDriveCapabilities?, colorRgb:String?, createdTime:String?, id:String?, kind:String?, name:String?, restrictions:GoogleCloudDriveTeamDriveRestrictions?, themeId:String?) {
+      self.backgroundImageFile = backgroundImageFile
+      self.backgroundImageLink = backgroundImageLink
+      self.capabilities = capabilities
+      self.colorRgb = colorRgb
+      self.createdTime = createdTime
+      self.id = id
+      self.kind = kind
+      self.name = name
+      self.restrictions = restrictions
+      self.themeId = themeId
+   }
 }
 public struct GoogleCloudDriveTeamDriveList : GoogleCloudModel {
    /*Identifies what kind of resource this is. Value: the fixed string "drive#teamDriveList". */
@@ -1535,6 +1757,11 @@ public struct GoogleCloudDriveTeamDriveList : GoogleCloudModel {
    public var nextPageToken: String?
    /*The list of Team Drives. If nextPageToken is populated, then this list may be incomplete and an additional page of results should be fetched. */
    public var teamDrives: [GoogleCloudDriveTeamDrive]?
+   public init(kind:String?, nextPageToken:String?, teamDrives:[GoogleCloudDriveTeamDrive]?) {
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.teamDrives = teamDrives
+   }
 }
 public struct GoogleCloudDriveUser : GoogleCloudModel {
    /*A plain text displayable name for this user. */
@@ -1549,6 +1776,14 @@ public struct GoogleCloudDriveUser : GoogleCloudModel {
    public var permissionId: String?
    /*A link to the user's profile photo, if available. */
    public var photoLink: String?
+   public init(displayName:String?, emailAddress:String?, kind:String?, me:Bool?, permissionId:String?, photoLink:String?) {
+      self.displayName = displayName
+      self.emailAddress = emailAddress
+      self.kind = kind
+      self.me = me
+      self.permissionId = permissionId
+      self.photoLink = photoLink
+   }
 }
 public struct GoogleCloudDriveAboutDriveThemes : GoogleCloudModel {
    /*A link to this theme's background image. */

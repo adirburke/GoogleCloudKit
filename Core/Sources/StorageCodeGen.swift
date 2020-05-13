@@ -13,18 +13,18 @@ import CodableWrappers
 public enum GoogleCloudStorageScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
-      case .CloudPlatformReadOnly: return "https://www.googleapis.com/auth/cloud-platform.read-only"
-      case .DevstorageFullControl: return "https://www.googleapis.com/auth/devstorage.full_control"
       case .CloudPlatform: return "https://www.googleapis.com/auth/cloud-platform"
+      case .CloudPlatformReadOnly: return "https://www.googleapis.com/auth/cloud-platform.read-only"
       case .DevstorageReadOnly: return "https://www.googleapis.com/auth/devstorage.read_only"
+      case .DevstorageFullControl: return "https://www.googleapis.com/auth/devstorage.full_control"
       case .DevstorageReadWrite: return "https://www.googleapis.com/auth/devstorage.read_write"
       }
    }
 
-   case CloudPlatformReadOnly // View your data across Google Cloud Platform services
-   case DevstorageFullControl // Manage your data and permissions in Google Cloud Storage
    case CloudPlatform // View and manage your data across Google Cloud Platform services
+   case CloudPlatformReadOnly // View your data across Google Cloud Platform services
    case DevstorageReadOnly // View your data in Google Cloud Storage
+   case DevstorageFullControl // Manage your data and permissions in Google Cloud Storage
    case DevstorageReadWrite // Manage your data in Google Cloud Storage
 }
 
@@ -1300,6 +1300,34 @@ public struct GoogleCloudStorageBucket : GoogleCloudModel {
    public var versioning: GoogleCloudStorageBucketVersioning?
    /*The bucket's website configuration, controlling how the service behaves when accessing bucket contents as a web site. See the Static Website Examples for more information. */
    public var website: GoogleCloudStorageBucketWebsite?
+   public init(acl:[GoogleCloudStorageBucketAccessControl]?, billing:GoogleCloudStorageBucketBilling?, cors:[GoogleCloudStorageBucketCors]?, defaultEventBasedHold:Bool?, defaultObjectAcl:[GoogleCloudStorageObjectAccessControl]?, encryption:GoogleCloudStorageBucketEncryption?, etag:String?, iamConfiguration:GoogleCloudStorageBucketIamConfiguration?, id:String?, kind:String?, labels:[String : String]?, lifecycle:GoogleCloudStorageBucketLifecycle?, location:String?, locationType:String?, logging:GoogleCloudStorageBucketLogging?, metageneration:Int?, name:String?, owner:GoogleCloudStorageBucketOwner?, projectNumber:UInt?, retentionPolicy:GoogleCloudStorageBucketRetentionPolicy?, selfLink:String?, storageClass:String?, timeCreated:String?, updated:String?, versioning:GoogleCloudStorageBucketVersioning?, website:GoogleCloudStorageBucketWebsite?) {
+      self.acl = acl
+      self.billing = billing
+      self.cors = cors
+      self.defaultEventBasedHold = defaultEventBasedHold
+      self.defaultObjectAcl = defaultObjectAcl
+      self.encryption = encryption
+      self.etag = etag
+      self.iamConfiguration = iamConfiguration
+      self.id = id
+      self.kind = kind
+      self.labels = labels
+      self.lifecycle = lifecycle
+      self.location = location
+      self.locationType = locationType
+      self.logging = logging
+      self.metageneration = metageneration
+      self.name = name
+      self.owner = owner
+      self.projectNumber = projectNumber
+      self.retentionPolicy = retentionPolicy
+      self.selfLink = selfLink
+      self.storageClass = storageClass
+      self.timeCreated = timeCreated
+      self.updated = updated
+      self.versioning = versioning
+      self.website = website
+   }
 }
 public struct GoogleCloudStorageBucketAccessControl : GoogleCloudModel {
    /*The name of the bucket. */
@@ -1335,12 +1363,29 @@ public struct GoogleCloudStorageBucketAccessControl : GoogleCloudModel {
    public var role: String?
    /*The link to this access-control entry. */
    public var selfLink: String?
+   public init(bucket:String?, domain:String?, email:String?, entity:String?, entityId:String?, etag:String?, id:String?, kind:String?, projectTeam:GoogleCloudStorageBucketAccessControlProjectTeam?, role:String?, selfLink:String?) {
+      self.bucket = bucket
+      self.domain = domain
+      self.email = email
+      self.entity = entity
+      self.entityId = entityId
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.projectTeam = projectTeam
+      self.role = role
+      self.selfLink = selfLink
+   }
 }
 public struct GoogleCloudStorageBucketAccessControls : GoogleCloudModel {
    /*The list of items. */
    public var items: [GoogleCloudStorageBucketAccessControl]?
    /*The kind of item this is. For lists of bucket access control entries, this is always storage#bucketAccessControls. */
    public var kind: String?
+   public init(items:[GoogleCloudStorageBucketAccessControl]?, kind:String?) {
+      self.items = items
+      self.kind = kind
+   }
 }
 public struct GoogleCloudStorageBuckets : GoogleCloudModel {
    /*The list of items. */
@@ -1349,6 +1394,11 @@ public struct GoogleCloudStorageBuckets : GoogleCloudModel {
    public var kind: String?
    /*The continuation token, used to page through large result sets. Provide this value in a subsequent request to return the next page of results. */
    public var nextPageToken: String?
+   public init(items:[GoogleCloudStorageBucket]?, kind:String?, nextPageToken:String?) {
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+   }
 }
 public struct GoogleCloudStorageChannel : GoogleCloudModel {
    /*The address where notifications are delivered for this channel. */
@@ -1371,14 +1421,31 @@ public struct GoogleCloudStorageChannel : GoogleCloudModel {
    public var token: String?
    /*The type of delivery mechanism used for this channel. */
    public var type: String?
+   public init(address:String?, expiration:Int?, id:String?, kind:String?, params:[String : String]?, payload:Bool?, resourceId:String?, resourceUri:String?, token:String?, type:String?) {
+      self.address = address
+      self.expiration = expiration
+      self.id = id
+      self.kind = kind
+      self.params = params
+      self.payload = payload
+      self.resourceId = resourceId
+      self.resourceUri = resourceUri
+      self.token = token
+      self.type = type
+   }
 }
 public struct GoogleCloudStorageComposeRequest : GoogleCloudModel {
    /*Properties of the resulting object. */
-   public var destination:  GoogleCloudStorageObject?
+   public var destination: GoogleCloudStorageObject?
    /*The kind of item this is. */
    public var kind: String?
    /*The list of source objects that will be concatenated into a single object. */
    public var sourceObjects: [GoogleCloudStorageComposeRequestSourceObjects]?
+   public init(destination:GoogleCloudStorageObject?, kind:String?, sourceObjects:[GoogleCloudStorageComposeRequestSourceObjects]?) {
+      self.destination = destination
+      self.kind = kind
+      self.sourceObjects = sourceObjects
+   }
 }
 public struct GoogleCloudStorageExpr : GoogleCloudModel {
    /*An optional description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI. */
@@ -1389,14 +1456,25 @@ public struct GoogleCloudStorageExpr : GoogleCloudModel {
    public var location: String?
    /*An optional title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression. */
    public var title: String?
+   public init(description:String?, expression:String?, location:String?, title:String?) {
+      self.description = description
+      self.expression = expression
+      self.location = location
+      self.title = title
+   }
 }
 public struct GoogleCloudStorageHmacKey : GoogleCloudModel {
    /*The kind of item this is. For HMAC keys, this is always storage#hmacKey. */
    public var kind: String?
    /*Key metadata. */
-   public var metadata:  GoogleCloudStorageHmacKeyMetadata?
+   public var metadata: GoogleCloudStorageHmacKeyMetadata?
    /*HMAC secret key material. */
    public var secret: String?
+   public init(kind:String?, metadata:GoogleCloudStorageHmacKeyMetadata?, secret:String?) {
+      self.kind = kind
+      self.metadata = metadata
+      self.secret = secret
+   }
 }
 public struct GoogleCloudStorageHmacKeyMetadata : GoogleCloudModel {
    /*The ID of the HMAC Key. */
@@ -1419,6 +1497,18 @@ public struct GoogleCloudStorageHmacKeyMetadata : GoogleCloudModel {
    @CodingUses<Coder> public var timeCreated: String?
    /*The last modification time of the HMAC key metadata in RFC 3339 format. */
    @CodingUses<Coder> public var updated: String?
+   public init(accessId:String?, etag:String?, id:String?, kind:String?, projectId:String?, selfLink:String?, serviceAccountEmail:String?, state:String?, timeCreated:String?, updated:String?) {
+      self.accessId = accessId
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.projectId = projectId
+      self.selfLink = selfLink
+      self.serviceAccountEmail = serviceAccountEmail
+      self.state = state
+      self.timeCreated = timeCreated
+      self.updated = updated
+   }
 }
 public struct GoogleCloudStorageHmacKeysMetadata : GoogleCloudModel {
    /*The list of items. */
@@ -1427,6 +1517,11 @@ public struct GoogleCloudStorageHmacKeysMetadata : GoogleCloudModel {
    public var kind: String?
    /*The continuation token, used to page through large result sets. Provide this value in a subsequent request to return the next page of results. */
    public var nextPageToken: String?
+   public init(items:[GoogleCloudStorageHmacKeyMetadata]?, kind:String?, nextPageToken:String?) {
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+   }
 }
 public struct GoogleCloudStorageNotification : GoogleCloudModel {
    /*An optional list of additional attributes to attach to each Cloud PubSub message published for this notification subscription. */
@@ -1447,12 +1542,27 @@ public struct GoogleCloudStorageNotification : GoogleCloudModel {
    public var selfLink: String?
    /*The Cloud PubSub topic to which this subscription publishes. Formatted as: '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}' */
    public var topic: String?
+   public init(custom_attributes:[String : String]?, etag:String?, event_types:[String]?, id:String?, kind:String?, object_name_prefix:String?, payload_format:String?, selfLink:String?, topic:String?) {
+      self.custom_attributes = custom_attributes
+      self.etag = etag
+      self.event_types = event_types
+      self.id = id
+      self.kind = kind
+      self.object_name_prefix = object_name_prefix
+      self.payload_format = payload_format
+      self.selfLink = selfLink
+      self.topic = topic
+   }
 }
 public struct GoogleCloudStorageNotifications : GoogleCloudModel {
    /*The list of items. */
    public var items: [GoogleCloudStorageNotification]?
    /*The kind of item this is. For lists of notifications, this is always storage#notifications. */
    public var kind: String?
+   public init(items:[GoogleCloudStorageNotification]?, kind:String?) {
+      self.items = items
+      self.kind = kind
+   }
 }
 public struct GoogleCloudStorageObject : GoogleCloudModel {
    /*Access controls on the object. */
@@ -1517,6 +1627,39 @@ public struct GoogleCloudStorageObject : GoogleCloudModel {
    @CodingUses<Coder> public var timeStorageClassUpdated: String?
    /*The modification time of the object metadata in RFC 3339 format. */
    @CodingUses<Coder> public var updated: String?
+   public init(acl:[GoogleCloudStorageObjectAccessControl]?, bucket:String?, cacheControl:String?, componentCount:Int?, contentDisposition:String?, contentEncoding:String?, contentLanguage:String?, contentType:String?, crc32c:String?, customerEncryption:GoogleCloudStorageObjectCustomerEncryption?, etag:String?, eventBasedHold:Bool?, generation:Int?, id:String?, kind:String?, kmsKeyName:String?, md5Hash:String?, mediaLink:String?, metadata:[String : String]?, metageneration:Int?, name:String?, owner:GoogleCloudStorageObjectOwner?, retentionExpirationTime:String?, selfLink:String?, size:UInt?, storageClass:String?, temporaryHold:Bool?, timeCreated:String?, timeDeleted:String?, timeStorageClassUpdated:String?, updated:String?) {
+      self.acl = acl
+      self.bucket = bucket
+      self.cacheControl = cacheControl
+      self.componentCount = componentCount
+      self.contentDisposition = contentDisposition
+      self.contentEncoding = contentEncoding
+      self.contentLanguage = contentLanguage
+      self.contentType = contentType
+      self.crc32c = crc32c
+      self.customerEncryption = customerEncryption
+      self.etag = etag
+      self.eventBasedHold = eventBasedHold
+      self.generation = generation
+      self.id = id
+      self.kind = kind
+      self.kmsKeyName = kmsKeyName
+      self.md5Hash = md5Hash
+      self.mediaLink = mediaLink
+      self.metadata = metadata
+      self.metageneration = metageneration
+      self.name = name
+      self.owner = owner
+      self.retentionExpirationTime = retentionExpirationTime
+      self.selfLink = selfLink
+      self.size = size
+      self.storageClass = storageClass
+      self.temporaryHold = temporaryHold
+      self.timeCreated = timeCreated
+      self.timeDeleted = timeDeleted
+      self.timeStorageClassUpdated = timeStorageClassUpdated
+      self.updated = updated
+   }
 }
 public struct GoogleCloudStorageObjectAccessControl : GoogleCloudModel {
    /*The name of the bucket. */
@@ -1556,12 +1699,31 @@ public struct GoogleCloudStorageObjectAccessControl : GoogleCloudModel {
    public var role: String?
    /*The link to this access-control entry. */
    public var selfLink: String?
+   public init(bucket:String?, domain:String?, email:String?, entity:String?, entityId:String?, etag:String?, generation:Int?, id:String?, kind:String?, `object`:String?, projectTeam:GoogleCloudStorageObjectAccessControlProjectTeam?, role:String?, selfLink:String?) {
+      self.bucket = bucket
+      self.domain = domain
+      self.email = email
+      self.entity = entity
+      self.entityId = entityId
+      self.etag = etag
+      self.generation = generation
+      self.id = id
+      self.kind = kind
+      self.`object` = `object`
+      self.projectTeam = projectTeam
+      self.role = role
+      self.selfLink = selfLink
+   }
 }
 public struct GoogleCloudStorageObjectAccessControls : GoogleCloudModel {
    /*The list of items. */
    public var items: [GoogleCloudStorageObjectAccessControl]?
    /*The kind of item this is. For lists of object access control entries, this is always storage#objectAccessControls. */
    public var kind: String?
+   public init(items:[GoogleCloudStorageObjectAccessControl]?, kind:String?) {
+      self.items = items
+      self.kind = kind
+   }
 }
 public struct GoogleCloudStorageObjects : GoogleCloudModel {
    /*The list of items. */
@@ -1572,6 +1734,12 @@ public struct GoogleCloudStorageObjects : GoogleCloudModel {
    public var nextPageToken: String?
    /*The list of prefixes of objects matching-but-not-listed up to and including the requested delimiter. */
    public var prefixes: [String]?
+   public init(items:[GoogleCloudStorageObject]?, kind:String?, nextPageToken:String?, prefixes:[String]?) {
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.prefixes = prefixes
+   }
 }
 public struct GoogleCloudStoragePolicy : GoogleCloudModel {
    /*An association between a role, which comes with a set of permissions, and members who may assume that role. */
@@ -1584,6 +1752,13 @@ public struct GoogleCloudStoragePolicy : GoogleCloudModel {
    public var resourceId: String?
    /*The IAM policy format version. */
    @CodingUses<Coder> public var version: Int?
+   public init(bindings:[GoogleCloudStoragePolicyBindings]?, etag:Data?, kind:String?, resourceId:String?, version:Int?) {
+      self.bindings = bindings
+      self.etag = etag
+      self.kind = kind
+      self.resourceId = resourceId
+      self.version = version
+   }
 }
 public struct GoogleCloudStorageRewriteResponse : GoogleCloudModel {
    /*true if the copy is finished; otherwise, false if the copy is in progress. This property is always present in the response. */
@@ -1593,17 +1768,29 @@ public struct GoogleCloudStorageRewriteResponse : GoogleCloudModel {
    /*The total size of the object being copied in bytes. This property is always present in the response. */
    @CodingUses<Coder> public var objectSize: Int?
    /*A resource containing the metadata for the copied-to object. This property is present in the response only when copying completes. */
-   public var resource:  GoogleCloudStorageObject?
+   public var resource: GoogleCloudStorageObject?
    /*A token to use in subsequent requests to continue copying data. This token is present in the response only when there is more data to copy. */
    public var rewriteToken: String?
    /*The total bytes written so far, which can be used to provide a waiting user with a progress indicator. This property is always present in the response. */
    @CodingUses<Coder> public var totalBytesRewritten: Int?
+   public init(done:Bool?, kind:String?, objectSize:Int?, resource:GoogleCloudStorageObject?, rewriteToken:String?, totalBytesRewritten:Int?) {
+      self.done = done
+      self.kind = kind
+      self.objectSize = objectSize
+      self.resource = resource
+      self.rewriteToken = rewriteToken
+      self.totalBytesRewritten = totalBytesRewritten
+   }
 }
 public struct GoogleCloudStorageServiceAccount : GoogleCloudModel {
    /*The ID of the notification. */
    public var email_address: String?
    /*The kind of item this is. For notifications, this is always storage#notification. */
    public var kind: String?
+   public init(email_address:String?, kind:String?) {
+      self.email_address = email_address
+      self.kind = kind
+   }
 }
 public struct GoogleCloudStorageTestIamPermissionsResponse : GoogleCloudModel {
    /*The kind of item this is. */
@@ -1624,6 +1811,10 @@ public struct GoogleCloudStorageTestIamPermissionsResponse : GoogleCloudModel {
 - storage.objects.setIamPolicy — Update object IAM policy.  
 - storage.objects.update — Update object metadata. */
    public var permissions: [String]?
+   public init(kind:String?, permissions:[String]?) {
+      self.kind = kind
+      self.permissions = permissions
+   }
 }
 public struct GoogleCloudStorageBucketBilling : GoogleCloudModel {
    /*When set to true, Requester Pays is enabled for this bucket. */

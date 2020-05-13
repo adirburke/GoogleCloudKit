@@ -383,10 +383,12 @@ extension DiscoveryService {
         var gc = "public struct GoogleCloud\(capName)EmptyResponse : GoogleCloudModel {}\n"
         var later = ""
         for schema in schemas.sorted(by: { $0.key < $1.key }) {
+            var listOfNames = [(String, String)]()
             let modelName = schema.key
             gc.addLine("public struct GoogleCloud\(capName)\(modelName) : GoogleCloudModel {")
             for p in schema.value.properties?.sorted(by: {$0.key < $1.key}) ?? [] {
                 let propertyNameSafe = p.key.makeSwiftSafe()
+                
                 let propertyNameSafeCap = p.key.capitalized().makeSwiftSafe()
                 if propertyNameSafe == "conferenceProperties" {
                     
@@ -396,42 +398,74 @@ extension DiscoveryService {
                     let something = p.value.properties?.sorted(by: {$0.key < $1.key}) ?? []
                     if something.count == 0 {
                         let addProp = createSmallModelFromAdditionalProperties(modelName: modelName, name: propertyNameSafeCap, props: p.value.additionalProperties)
-                        gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [String : \(addProp)]", 1, false, p: p.value)
+                        let typeToUse = "[String : \(addProp)]"
+                        gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(typeToUse)", 1, false, p: p.value)
+                        
+                        listOfNames.append((propertyNameSafe, typeToUse + "?"))
                     } else {
+                        var typeToUse = "GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)"
                         later += createSmallModel(modelName: modelName, name: propertyNameSafeCap, props: something)
-                        gc += checkRequiredAndAddComment("public var \(propertyNameSafe): GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)", 1, p.value.required, p: p.value)
+                        gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(typeToUse)", 1, p.value.required, p: p.value)
+                        if !(p.value.required ?? false) {
+                            typeToUse += "?"
+                        }
+                        listOfNames.append((propertyNameSafe, typeToUse))
                     }
                     
                     
                 case .array:
                     if let items = p.value.items {
-                        let (type, format) = p.value.toType(capName)
+                        var (type, format) = p.value.toType(capName)
                         switch items.type {
                         case .object:
-                            
+                            var typeToUse = "[GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]"
                             later += createSmallModel(modelName: modelName, name: propertyNameSafeCap, props: items.properties?.sorted(by: {$0.key < $1.key}) ?? [])
-                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [GoogleCloud\(capName)\(modelName)\(propertyNameSafeCap)]", 1, p.value.required, p: p.value)
+                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(typeToUse)", 1, p.value.required, p: p.value)
+                            if !(p.value.required ?? false) {
+                                 typeToUse += "?"
+                             }
+                            listOfNames.append((propertyNameSafe, typeToUse))
                         case .array:
-//                            let (type, format) = p.value.toType(capName)
-                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [GoogleCloud\(capName)\(type.dropFirst())", 1, p.value.required, p: p.value)
+                            var typeToUse = "[GoogleCloud\(capName)\(type.dropFirst())"
+                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(typeToUse)", 1, p.value.required, p: p.value)
+                            if !(p.value.required ?? false) {
+                                 typeToUse += "?"
+                             }
+                            listOfNames.append((propertyNameSafe, typeToUse))
                         default:
-//                            let (type, format) = p.value.toType(capName)
-                            
                             if let _ = GoogleCloudDiscoveryJSONTypeEnum(rawValue: type.lowercased().replacingOccurrences(of: "[", with: "").replacingOccurrences(of: "]", with: "")) {
                                 gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(type)",  1, p.value.required, p: p.value)
-                                
+                                if !(p.value.required ?? false) {
+                                     type += "?"
+                                 }
+                                listOfNames.append((propertyNameSafe, type))
                             } else {
-                                gc += checkRequiredAndAddComment("public var \(propertyNameSafe): [\(type.dropFirst())", 1, p.value.required, p: p.value)
+                                var typeToUse = "[\(type.dropFirst())"
+                                gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(typeToUse)", 1, p.value.required, p: p.value)
+                                if !(p.value.required ?? false) {
+                                     typeToUse += "?"
+                                 }
+                                listOfNames.append((propertyNameSafe, "\(typeToUse)"))
                             }
                         }
                     }
                 default:
                     if p.value.type == nil {
                         if let reference = p.value.ref {
-                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe):  GoogleCloud\(capName)\(reference)",  1, p.value.required, p: p.value)
+                            var typeToUse = "GoogleCloud\(capName)\(reference)"
+                            gc += checkRequiredAndAddComment("public var \(propertyNameSafe): \(typeToUse)",  1, p.value.required, p: p.value)
+                            if !(p.value.required ?? false) {
+                                 typeToUse += "?"
+                             }
+                            listOfNames.append((propertyNameSafe, typeToUse))
                         }
                     } else {
                         let (type, format) = p.value.toType(capName)
+                        var typeToUse = type
+                        if !(p.value.required ?? false) {
+                             typeToUse += "?"
+                         }
+                        listOfNames.append((propertyNameSafe, typeToUse))
                         if format {
                              gc += checkRequiredAndAddComment("@CodingUses<Coder> public var \(propertyNameSafe): \(type)",  1, p.value.required, p: p.value)
                         } else {
@@ -440,6 +474,16 @@ extension DiscoveryService {
                     }
                 }
             }
+//            gc.addLine("public init(", with: 1)
+            if listOfNames.count > 0 {
+                let publicInit = listOfNames.reduce("public init(", {"\($0)\($1.0):\($1.1), "}).dropLast(2) + ") {"
+                gc.addLine(String(publicInit), with: 1)
+                _ = listOfNames.map {
+                    gc.addLine("self.\($0.0) = \($0.0)", with: 2)
+                }
+                gc.addLine("}", with: 1)
+            }
+//            print(publicInit)
             gc.addLine("}", with: 0)
         }
         return gc + later

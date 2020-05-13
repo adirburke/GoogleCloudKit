@@ -13,19 +13,19 @@ import CodableWrappers
 public enum GoogleCloudCalendarScope : GoogleCloudAPIScope {
    public var value : String {
       switch self {
-      case .CalendarEvents: return "https://www.googleapis.com/auth/calendar.events"
-      case .Calendar: return "https://www.googleapis.com/auth/calendar"
+      case .CalendarReadonly: return "https://www.googleapis.com/auth/calendar.readonly"
       case .CalendarSettingsReadonly: return "https://www.googleapis.com/auth/calendar.settings.readonly"
       case .CalendarEventsReadonly: return "https://www.googleapis.com/auth/calendar.events.readonly"
-      case .CalendarReadonly: return "https://www.googleapis.com/auth/calendar.readonly"
+      case .Calendar: return "https://www.googleapis.com/auth/calendar"
+      case .CalendarEvents: return "https://www.googleapis.com/auth/calendar.events"
       }
    }
 
-   case CalendarEvents // View and edit events on all your calendars
-   case Calendar // See, edit, share, and permanently delete all the calendars you can access using Google Calendar
+   case CalendarReadonly // View your calendars
    case CalendarSettingsReadonly // View your Calendar settings
    case CalendarEventsReadonly // View events on all your calendars
-   case CalendarReadonly // View your calendars
+   case Calendar // See, edit, share, and permanently delete all the calendars you can access using Google Calendar
+   case CalendarEvents // View and edit events on all your calendars
 }
 
 
@@ -928,6 +928,13 @@ public struct GoogleCloudCalendarAcl : GoogleCloudModel {
    public var nextPageToken: String?
    /*Token used at a later point in time to retrieve only the entries that have changed since this result was returned. Omitted if further results are available, in which case nextPageToken is provided. */
    public var nextSyncToken: String?
+   public init(etag:String?, items:[GoogleCloudCalendarAclRule]?, kind:String?, nextPageToken:String?, nextSyncToken:String?) {
+      self.etag = etag
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.nextSyncToken = nextSyncToken
+   }
 }
 public struct GoogleCloudCalendarAclRule : GoogleCloudModel {
    /*ETag of the resource. */
@@ -945,10 +952,17 @@ public struct GoogleCloudCalendarAclRule : GoogleCloudModel {
    public var role: String?
    /*The scope of the rule. */
    public var scope: GoogleCloudCalendarAclRuleScope?
+   public init(etag:String?, id:String?, kind:String?, role:String?, scope:GoogleCloudCalendarAclRuleScope?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.role = role
+      self.scope = scope
+   }
 }
 public struct GoogleCloudCalendarCalendar : GoogleCloudModel {
    /*Conferencing properties for this calendar, for example what types of conferences are allowed. */
-   public var conferenceProperties:  GoogleCloudCalendarConferenceProperties?
+   public var conferenceProperties: GoogleCloudCalendarConferenceProperties?
    /*Description of the calendar. Optional. */
    public var description: String?
    /*ETag of the resource. */
@@ -963,6 +977,16 @@ public struct GoogleCloudCalendarCalendar : GoogleCloudModel {
    public var summary: String?
    /*The time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional. */
    public var timeZone: String?
+   public init(conferenceProperties:GoogleCloudCalendarConferenceProperties?, description:String?, etag:String?, id:String?, kind:String?, location:String?, summary:String?, timeZone:String?) {
+      self.conferenceProperties = conferenceProperties
+      self.description = description
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.location = location
+      self.summary = summary
+      self.timeZone = timeZone
+   }
 }
 public struct GoogleCloudCalendarCalendarList : GoogleCloudModel {
    /*ETag of the collection. */
@@ -975,6 +999,13 @@ public struct GoogleCloudCalendarCalendarList : GoogleCloudModel {
    public var nextPageToken: String?
    /*Token used at a later point in time to retrieve only the entries that have changed since this result was returned. Omitted if further results are available, in which case nextPageToken is provided. */
    public var nextSyncToken: String?
+   public init(etag:String?, items:[GoogleCloudCalendarCalendarListEntry]?, kind:String?, nextPageToken:String?, nextSyncToken:String?) {
+      self.etag = etag
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.nextSyncToken = nextSyncToken
+   }
 }
 public struct GoogleCloudCalendarCalendarListEntry : GoogleCloudModel {
    /*The effective access role that the authenticated user has on the calendar. Read-only. Possible values are:  
@@ -988,7 +1019,7 @@ public struct GoogleCloudCalendarCalendarListEntry : GoogleCloudModel {
    /*The color of the calendar. This is an ID referring to an entry in the calendar section of the colors definition (see the colors endpoint). This property is superseded by the backgroundColor and foregroundColor properties and can be ignored when using these properties. Optional. */
    public var colorId: String?
    /*Conferencing properties for this calendar, for example what types of conferences are allowed. */
-   public var conferenceProperties:  GoogleCloudCalendarConferenceProperties?
+   public var conferenceProperties: GoogleCloudCalendarConferenceProperties?
    /*The default reminders that the authenticated user has for this calendar. */
    public var defaultReminders: [GoogleCloudCalendarEventReminder]?
    /*Whether this calendar list entry has been deleted from the calendar list. Read-only. Optional. The default is False. */
@@ -1019,6 +1050,27 @@ public struct GoogleCloudCalendarCalendarListEntry : GoogleCloudModel {
    public var summaryOverride: String?
    /*The time zone of the calendar. Optional. Read-only. */
    public var timeZone: String?
+   public init(accessRole:String?, backgroundColor:String?, colorId:String?, conferenceProperties:GoogleCloudCalendarConferenceProperties?, defaultReminders:[GoogleCloudCalendarEventReminder]?, deleted:Bool?, description:String?, etag:String?, foregroundColor:String?, hidden:Bool?, id:String?, kind:String?, location:String?, notificationSettings:GoogleCloudCalendarCalendarListEntryNotificationSettings?, primary:Bool?, selected:Bool?, summary:String?, summaryOverride:String?, timeZone:String?) {
+      self.accessRole = accessRole
+      self.backgroundColor = backgroundColor
+      self.colorId = colorId
+      self.conferenceProperties = conferenceProperties
+      self.defaultReminders = defaultReminders
+      self.deleted = deleted
+      self.description = description
+      self.etag = etag
+      self.foregroundColor = foregroundColor
+      self.hidden = hidden
+      self.id = id
+      self.kind = kind
+      self.location = location
+      self.notificationSettings = notificationSettings
+      self.primary = primary
+      self.selected = selected
+      self.summary = summary
+      self.summaryOverride = summaryOverride
+      self.timeZone = timeZone
+   }
 }
 public struct GoogleCloudCalendarCalendarNotification : GoogleCloudModel {
    /*The method used to deliver the notification. Possible values are:  
@@ -1035,6 +1087,10 @@ Required when adding a notification. */
 - "agenda" - An agenda with the events of the day (sent out in the morning).  
 Required when adding a notification. */
    public var type: String?
+   public init(method:String?, type:String?) {
+      self.method = method
+      self.type = type
+   }
 }
 public struct GoogleCloudCalendarChannel : GoogleCloudModel {
    /*The address where notifications are delivered for this channel. */
@@ -1057,12 +1113,28 @@ public struct GoogleCloudCalendarChannel : GoogleCloudModel {
    public var token: String?
    /*The type of delivery mechanism used for this channel. */
    public var type: String?
+   public init(address:String?, expiration:Int?, id:String?, kind:String?, params:[String : String]?, payload:Bool?, resourceId:String?, resourceUri:String?, token:String?, type:String?) {
+      self.address = address
+      self.expiration = expiration
+      self.id = id
+      self.kind = kind
+      self.params = params
+      self.payload = payload
+      self.resourceId = resourceId
+      self.resourceUri = resourceUri
+      self.token = token
+      self.type = type
+   }
 }
 public struct GoogleCloudCalendarColorDefinition : GoogleCloudModel {
    /*The background color associated with this color definition. */
    public var background: String?
    /*The foreground color that can be used to write on top of a background with 'background' color. */
    public var foreground: String?
+   public init(background:String?, foreground:String?) {
+      self.background = background
+      self.foreground = foreground
+   }
 }
 public struct GoogleCloudCalendarColors : GoogleCloudModel {
    /*A global palette of calendar colors, mapping from the color ID to its definition. A calendarListEntry resource refers to one of these color IDs in its color field. Read-only. */
@@ -1073,6 +1145,12 @@ public struct GoogleCloudCalendarColors : GoogleCloudModel {
    public var kind: String?
    /*Last modification time of the color palette (as a RFC3339 timestamp). Read-only. */
    @CodingUses<Coder> public var updated: String?
+   public init(calendar:[String : GoogleCloudCalendarColorDefinition]?, event:[String : GoogleCloudCalendarColorDefinition]?, kind:String?, updated:String?) {
+      self.calendar = calendar
+      self.event = event
+      self.kind = kind
+      self.updated = updated
+   }
 }
 public struct GoogleCloudCalendarConferenceData : GoogleCloudModel {
    /*The ID of the conference.
@@ -1086,10 +1164,10 @@ Values for solution types:
    /*The conference solution, such as Hangouts or Hangouts Meet.
 Unset for a conference with a failed create request.
 Either conferenceSolution and at least one entryPoint, or createRequest is required. */
-   public var conferenceSolution:  GoogleCloudCalendarConferenceSolution?
+   public var conferenceSolution: GoogleCloudCalendarConferenceSolution?
    /*A request to generate a new conference and attach it to the event. The data is generated asynchronously. To see whether the data is present check the status field.
 Either conferenceSolution and at least one entryPoint, or createRequest is required. */
-   public var createRequest:  GoogleCloudCalendarCreateConferenceRequest?
+   public var createRequest: GoogleCloudCalendarCreateConferenceRequest?
    /*Information about individual conference entry points, such as URLs or phone numbers.
 All of them must belong to the same conference.
 Either conferenceSolution and at least one entryPoint, or createRequest is required. */
@@ -1097,19 +1175,34 @@ Either conferenceSolution and at least one entryPoint, or createRequest is requi
    /*Additional notes (such as instructions from the domain administrator, legal notices) to display to the user. Can contain HTML. The maximum length is 2048 characters. Optional. */
    public var notes: String?
    /*Additional properties related to a conference. An example would be a solution-specific setting for enabling video streaming. */
-   public var parameters:  GoogleCloudCalendarConferenceParameters?
+   public var parameters: GoogleCloudCalendarConferenceParameters?
    /*The signature of the conference data.
 Generated on server side. Must be preserved while copying the conference data between events, otherwise the conference data will not be copied.
 Unset for a conference with a failed create request.
 Optional for a conference with a pending create request. */
    public var signature: String?
+   public init(conferenceId:String?, conferenceSolution:GoogleCloudCalendarConferenceSolution?, createRequest:GoogleCloudCalendarCreateConferenceRequest?, entryPoints:[GoogleCloudCalendarEntryPoint]?, notes:String?, parameters:GoogleCloudCalendarConferenceParameters?, signature:String?) {
+      self.conferenceId = conferenceId
+      self.conferenceSolution = conferenceSolution
+      self.createRequest = createRequest
+      self.entryPoints = entryPoints
+      self.notes = notes
+      self.parameters = parameters
+      self.signature = signature
+   }
 }
 public struct GoogleCloudCalendarConferenceParameters : GoogleCloudModel {
    /*Additional add-on specific data. */
-   public var addOnParameters:  GoogleCloudCalendarConferenceParametersAddOnParameters?
+   public var addOnParameters: GoogleCloudCalendarConferenceParametersAddOnParameters?
+   public init(addOnParameters:GoogleCloudCalendarConferenceParametersAddOnParameters?) {
+      self.addOnParameters = addOnParameters
+   }
 }
 public struct GoogleCloudCalendarConferenceParametersAddOnParameters : GoogleCloudModel {
    public var parameters: [String : String]?
+   public init(parameters:[String : String]?) {
+      self.parameters = parameters
+   }
 }
 public struct GoogleCloudCalendarConferenceProperties : GoogleCloudModel {
    /*The types of conference solutions that are supported for this calendar.
@@ -1118,6 +1211,9 @@ The possible values are:
 - "eventNamedHangout" 
 - "hangoutsMeet"  Optional. */
    public var allowedConferenceSolutionTypes: [String]?
+   public init(allowedConferenceSolutionTypes:[String]?) {
+      self.allowedConferenceSolutionTypes = allowedConferenceSolutionTypes
+   }
 }
 public struct GoogleCloudCalendarConferenceRequestStatus : GoogleCloudModel {
    /*The current status of the conference create request. Read-only.
@@ -1126,14 +1222,22 @@ The possible values are:
 - "success": the conference create request succeeded, the entry points are populated.
 - "failure": the conference create request failed, there are no entry points. */
    public var statusCode: String?
+   public init(statusCode:String?) {
+      self.statusCode = statusCode
+   }
 }
 public struct GoogleCloudCalendarConferenceSolution : GoogleCloudModel {
    /*The user-visible icon for this solution. */
    public var iconUri: String?
    /*The key which can uniquely identify the conference solution for this event. */
-   public var key:  GoogleCloudCalendarConferenceSolutionKey?
+   public var key: GoogleCloudCalendarConferenceSolutionKey?
    /*The user-visible name of this solution. Not localized. */
    public var name: String?
+   public init(iconUri:String?, key:GoogleCloudCalendarConferenceSolutionKey?, name:String?) {
+      self.iconUri = iconUri
+      self.key = key
+      self.name = name
+   }
 }
 public struct GoogleCloudCalendarConferenceSolutionKey : GoogleCloudModel {
    /*The conference solution type.
@@ -1144,15 +1248,23 @@ The possible values are:
 - "hangoutsMeet" for Hangouts Meet (http://meet.google.com)
 - "addOn" for 3P conference providers */
    public var type: String?
+   public init(type:String?) {
+      self.type = type
+   }
 }
 public struct GoogleCloudCalendarCreateConferenceRequest : GoogleCloudModel {
    /*The conference solution, such as Hangouts or Hangouts Meet. */
-   public var conferenceSolutionKey:  GoogleCloudCalendarConferenceSolutionKey?
+   public var conferenceSolutionKey: GoogleCloudCalendarConferenceSolutionKey?
    /*The client-generated unique ID for this request.
 Clients should regenerate this ID for every new request. If an ID provided is the same as for the previous request, the request is ignored. */
    public var requestId: String?
    /*The status of the conference create request. */
-   public var status:  GoogleCloudCalendarConferenceRequestStatus?
+   public var status: GoogleCloudCalendarConferenceRequestStatus?
+   public init(conferenceSolutionKey:GoogleCloudCalendarConferenceSolutionKey?, requestId:String?, status:GoogleCloudCalendarConferenceRequestStatus?) {
+      self.conferenceSolutionKey = conferenceSolutionKey
+      self.requestId = requestId
+      self.status = status
+   }
 }
 public struct GoogleCloudCalendarEntryPoint : GoogleCloudModel {
    /*The access code to access the conference. The maximum length is 128 characters.
@@ -1201,6 +1313,18 @@ Format:
 - for sip, sip: schema is required, e.g., sip:12345678@myprovider.com.
 - for more, http: or https: schema is required. */
    public var uri: String?
+   public init(accessCode:String?, entryPointFeatures:[String]?, entryPointType:String?, label:String?, meetingCode:String?, passcode:String?, password:String?, pin:String?, regionCode:String?, uri:String?) {
+      self.accessCode = accessCode
+      self.entryPointFeatures = entryPointFeatures
+      self.entryPointType = entryPointType
+      self.label = label
+      self.meetingCode = meetingCode
+      self.passcode = passcode
+      self.password = password
+      self.pin = pin
+      self.regionCode = regionCode
+      self.uri = uri
+   }
 }
 public struct GoogleCloudCalendarError : GoogleCloudModel {
    /*Domain, or broad category, of the error. */
@@ -1211,6 +1335,10 @@ public struct GoogleCloudCalendarError : GoogleCloudModel {
 - "notFound" - The requested resource was not found. 
 - "internalError" - The API service has encountered an internal error.  Additional error types may be added in the future, so clients should gracefully handle additional error statuses not included in this list. */
    public var reason: String?
+   public init(domain:String?, reason:String?) {
+      self.domain = domain
+      self.reason = reason
+   }
 }
 public struct GoogleCloudCalendarEvent : GoogleCloudModel {
    /*Whether anyone can invite themselves to the event (currently works for Google+ events only). Optional. The default is False. */
@@ -1226,7 +1354,7 @@ There can be at most 25 attachments per event, */
    /*The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional. */
    public var colorId: String?
    /*The conference-related information, such as details of a Hangouts Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests. */
-   public var conferenceData:  GoogleCloudCalendarConferenceData?
+   public var conferenceData: GoogleCloudCalendarConferenceData?
    /*Creation time of the event (as a RFC3339 timestamp). Read-only. */
    @CodingUses<Coder> public var created: String?
    /*The creator of the event. Read-only. */
@@ -1234,7 +1362,7 @@ There can be at most 25 attachments per event, */
    /*Description of the event. Can contain HTML. Optional. */
    public var description: String?
    /*The (exclusive) end time of the event. For a recurring event, this is the end time of the first instance. */
-   public var end:  GoogleCloudCalendarEventDateTime?
+   public var end: GoogleCloudCalendarEventDateTime?
    /*Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False. */
    public var endTimeUnspecified: Bool?
    /*ETag of the resource. */
@@ -1272,7 +1400,7 @@ Note that the icalUID and the id are not identical and only one of them should b
    /*The organizer of the event. If the organizer is also an attendee, this is indicated with a separate entry in attendees with the organizer field set to True. To change the organizer, use the move operation. Read-only, except when importing an event. */
    public var organizer: GoogleCloudCalendarEventOrganizer?
    /*For an instance of a recurring event, this is the time at which this event would start according to the recurrence data in the recurring event identified by recurringEventId. It uniquely identifies the instance within the recurring event series even if the instance was moved to a different time. Immutable. */
-   public var originalStartTime:  GoogleCloudCalendarEventDateTime?
+   public var originalStartTime: GoogleCloudCalendarEventDateTime?
    /*If set to True, Event propagation is disabled. Note that it is not the same thing as Private event properties. Optional. Immutable. The default is False. */
    public var privateCopy: Bool?
    /*List of RRULE, EXRULE, RDATE and EXDATE lines for a recurring event, as specified in RFC5545. Note that DTSTART and DTEND lines are not allowed in this field; event start and end times are specified in the start and end fields. This field is omitted for single events or instances of recurring events. */
@@ -1286,7 +1414,7 @@ Note that the icalUID and the id are not identical and only one of them should b
    /*Source from which the event was created. For example, a web page, an email message or any document identifiable by an URL with HTTP or HTTPS scheme. Can only be seen or modified by the creator of the event. */
    public var source: GoogleCloudCalendarEventSource?
    /*The (inclusive) start time of the event. For a recurring event, this is the start time of the first instance. */
-   public var start:  GoogleCloudCalendarEventDateTime?
+   public var start: GoogleCloudCalendarEventDateTime?
    /*Status of the event. Optional. Possible values are:  
 - "confirmed" - The event is confirmed. This is the default status. 
 - "tentative" - The event is tentatively confirmed. 
@@ -1312,6 +1440,46 @@ If an event changes its organizer (for example via the move operation) and the o
 - "private" - The event is private and only event attendees may view event details. 
 - "confidential" - The event is private. This value is provided for compatibility reasons. */
    public var visibility: String?
+   public init(anyoneCanAddSelf:Bool?, attachments:[GoogleCloudCalendarEventAttachment]?, attendees:[GoogleCloudCalendarEventAttendee]?, attendeesOmitted:Bool?, colorId:String?, conferenceData:GoogleCloudCalendarConferenceData?, created:String?, creator:GoogleCloudCalendarEventCreator?, description:String?, end:GoogleCloudCalendarEventDateTime?, endTimeUnspecified:Bool?, etag:String?, extendedProperties:GoogleCloudCalendarEventExtendedProperties?, gadget:GoogleCloudCalendarEventGadget?, guestsCanInviteOthers:Bool?, guestsCanModify:Bool?, guestsCanSeeOtherGuests:Bool?, hangoutLink:String?, htmlLink:String?, iCalUID:String?, id:String?, kind:String?, location:String?, locked:Bool?, organizer:GoogleCloudCalendarEventOrganizer?, originalStartTime:GoogleCloudCalendarEventDateTime?, privateCopy:Bool?, recurrence:[String]?, recurringEventId:String?, reminders:GoogleCloudCalendarEventReminders?, sequence:Int?, source:GoogleCloudCalendarEventSource?, start:GoogleCloudCalendarEventDateTime?, status:String?, summary:String?, transparency:String?, updated:String?, visibility:String?) {
+      self.anyoneCanAddSelf = anyoneCanAddSelf
+      self.attachments = attachments
+      self.attendees = attendees
+      self.attendeesOmitted = attendeesOmitted
+      self.colorId = colorId
+      self.conferenceData = conferenceData
+      self.created = created
+      self.creator = creator
+      self.description = description
+      self.end = end
+      self.endTimeUnspecified = endTimeUnspecified
+      self.etag = etag
+      self.extendedProperties = extendedProperties
+      self.gadget = gadget
+      self.guestsCanInviteOthers = guestsCanInviteOthers
+      self.guestsCanModify = guestsCanModify
+      self.guestsCanSeeOtherGuests = guestsCanSeeOtherGuests
+      self.hangoutLink = hangoutLink
+      self.htmlLink = htmlLink
+      self.iCalUID = iCalUID
+      self.id = id
+      self.kind = kind
+      self.location = location
+      self.locked = locked
+      self.organizer = organizer
+      self.originalStartTime = originalStartTime
+      self.privateCopy = privateCopy
+      self.recurrence = recurrence
+      self.recurringEventId = recurringEventId
+      self.reminders = reminders
+      self.sequence = sequence
+      self.source = source
+      self.start = start
+      self.status = status
+      self.summary = summary
+      self.transparency = transparency
+      self.updated = updated
+      self.visibility = visibility
+   }
 }
 public struct GoogleCloudCalendarEventAttachment : GoogleCloudModel {
    /*ID of the attached file. Read-only.
@@ -1327,6 +1495,13 @@ Required when adding an attachment. */
    public var mimeType: String?
    /*Attachment title. */
    public var title: String?
+   public init(fileId:String?, fileUrl:String?, iconLink:String?, mimeType:String?, title:String?) {
+      self.fileId = fileId
+      self.fileUrl = fileUrl
+      self.iconLink = iconLink
+      self.mimeType = mimeType
+      self.title = title
+   }
 }
 public struct GoogleCloudCalendarEventAttendee : GoogleCloudModel {
    /*Number of additional guests. Optional. The default is 0. */
@@ -1354,6 +1529,18 @@ Required when adding an attendee. */
    public var responseStatus: String?
    /*Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False. */
    public var `self`: Bool?
+   public init(additionalGuests:Int?, comment:String?, displayName:String?, email:String?, id:String?, optional:Bool?, organizer:Bool?, resource:Bool?, responseStatus:String?, _self :Bool?) {
+      self.additionalGuests = additionalGuests
+      self.comment = comment
+      self.displayName = displayName
+      self.email = email
+      self.id = id
+      self.optional = optional
+      self.organizer = organizer
+      self.resource = resource
+      self.responseStatus = responseStatus
+      self.`self` = _self
+   }
 }
 public struct GoogleCloudCalendarEventDateTime : GoogleCloudModel {
    /*The date, in the format "yyyy-mm-dd", if this is an all-day event. */
@@ -1362,6 +1549,11 @@ public struct GoogleCloudCalendarEventDateTime : GoogleCloudModel {
    @CodingUses<Coder> public var dateTime: String?
    /*The time zone in which the time is specified. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) For recurring events this field is required and specifies the time zone in which the recurrence is expanded. For single events this field is optional and indicates a custom time zone for the event start/end. */
    public var timeZone: String?
+   public init(date:String?, dateTime:String?, timeZone:String?) {
+      self.date = date
+      self.dateTime = dateTime
+      self.timeZone = timeZone
+   }
 }
 public struct GoogleCloudCalendarEventReminder : GoogleCloudModel {
    /*The method used by this reminder. Possible values are:  
@@ -1374,6 +1566,10 @@ Required when adding a reminder. */
    /*Number of minutes before the start of the event when the reminder should trigger. Valid values are between 0 and 40320 (4 weeks in minutes).
 Required when adding a reminder. */
    @CodingUses<Coder> public var minutes: Int?
+   public init(method:String?, minutes:Int?) {
+      self.method = method
+      self.minutes = minutes
+   }
 }
 public struct GoogleCloudCalendarEvents : GoogleCloudModel {
    /*The user's access role for this calendar. Read-only. Possible values are:  
@@ -1403,18 +1599,39 @@ public struct GoogleCloudCalendarEvents : GoogleCloudModel {
    public var timeZone: String?
    /*Last modification time of the calendar (as a RFC3339 timestamp). Read-only. */
    @CodingUses<Coder> public var updated: String?
+   public init(accessRole:String?, defaultReminders:[GoogleCloudCalendarEventReminder]?, description:String?, etag:String?, items:[GoogleCloudCalendarEvent]?, kind:String?, nextPageToken:String?, nextSyncToken:String?, summary:String?, timeZone:String?, updated:String?) {
+      self.accessRole = accessRole
+      self.defaultReminders = defaultReminders
+      self.description = description
+      self.etag = etag
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.nextSyncToken = nextSyncToken
+      self.summary = summary
+      self.timeZone = timeZone
+      self.updated = updated
+   }
 }
 public struct GoogleCloudCalendarFreeBusyCalendar : GoogleCloudModel {
    /*List of time ranges during which this calendar should be regarded as busy. */
    public var busy: [GoogleCloudCalendarTimePeriod]?
    /*Optional error(s) (if computation for the calendar failed). */
    public var errors: [GoogleCloudCalendarError]?
+   public init(busy:[GoogleCloudCalendarTimePeriod]?, errors:[GoogleCloudCalendarError]?) {
+      self.busy = busy
+      self.errors = errors
+   }
 }
 public struct GoogleCloudCalendarFreeBusyGroup : GoogleCloudModel {
    /*List of calendars' identifiers within a group. */
    public var calendars: [String]?
    /*Optional error(s) (if computation for the group failed). */
    public var errors: [GoogleCloudCalendarError]?
+   public init(calendars:[String]?, errors:[GoogleCloudCalendarError]?) {
+      self.calendars = calendars
+      self.errors = errors
+   }
 }
 public struct GoogleCloudCalendarFreeBusyRequest : GoogleCloudModel {
    /*Maximal number of calendars for which FreeBusy information is to be provided. Optional. Maximum value is 50. */
@@ -1429,10 +1646,21 @@ public struct GoogleCloudCalendarFreeBusyRequest : GoogleCloudModel {
    @CodingUses<Coder> public var timeMin: String?
    /*Time zone used in the response. Optional. The default is UTC. */
    public var timeZone: String?
+   public init(calendarExpansionMax:Int?, groupExpansionMax:Int?, items:[GoogleCloudCalendarFreeBusyRequestItem]?, timeMax:String?, timeMin:String?, timeZone:String?) {
+      self.calendarExpansionMax = calendarExpansionMax
+      self.groupExpansionMax = groupExpansionMax
+      self.items = items
+      self.timeMax = timeMax
+      self.timeMin = timeMin
+      self.timeZone = timeZone
+   }
 }
 public struct GoogleCloudCalendarFreeBusyRequestItem : GoogleCloudModel {
    /*The identifier of a calendar or a group. */
    public var id: String?
+   public init(id:String?) {
+      self.id = id
+   }
 }
 public struct GoogleCloudCalendarFreeBusyResponse : GoogleCloudModel {
    /*List of free/busy information for calendars. */
@@ -1445,6 +1673,13 @@ public struct GoogleCloudCalendarFreeBusyResponse : GoogleCloudModel {
    @CodingUses<Coder> public var timeMax: String?
    /*The start of the interval. */
    @CodingUses<Coder> public var timeMin: String?
+   public init(calendars:[String : GoogleCloudCalendarFreeBusyCalendar]?, groups:[String : GoogleCloudCalendarFreeBusyGroup]?, kind:String?, timeMax:String?, timeMin:String?) {
+      self.calendars = calendars
+      self.groups = groups
+      self.kind = kind
+      self.timeMax = timeMax
+      self.timeMin = timeMin
+   }
 }
 public struct GoogleCloudCalendarSetting : GoogleCloudModel {
    /*ETag of the resource. */
@@ -1455,6 +1690,12 @@ public struct GoogleCloudCalendarSetting : GoogleCloudModel {
    public var kind: String?
    /*Value of the user setting. The format of the value depends on the ID of the setting. It must always be a UTF-8 string of length up to 1024 characters. */
    public var value: String?
+   public init(etag:String?, id:String?, kind:String?, value:String?) {
+      self.etag = etag
+      self.id = id
+      self.kind = kind
+      self.value = value
+   }
 }
 public struct GoogleCloudCalendarSettings : GoogleCloudModel {
    /*Etag of the collection. */
@@ -1467,12 +1708,23 @@ public struct GoogleCloudCalendarSettings : GoogleCloudModel {
    public var nextPageToken: String?
    /*Token used at a later point in time to retrieve only the entries that have changed since this result was returned. Omitted if further results are available, in which case nextPageToken is provided. */
    public var nextSyncToken: String?
+   public init(etag:String?, items:[GoogleCloudCalendarSetting]?, kind:String?, nextPageToken:String?, nextSyncToken:String?) {
+      self.etag = etag
+      self.items = items
+      self.kind = kind
+      self.nextPageToken = nextPageToken
+      self.nextSyncToken = nextSyncToken
+   }
 }
 public struct GoogleCloudCalendarTimePeriod : GoogleCloudModel {
    /*The (exclusive) end of the time period. */
    @CodingUses<Coder> public var end: String?
    /*The (inclusive) start of the time period. */
    @CodingUses<Coder> public var start: String?
+   public init(end:String?, start:String?) {
+      self.end = end
+      self.start = start
+   }
 }
 public struct GoogleCloudCalendarAclRuleScope : GoogleCloudModel {
    /*The type of the scope. Possible values are:  

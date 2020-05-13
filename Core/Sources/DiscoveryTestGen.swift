@@ -158,12 +158,17 @@ public struct GoogleCloudDiscoveryDirectoryList : GoogleCloudModel {
    public var items: [GoogleCloudDiscoveryDirectoryListItems]?
    /*The kind for this response. */
    public var kind: String?
+   public init(discoveryVersion:String?, items:[GoogleCloudDiscoveryDirectoryListItems]?, kind:String?) {
+      self.discoveryVersion = discoveryVersion
+      self.items = items
+      self.kind = kind
+   }
 }
 public struct GoogleCloudDiscoveryJsonSchema : GoogleCloudModel {
    /*A reference to another schema. The value of this property is the "id" of another schema. */
    public var $ref: String?
    /*If this is a schema for an object, this property is the schema for any additional properties with dynamic keys on this object. */
-   public var additionalProperties:  GoogleCloudDiscoveryJsonSchema?
+   public var additionalProperties: GoogleCloudDiscoveryJsonSchema?
    /*Additional information about this property. */
    public var annotations: GoogleCloudDiscoveryJsonSchemaAnnotations?
    /*The default value of this property (if one exists). */
@@ -179,7 +184,7 @@ public struct GoogleCloudDiscoveryJsonSchema : GoogleCloudModel {
    /*Unique identifier for this schema. */
    public var id: String?
    /*If this is a schema for an array, this property is the schema for each element in the array. */
-   public var items:  GoogleCloudDiscoveryJsonSchema?
+   public var items: GoogleCloudDiscoveryJsonSchema?
    /*Whether this parameter goes in the query or the path for REST requests. */
    public var location: String?
    /*The maximum value of this parameter. */
@@ -200,6 +205,28 @@ public struct GoogleCloudDiscoveryJsonSchema : GoogleCloudModel {
    public var type: String?
    /*In a variant data type, the value of one property is used to determine how to interpret the entire entity. Its value must exist in a map of descriminant values to schema names. */
    public var variant: GoogleCloudDiscoveryJsonSchemaVariant?
+   public init($ref:String?, additionalProperties:GoogleCloudDiscoveryJsonSchema?, annotations:GoogleCloudDiscoveryJsonSchemaAnnotations?, `default`:String?, description:String?, `enum`:[String]?, enumDescriptions:[String]?, format:String?, id:String?, items:GoogleCloudDiscoveryJsonSchema?, location:String?, maximum:String?, minimum:String?, pattern:String?, properties:[String : GoogleCloudDiscoveryJsonSchema]?, readOnly:Bool?, repeated:Bool?, required:Bool?, type:String?, variant:GoogleCloudDiscoveryJsonSchemaVariant?) {
+      self.$ref = $ref
+      self.additionalProperties = additionalProperties
+      self.annotations = annotations
+      self.`default` = `default`
+      self.description = description
+      self.`enum` = `enum`
+      self.enumDescriptions = enumDescriptions
+      self.format = format
+      self.id = id
+      self.items = items
+      self.location = location
+      self.maximum = maximum
+      self.minimum = minimum
+      self.pattern = pattern
+      self.properties = properties
+      self.readOnly = readOnly
+      self.repeated = repeated
+      self.required = required
+      self.type = type
+      self.variant = variant
+   }
 }
 public struct GoogleCloudDiscoveryRestDescription : GoogleCloudModel {
    /*Authentication information. */
@@ -261,6 +288,38 @@ public struct GoogleCloudDiscoveryRestDescription : GoogleCloudModel {
    /*The version of this API. */
    public var version: String?
    public var version_module: Bool?
+   public init(auth:GoogleCloudDiscoveryRestDescriptionAuth?, basePath:String?, baseUrl:String?, batchPath:String?, canonicalName:String?, description:String?, discoveryVersion:String?, documentationLink:String?, etag:String?, exponentialBackoffDefault:Bool?, features:[String]?, icons:GoogleCloudDiscoveryRestDescriptionIcons?, id:String?, kind:String?, labels:[String]?, methods:[String : GoogleCloudDiscoveryRestMethod]?, name:String?, ownerDomain:String?, ownerName:String?, packagePath:String?, parameters:[String : GoogleCloudDiscoveryJsonSchema]?, `protocol`:String?, resources:[String : GoogleCloudDiscoveryRestResource]?, revision:String?, rootUrl:String?, schemas:[String : GoogleCloudDiscoveryJsonSchema]?, servicePath:String?, title:String?, version:String?, version_module:Bool?) {
+      self.auth = auth
+      self.basePath = basePath
+      self.baseUrl = baseUrl
+      self.batchPath = batchPath
+      self.canonicalName = canonicalName
+      self.description = description
+      self.discoveryVersion = discoveryVersion
+      self.documentationLink = documentationLink
+      self.etag = etag
+      self.exponentialBackoffDefault = exponentialBackoffDefault
+      self.features = features
+      self.icons = icons
+      self.id = id
+      self.kind = kind
+      self.labels = labels
+      self.methods = methods
+      self.name = name
+      self.ownerDomain = ownerDomain
+      self.ownerName = ownerName
+      self.packagePath = packagePath
+      self.parameters = parameters
+      self.`protocol` = `protocol`
+      self.resources = resources
+      self.revision = revision
+      self.rootUrl = rootUrl
+      self.schemas = schemas
+      self.servicePath = servicePath
+      self.title = title
+      self.version = version
+      self.version_module = version_module
+   }
 }
 public struct GoogleCloudDiscoveryRestMethod : GoogleCloudModel {
    /*Description of this method. */
@@ -293,12 +352,33 @@ public struct GoogleCloudDiscoveryRestMethod : GoogleCloudModel {
    public var supportsSubscription: Bool?
    /*Indicates that downloads from this method should use the download service URL (i.e. "/download"). Only applies if the method supports media download. */
    public var useMediaDownloadService: Bool?
+   public init(description:String?, etagRequired:Bool?, httpMethod:String?, id:String?, mediaUpload:GoogleCloudDiscoveryRestMethodMediaUpload?, parameterOrder:[String]?, parameters:[String : GoogleCloudDiscoveryJsonSchema]?, path:String?, request:GoogleCloudDiscoveryRestMethodRequest?, response:GoogleCloudDiscoveryRestMethodResponse?, scopes:[String]?, supportsMediaDownload:Bool?, supportsMediaUpload:Bool?, supportsSubscription:Bool?, useMediaDownloadService:Bool?) {
+      self.description = description
+      self.etagRequired = etagRequired
+      self.httpMethod = httpMethod
+      self.id = id
+      self.mediaUpload = mediaUpload
+      self.parameterOrder = parameterOrder
+      self.parameters = parameters
+      self.path = path
+      self.request = request
+      self.response = response
+      self.scopes = scopes
+      self.supportsMediaDownload = supportsMediaDownload
+      self.supportsMediaUpload = supportsMediaUpload
+      self.supportsSubscription = supportsSubscription
+      self.useMediaDownloadService = useMediaDownloadService
+   }
 }
 public struct GoogleCloudDiscoveryRestResource : GoogleCloudModel {
    /*Methods on this resource. */
    public var methods: [String : GoogleCloudDiscoveryRestMethod]?
    /*Sub-resources on this resource. */
    public var resources: [String : GoogleCloudDiscoveryRestResource]?
+   public init(methods:[String : GoogleCloudDiscoveryRestMethod]?, resources:[String : GoogleCloudDiscoveryRestResource]?) {
+      self.methods = methods
+      self.resources = resources
+   }
 }
 public struct GoogleCloudDiscoveryDirectoryListItems : GoogleCloudModel {
    /*The description of this API. */
