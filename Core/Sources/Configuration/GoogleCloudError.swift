@@ -61,6 +61,8 @@ public struct GoogleCloudAPIErrorBody: Codable {
 }
 
 public struct GoogleCloudAPIError: Codable {
+
+    
     /// The scope of the error. Example values include: global, push and usageLimits.
     public var domain: String?
     /// Example values include invalid, invalidParameter, and required.
@@ -72,4 +74,12 @@ public struct GoogleCloudAPIError: Codable {
     public var locationType: String?
     /// The specific item within the locationType that caused the error. For example, if you specify an invalid value for a parameter, the location will be the name of the parameter.
     public var location: String?
+    
+    public init(domain: String? = nil, reason: String? = nil, message: String? = nil, locationType: String? = nil, location: String? = nil) {
+        self.domain = domain
+        self.reason = reason
+        self.message = message
+        self.locationType = locationType
+        self.location = location
+    }
 }
