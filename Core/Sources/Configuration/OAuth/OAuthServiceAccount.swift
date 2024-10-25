@@ -33,7 +33,10 @@ public class OAuthServiceAccount: OAuthRefreshable {
     public func refresh() -> EventLoopFuture<OAuthAccessToken> {
         do {
             let headers: HTTPHeaders = ["Content-Type": "application/x-www-form-urlencoded"]
-            let token = try generateJWT()
+            
+            let token = self.eventLoop.makeFutureWithTask { [generateJWT] in
+                try await generateJWT()
+            }
             let body: HTTPClient.Body = .string("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=\(token)"
                                         .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
             let request = try HTTPClient.Request(url: GoogleOAuthTokenUrl, method: .POST, headers: headers, body: body)
@@ -58,13 +61,14 @@ public class OAuthServiceAccount: OAuthRefreshable {
         }
     }
 
-    private func generateJWT() throws -> String {
+    private func generateJWT() async throws -> String {
         let payload = OAuthPayload(iss: IssuerClaim(value: credentials.clientEmail),
                                    scope: scope,
                                    aud: AudienceClaim(value: GoogleOAuthTokenAudience),
                                    exp: ExpirationClaim(value: Date().addingTimeInterval(3600)),
                                    iat: IssuedAtClaim(value: Date()), sub: subscription)
-        let privateKey = try RSAKey.private(pem: credentials.privateKey.data(using: .utf8, allowLossyConversion: true) ?? Data())
-        return try JWTSigner.rs256(key: privateKey).sign(payload)
+        let privateKey = try Insecure.RSA.PrivateKey(pem: credentials.privateKey.data(using: .utf8, allowLossyConversion: true) ?? Data())
+        let keys = try await JWTKeyCollection().add(rsa: privateKey, digestAlgorithm: .sha256).sign(payload)
+        return keys
     }
 }
