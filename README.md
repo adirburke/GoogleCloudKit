@@ -44,7 +44,7 @@ Now setup the configuration.
 Optionally, you can register an empty `GoogleCloudCredentialsConfiguration()` and configure the following environment variables:
 
 ```shell
-export PROJECT_ID=myprojectid-12345
+export GOOGLE_PROJECT_ID=myprojectid-12345
 export GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/service-account.json
 ```
 
@@ -57,3 +57,6 @@ export GOOGLE_APPLICATION_CREDENTIALS=[Valid Pasted JSON]
 ### Currently the following API's are implemented and you can follow the setup guides for each specific API to integrate with your project.
 * [x] Cloud Storage [Setup guide](https://github.com/vapor-community/GoogleCloudKit/tree/master/Storage/Sources/README.md)
 * [x] Datastore [Setup guide](https://github.com/vapor-community/GoogleCloudKit/tree/master/Datastore/Sources/README.md)
+* [x] SecretManager [Setup Guide](https://github.com/vapor-community/google-cloud-kit/tree/master/SecretManager/Sources/README.md)
+* [x] Translation [Setup Guide](https://github.com/vapor-community/google-cloud-kit/tree/master/Translation/Sources/README.md)
+* [x] IAM Service Account Credentials [Setup Guide](https://github.com/vapor-community/google-cloud-kit/tree/master/IAMServiceAccountCredentials/Sources/README.md)

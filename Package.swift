@@ -1,14 +1,24 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.7
 
 import PackageDescription
 
 let package = Package(
     name: "google-cloud-kit",
-    platforms: [ .macOS(.v10_15)],
+    platforms: [
+        .macOS(.v13),
+        .iOS(.v13)
+    ],
     products: [
         .library(
             name: "GoogleCloudKit",
-            targets: ["Core", "Storage", "Datastore"]
+            targets: [
+                "Core",
+                "Datastore",
+                "IAMServiceAccountCredentials",
+                "PubSub",
+                "SecretManager",
+                "Storage",
+            ]
         ),
         .library(
             name: "GoogleCloudCore",
@@ -22,10 +32,26 @@ let package = Package(
             name: "GoogleCloudDatastore",
             targets: ["Datastore"]
         ),
+        .library(
+            name: "GoogleCloudSecretManager",
+            targets: ["SecretManager"]
+        ),
+        .library(
+            name: "GoogleCloudIAMServiceAccountCredentials",
+            targets: ["IAMServiceAccountCredentials"]
+        ),
+        .library(
+            name: "GoogleCloudTranslation",
+            targets: ["Translation"]
+        ),
+        .library(
+            name: "GoogleCloudPubSub",
+            targets: ["PubSub"]
+        ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.2.0"),
-        .package(url: "https://github.com/vapor/jwt-kit.git", from: "4.0.0")
+        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.18.0"),
+        .package(url: "https://github.com/vapor/jwt-kit.git", from: "4.13.0")
     ],
     targets: [
         .target(
@@ -50,6 +76,34 @@ let package = Package(
             ],
             path: "Datastore/Sources/"
         ),
+        .target(
+            name: "SecretManager",
+            dependencies: [
+                .target(name: "Core")
+            ],
+            path: "SecretManager/Sources"
+        ),
+        .target(
+            name: "IAMServiceAccountCredentials",
+            dependencies: [
+                .target(name: "Core")
+            ],
+            path: "IAMServiceAccountCredentials/Sources"
+        ),
+        .target(
+            name: "Translation",
+            dependencies: [
+                .target(name: "Core")
+            ],
+            path: "Translation/Sources"
+        ),
+        .target(
+            name: "PubSub",
+            dependencies: [
+                .target(name: "Core")
+            ],
+            path: "PubSub/Sources/"
+        ),
         .testTarget(
             name: "CoreTests",
             dependencies: [
@@ -71,6 +125,20 @@ let package = Package(
                 .target(name: "Datastore")
             ],
             path: "Datastore/Tests/"
+        ),
+        .testTarget(
+            name: "TranslationTests",
+            dependencies: [
+                .target(name: "Translation")
+            ],
+            path: "Translation/Tests/"
+        ),
+        .testTarget(
+            name: "PubSubTests",
+            dependencies: [
+                .target(name: "PubSub")
+            ],
+            path: "PubSub/Tests/"
         ),
     ]
 )
