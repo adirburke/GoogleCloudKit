@@ -31,34 +31,35 @@ public class OAuthServiceAccount: OAuthRefreshable {
 
     // Google Documentation for this approach: https://developers.google.com/identity/protocols/OAuth2ServiceAccount
     public func refresh() -> EventLoopFuture<OAuthAccessToken> {
-        do {
             let headers: HTTPHeaders = ["Content-Type": "application/x-www-form-urlencoded"]
             
             let token = self.eventLoop.makeFutureWithTask { [generateJWT] in
                 try await generateJWT()
             }
-            let body: HTTPClient.Body = .string("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=\(token)"
-                                        .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
-            let request = try HTTPClient.Request(url: GoogleOAuthTokenUrl, method: .POST, headers: headers, body: body)
-            
-            return httpClient.execute(request: request, eventLoop: .delegate(on: self.eventLoop)).flatMap { response in
-                
-                guard var byteBuffer = response.body,
-                let responseData = byteBuffer.readData(length: byteBuffer.readableBytes),
-                response.status == .ok else {
-                    return self.eventLoop.makeFailedFuture(OauthRefreshError.noResponse(response.status))
-                }
-                
+            return token.flatMap { [httpClient] token in
                 do {
-                    return self.eventLoop.makeSucceededFuture(try self.decoder.decode(OAuthAccessToken.self, from: responseData))
-                } catch {
+                    let body: HTTPClient.Body = .string("grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=\(token)"
+                        .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")
+                    let request = try HTTPClient.Request(url: GoogleOAuthTokenUrl, method: .POST, headers: headers, body: body)
+                    
+                    return httpClient.execute(request: request, eventLoop: .delegate(on: self.eventLoop)).flatMap { response in
+                        
+                        guard var byteBuffer = response.body,
+                              let responseData = byteBuffer.readData(length: byteBuffer.readableBytes),
+                              response.status == .ok else {
+                            return self.eventLoop.makeFailedFuture(OauthRefreshError.noResponse(response.status))
+                        }
+                        
+                        do {
+                            return self.eventLoop.makeSucceededFuture(try self.decoder.decode(OAuthAccessToken.self, from: responseData))
+                        } catch {
+                            return self.eventLoop.makeFailedFuture(error)
+                        }
+                    }
+                }  catch {
                     return self.eventLoop.makeFailedFuture(error)
                 }
             }
-            
-        } catch {
-            return self.eventLoop.makeFailedFuture(error)
-        }
     }
 
     private func generateJWT() async throws -> String {
